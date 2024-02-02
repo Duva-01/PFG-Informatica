@@ -1,7 +1,33 @@
-version: '3.1'
+version: '3.8'
 
 services:
-  backend:
+
+  app:
     build: .
     ports:
       - "5000:5000"
+    depends_on:
+      - db
+    environment:
+      - FLASK_APP=app
+      - FLASK_ENV=development
+    volumes:
+      - .:/app
+    command: flask run --host=0.0.0.0
+
+    depends_on:
+      - grownomics-db
+
+  grownomics-db:
+
+    image: postgres
+
+    environment:
+      POSTGRES_PASSWORD: example
+
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
+
