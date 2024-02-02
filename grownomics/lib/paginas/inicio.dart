@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:grownomics/paginas/Mercado/pagina_mercado.dart';
-import 'package:grownomics/paginas/pagina_inicio.dart';
+import 'package:grownomics/paginas/Home/homePage.dart';
 
 import '../widgets/menu_controller.dart';
 

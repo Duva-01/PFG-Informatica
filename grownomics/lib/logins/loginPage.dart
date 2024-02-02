@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:grownomics/api/authAPI.dart';
-import 'package:grownomics/paginas/pagina_inicio.dart';
-import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -12,6 +11,7 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
 
+  bool _isRememberMeChecked = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,9 +51,11 @@ class _LoginPageState extends State<LoginPage> {
                 Row(
                   children: [
                     Checkbox(
-                      value: false,
+                      value: _isRememberMeChecked,
                       onChanged: (bool? value) {
-                        // Manejar cambio
+                        setState(() {
+                          _isRememberMeChecked = value!;
+                        });
                       },
                     ),
                     Text('Recordarme'),
@@ -76,9 +78,15 @@ class _LoginPageState extends State<LoginPage> {
                 final loginSuccessful = await loginUser(email, password);
 
                 if (loginSuccessful) {
+                  if (_isRememberMeChecked) {
+                    // Guarda la preferencia de recordar al usuario
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.setBool('isUserLoggedIn', true);
+                    await prefs.setString('userEmail', email);
+
+                  }
                   // Inicio de sesión exitoso, redirige a la página de inicio
-                  Navigator.of(context).pushNamed(
-                      '/home');
+                  Navigator.of(context).pushReplacementNamed('/home');
                 } else {
                   // Inicio de sesión fallido, muestra un mensaje de error
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -94,9 +102,9 @@ class _LoginPageState extends State<LoginPage> {
             TextButton(
               child: Text('¿Nuevo en Grownomics? Registrate'),
               onPressed: () {
-                  Navigator.of(context)
-                      .pushNamed('/register'); // Navega a la página de registro
-                },
+                Navigator.of(context)
+                    .pushNamed('/register'); // Navega a la página de registro
+              },
             ),
             Align(
               alignment: Alignment.center,

@@ -1,11 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class MenuScreen extends StatelessWidget {
+class MenuScreen extends StatefulWidget {
   final ZoomDrawerController controller;
   final Function(int) onItemTapped;
 
   MenuScreen({required this.controller, required this.onItemTapped});
+
+  @override
+  _MenuScreenState createState() => _MenuScreenState();
+}
+
+class _MenuScreenState extends State<MenuScreen> {
+  late String userEmail = "grownomicero@gmail.com"; // Valor predeterminado
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserEmail();
+  }
+
+  Future<void> _loadUserEmail() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userEmail = prefs.getString('userEmail') ?? userEmail;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,12 +36,12 @@ class MenuScreen extends StatelessWidget {
         children: [
           UserAccountsDrawerHeader(
             accountName: Text(
-              'David Martinez Diaz',
+              'Grownomicero',
               style: TextStyle(fontSize: 20),
             ),
-            accountEmail: Text("dmartinez01@correo.ugr.es"), 
+            accountEmail: Text(userEmail),
             currentAccountPicture: CircleAvatar(
-              //backgroundImage: AssetImage('assets/profile_picture.png'),
+              backgroundImage: AssetImage('assets/images/admin-profile.jpg'),
               backgroundColor: Colors.white,
             ),
             decoration: BoxDecoration(color: Colors.green[700]),
@@ -35,16 +56,25 @@ class MenuScreen extends StatelessWidget {
                 _buildMenuItem(Icons.attach_money, 'Mis Inversiones', 4),
                 _buildMenuItem(Icons.notifications, 'Notificaciones', 5),
                 _buildMenuItem(Icons.settings, 'Configuración', 6),
-                
               ],
             ),
           ),
-          Divider(thickness: 2,),  
+          Divider(
+            thickness: 2,
+          ),
           ListTile(
             leading: Icon(Icons.exit_to_app, color: Colors.white),
             title: Text('Salir', style: TextStyle(color: Colors.white)),
-            onTap: () {
-              // Lógica para salir de la aplicación
+            onTap: () async {
+              // Lógica para cerrar sesión
+              final SharedPreferences prefs =
+                  await SharedPreferences.getInstance();
+              await prefs.remove('isUserLoggedIn'); // Borrar el estado de inicio de sesión
+              await prefs.remove('userEmail');
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/login',
+                  (Route<dynamic> route) =>
+                      false); // Redirigir a la pantalla de inicio de sesión
             },
           ),
         ],
@@ -57,8 +87,8 @@ class MenuScreen extends StatelessWidget {
       leading: Icon(icon, color: Colors.white),
       title: Text(title, style: TextStyle(color: Colors.white)),
       onTap: () {
-        onItemTapped(index);  
-        controller.close!();  
+        widget.onItemTapped(index);
+        widget.controller.close!();
       },
     );
   }
