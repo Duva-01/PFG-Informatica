@@ -15,25 +15,46 @@ def get_ibex35_data():
 pass
 
 def get_global_trending_tickers():
+
     global_tickers = [
-        "AAPL", "MSFT", "AMZN", "GOOGL", "FB", "TSLA", "BRK.A", "JPM",
-        "JNJ", "V", "PG", "HD", "MA", "UNH", "NVDA", "BAC", "PYPL",
-        "NFLX", "ADBE", "KO",  # ... y otros 30 tickers más
-        "SAN", "BBVA", "TEF", "ITX", "IBE", "REP", "AMS", "FER",
-        "ELE", "CABK", "SAB", "MAP"  # ... y otros tickers españoles
-    ]
+    "AAPL", "MSFT", "AMZN", "GOOGL", "FB", "TSLA", "BRK.A", "JPM",
+    "JNJ", "V", "PG", "HD", "MA", "UNH", "NVDA", "BAC", "PYPL",
+    "NFLX", "ADBE", "KO", "CMCSA", "XOM", "T", "INTC", "VZ",
+    "PFE", "DIS", "CSCO", "CRM", "WMT", "ABT", "PEP", "NKE",
+    "MCD", "WFC", "CVX", "BA", "ABNB", "AAL", "DAL", "UAL",
+    "TWTR", "SQ", "ZM", "ROKU", "SNAP", "DOCU", "UBER", "LYFT",
+    "GOLD", "TGT", "COST", "CAT", "IBM", "ORCL", "TGT", "CVS",
+    "FDX", "UPS", "X", "ZS", "DDOG", "DOV", "DAL", "EMR",
+    "EXC", "CMI", "LMT", "NOC", "RTX", "REGN", "AMGN", "GILD",
+    "ABBV", "BIIB", "VRTX", "CELG", "REGN", "ILMN", "IDXX", "ALXN",
+    "ALGN", "CDNS", "CTSH", "NTES", "SNPS", "WBA", "WDAY", "FIS",
+    "ADP", "KLAC", "MCHP", "CTAS", "MTD", "ANET", "MNST", "XEL",
+    "YUM", "MNST", "CPRT", "CTRP", "WIX", "BMRN", "FOX", "FOXA",
+    "NTAP", "SGEN", "RCL", "AZO", "ADI", "RMD", "PHM", "AMD",
+    "YUMC", "LULU", "ALB", "URI", "CHTR", "SYF", "FTNT", "NOW",
+    "ZBRA", "SIVB", "IDXX", "TWLO", "PAYC", "AMAT", "KLAC", "ADSK",
+    "CDW", "AAP", "NVTA", "WDC", "FLT", "RNG", "MTCH", "GRMN",
+    "WYNN", "ULTA", "TXN", "CTXS", "FTNT", "STX", "NTGR", "COUP",
+    "PEGA", "OKTA", "STNE", "OKTA", "VEEV", "PANW", "TWLO", "WDAY",
+    "FICO", "HUBS", "TTD", "MDB", "DOCU", "PINS", "RNG", "SQ",
+    "ZM", "FSLY", "CRWD", "SPLK", "PD", "ETSY", "PTON", "ZEN",
+    "FTCH", "CRSP", "SHOP", "TWOU", "EVBG", "AYX", "DDOG", 
+    
+    "SAN", "BBVA", "TEF", "ITX", "IBE", "REP", "AMS", "FER",
+    "ELE", "CABK", "SAB", "MAP"]
+
     return global_tickers
 pass
 
 def get_popular_stocks_data():
     page = request.args.get('page', default=1, type=int)  
     per_page = request.args.get('per_page', default=2, type=int) 
-    popular_tickers = get_global_trending_tickers()  # Obtén los símbolos de ticker populares de varias regiones
+    global_tickers = get_global_trending_tickers()  # Obtén los símbolos de ticker globales
     
     # Pagina la lista de tickers primero
     start_index = (page - 1) * per_page
     end_index = start_index + per_page
-    paginated_tickers = popular_tickers[start_index:end_index]
+    paginated_tickers = global_tickers[start_index:end_index]
 
     end_date = datetime.now()
     start_date = end_date - timedelta(days=1)  # Obtén datos del último día
@@ -45,7 +66,8 @@ def get_popular_stocks_data():
         if not data.empty:
             last_row = data.iloc[-1]
             stock_info = {
-                'name': ticker_symbol,
+                'name': ticker.info['longName'],  # Nombre completo de la acción
+                'ticker_symbol': ticker_symbol,  # Símbolo del ticker
                 'current_price': last_row['Close'],
                 'change': last_row['Close'] - last_row['Open'],
                 'change_percent': ((last_row['Close'] - last_row['Open']) / last_row['Open']) * 100,
@@ -59,6 +81,7 @@ def get_popular_stocks_data():
     popular_stocks_data_sorted = dict(sorted(popular_stocks_data.items(), key=lambda x: x[1].get('change_percent', 0), reverse=True))
     
     return jsonify(popular_stocks_data_sorted)
+
 pass
 
 def get_historical_data():

@@ -31,7 +31,7 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.green[800],
+      color: Color.fromARGB(255, 39, 99, 72),
       child: Column(
         children: [
           UserAccountsDrawerHeader(
@@ -44,17 +44,17 @@ class _MenuScreenState extends State<MenuScreen> {
               backgroundImage: AssetImage('assets/images/admin-profile.jpg'),
               backgroundColor: Colors.white,
             ),
-            decoration: BoxDecoration(color: Colors.green[700]),
+            decoration: BoxDecoration(color: Color(0xFF2F8B62)),
           ),
           Expanded(
             child: ListView(
               children: [
                 _buildMenuItem(Icons.home, 'Inicio', 0),
                 _buildMenuItem(Icons.show_chart, 'Cotizaciones', 1),
-                _buildMenuItem(Icons.trending_up, 'Tendencias', 2),
-                _buildMenuItem(Icons.bar_chart, 'Análisis de Mercado', 3),
-                _buildMenuItem(Icons.attach_money, 'Mis Inversiones', 4),
-                _buildMenuItem(Icons.notifications, 'Notificaciones', 5),
+                _buildMenuItem(Icons.bar_chart, 'Análisis', 2),
+                _buildMenuItem(Icons.account_balance_wallet, 'Cartera', 3),
+                _buildMenuItem(Icons.library_books, 'Noticias', 4),
+                _buildMenuItem(Icons.school, 'Aprendizaje', 5),
                 _buildMenuItem(Icons.settings, 'Configuración', 6),
               ],
             ),
@@ -69,7 +69,8 @@ class _MenuScreenState extends State<MenuScreen> {
               // Lógica para cerrar sesión
               final SharedPreferences prefs =
                   await SharedPreferences.getInstance();
-              await prefs.remove('isUserLoggedIn'); // Borrar el estado de inicio de sesión
+              await prefs.remove(
+                  'isUserLoggedIn'); // Borrar el estado de inicio de sesión
               await prefs.remove('userEmail');
               Navigator.of(context).pushNamedAndRemoveUntil(
                   '/login',

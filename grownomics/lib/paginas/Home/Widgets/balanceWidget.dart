@@ -8,7 +8,7 @@ class BalanceCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(45.0), // Ajusta el radio según tu preferencia
       child: Container(
         width: MediaQuery.of(context).size.width * 0.90,
-        color: Color.fromARGB(255, 30, 92, 65),
+        color: Color.fromARGB(255, 19, 60, 42),
         margin: EdgeInsets.symmetric(vertical: 10),
         padding: EdgeInsets.all(20),
         child: Column(

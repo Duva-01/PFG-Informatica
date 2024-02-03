@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
-import 'package:grownomics/paginas/Mercado/pagina_mercado.dart';
-import 'package:grownomics/paginas/Home/homePage.dart';
+import 'package:grownomics/paginas/Cartera/pagina_cartera.dart';
 
+import 'package:grownomics/paginas/Home/homePage.dart';
+import 'package:grownomics/paginas/Mercado/marketPage.dart';
 import '../widgets/menu_controller.dart';
 
 final ZoomDrawerController controller = ZoomDrawerController();
@@ -23,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final pages = [PaginaInicio(), PaginaMercado()];  // lista de páginas
+    final pages = [PaginaInicio(), PaginaMercado(), PaginaCartera(),PaginaCartera(), PaginaCartera(), PaginaCartera(), PaginaCartera()];  // lista de páginas
 
     return ZoomDrawer(
       controller: controller,
@@ -34,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
       angle: 0.0,
       drawerShadowsBackgroundColor: Colors.grey,
       slideWidth: MediaQuery.of(context).size.width * 0.65,
-      menuBackgroundColor: Colors.green,
+      menuBackgroundColor: Color.fromARGB(255, 67, 211, 149),
     );
   }
 }
