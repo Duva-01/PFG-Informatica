@@ -3,6 +3,7 @@ import 'package:grownomics/api/marketAPI.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:grownomics/paginas/Mercado/Widgets/categoryButtonWidget.dart';
 import 'package:grownomics/paginas/Mercado/Widgets/marketListWidget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import './pagina_accion.dart';
 
@@ -16,8 +17,9 @@ class _PaginaMercadoState extends State<PaginaMercado> {
   Map<String, dynamic> acciones = {};
   TextEditingController _searchController = TextEditingController();
   Set<String> accionesFavoritas = Set<String>();
-
   
+
+  int selectedCategoryIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +61,12 @@ class _PaginaMercadoState extends State<PaginaMercado> {
                   } else {
                     accionesFavoritas.add(tickerSymbol);
                   }
+                });
+              },
+              onCategorySelected: (index) {
+                setState(() {
+                  selectedCategoryIndex = index; // Actualiza el índice seleccionado
+                  // Aquí puedes llamar a _loadData() si es necesario
                 });
               },
             ),

@@ -3,13 +3,31 @@ import 'package:http/http.dart' as http;
 
 const String baseUrl = 'http://10.0.2.2:5000';
 
+Future<int> obtenerIdUsuario(String email) async {
+  final Uri url = Uri.parse('$baseUrl/auth/get_id?email=$email');
+  final respuesta = await http.get(url);
+
+  if (respuesta.statusCode == 200) {
+    final responseData = json.decode(respuesta.body);
+    final idUsuario = responseData['idUsuario'];
+    if (idUsuario is int) {
+      return idUsuario;
+    } else {
+      throw Exception('El ID de usuario no es un entero');
+    }
+  } else {
+    throw Exception('Falló la carga de las acciones');
+  }
+}
+
+
 Future<bool> loginUser(String email, String password) async {
   print("Email: $email"); // Muestra el correo electrónico en la consola
   print("Password: $password"); // Muestra la contraseña en la consola
 
   try {
     final response = await http.post(
-      Uri.parse('$baseUrl/login'), // Endpoint para el inicio de sesión
+      Uri.parse('$baseUrl/auth/login'), // Endpoint para el inicio de sesión
       body: {
         'email': email,
         'password': password,
@@ -39,7 +57,7 @@ Future<bool> loginUser(String email, String password) async {
 Future<bool> registerUser(String name, String surname, String email, String password) async {
   try {
     final response = await http.post(
-      Uri.parse('$baseUrl/register'), // Endpoint para el registro
+      Uri.parse('$baseUrl/auth/register'), // Endpoint para el registro
       body: {
         'username': name,
         'apellido': surname,

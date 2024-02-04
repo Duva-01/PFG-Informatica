@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 class CategoriesSection extends StatefulWidget {
   final Set<String> accionesFavoritas;
   final Function(String) toggleFavorite;
+  final Function(int) onCategorySelected;
 
   CategoriesSection({
     required this.accionesFavoritas,
     required this.toggleFavorite,
+    required this.onCategorySelected,
   });
 
   @override
@@ -23,35 +25,28 @@ class _CategoriesSectionState extends State<CategoriesSection> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         CategoryButton(
-          texto: 'Favoritos',
-          icono: Icon(Icons.star),
+          texto: 'Todos',
+          icono: Icon(Icons.ballot),
           isSelected: selectedCategoryIndex == 0,
           onPressed: () {
             setState(() {
               selectedCategoryIndex = 0;
             });
+            widget.onCategorySelected(0);
           },
         ),
         CategoryButton(
-          texto: 'Calientes',
-          icono: Icon(Icons.local_fire_department),
+          texto: 'Favoritos',
+          icono: Icon(Icons.star),
           isSelected: selectedCategoryIndex == 1,
           onPressed: () {
             setState(() {
               selectedCategoryIndex = 1;
             });
+            widget.onCategorySelected(1);
           },
         ),
-        CategoryButton(
-          texto: 'Punto de vista',
-          icono: Icon(Icons.remove_red_eye),
-          isSelected: selectedCategoryIndex == 2,
-          onPressed: () {
-            setState(() {
-              selectedCategoryIndex = 2;
-            });
-          },
-        ),
+        
       ],
     );
   }

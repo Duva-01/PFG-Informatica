@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:grownomics/api/authAPI.dart';
 import 'package:grownomics/paginas/Mercado/pagina_accion.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../api/marketAPI.dart';
+
 
 class MarketList extends StatefulWidget {
   final Set<String> accionesFavoritas;
   final Function(String) toggleFavorite;
+  final bool cargarFavoritas;
 
   MarketList({
     required this.accionesFavoritas,
     required this.toggleFavorite,
+    this.cargarFavoritas = false,
   });
 
   @override
@@ -21,13 +26,28 @@ class _MarketListState extends State<MarketList> {
   Map<String, dynamic> acciones = {};
   ScrollController _scrollController = ScrollController();
   bool _isLoading = false;
+  late String userEmail = "grownomicero@gmail.com";
 
-  void _loadData() async {
-    if (!_isLoading) {
-      setState(() {
-        _isLoading = true;
-      });
-      final newAcciones = await obtenerAcciones(page);
+  Future<void> _loadUserEmail() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userEmail = prefs.getString('userEmail') ?? userEmail;
+    });
+  }
+  
+ void _loadData() async {
+  if (!_isLoading) {
+    setState(() => _isLoading = true);
+
+    Map<String, dynamic> newAcciones;
+    if (widget.cargarFavoritas) {
+      // Cargar acciones favoritas
+      int idUsuario = await obtenerIdUsuario(userEmail);
+      newAcciones = await obtenerAccionesFavoritas(idUsuario);
+    } else {
+      // Cargar todas las acciones
+      newAcciones = await obtenerAcciones(page);
+    }
       if (newAcciones != null) {
         final filteredAcciones = Map<String, dynamic>.fromIterable(
           newAcciones.entries.where((entry) => entry.value["error"] == null),
@@ -54,6 +74,7 @@ class _MarketListState extends State<MarketList> {
   @override
   void initState() {
     super.initState();
+    _loadUserEmail();
     _loadData();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=

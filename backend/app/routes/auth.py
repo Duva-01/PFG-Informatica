@@ -1,38 +1,12 @@
-from flask import Blueprint
-from flask import Blueprint, request, flash, redirect, url_for
+from flask import Blueprint, jsonify, request, flash, redirect, url_for
 from flask_login import login_user, login_required, logout_user
-from .models import Usuario
-from .extensions import db
+from ..models import Usuario
+from ..extensions import db
 
-from flask import jsonify  # Importa jsonify
+auth_bp = Blueprint('auth', __name__)
 
-# Define un objeto Blueprint para las rutas
-bp = Blueprint('routes', __name__)
-
-from .finance_data import get_ibex35_data, get_popular_stocks_data, get_historical_data, get_market_summary
-
-# Registra las rutas 
-
-@bp.route('/ibex35_data')
-def ibex35_data():
-    return get_ibex35_data()
-
-@bp.route('/popular_stocks_data')
-def popular_stocks_data():
-    return get_popular_stocks_data()
-
-@bp.route('/historical_data')
-def historical_data():
-    return get_historical_data()
-
-@bp.route('/resumen_mercado')
-def market_summary():
-    return get_market_summary()
-
-# -----------------------------------------------------------------------
-# Inicio de sesion y registrarse
-
-@bp.route('/register', methods=['POST'])
+# Tus funciones de rutas van aquí
+@auth_bp.route('/register', methods=['POST'])
 def register():
     if request.method == 'POST':
         username = request.form.get('username')
@@ -55,9 +29,7 @@ def register():
 
         return jsonify({'success': True, 'message': 'Registro exitoso. Ahora puedes iniciar sesión.'}), 201
 
-
-
-@bp.route('/login', methods=['POST'])
+@auth_bp.route('/login', methods=['POST'])
 def login():
     if request.method == 'POST':
         email = request.form['email']
@@ -72,13 +44,20 @@ def login():
             # Devuelve una respuesta JSON indicando fallo en el inicio de sesión
             return jsonify({'success': False, 'message': 'Credenciales incorrectas. Inténtalo de nuevo.'}), 401
 
-
-@bp.route('/logout')
-@login_required
+@auth_bp.route('/logout', methods=['GET'])
 def logout():
     logout_user()
     # Devuelve una respuesta JSON confirmando el cierre de sesión
     return jsonify({'success': True, 'message': 'Has cerrado sesión correctamente.'}), 200
 
-# -----------------------------------------------------------------------
-# -----------------------------------------------------------------------
+@auth_bp.route('/get_id', methods=['GET'])
+def get_id():
+    email = request.args.get('email')
+    if email:
+        try:
+            id_usuario = obtener_id_usuario(email)
+            return jsonify({'idUsuario': id_usuario}), 200
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    else:
+        return jsonify({'error': 'Correo electrónico no proporcionado'}), 400

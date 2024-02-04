@@ -12,7 +12,7 @@ import '../../widgets/indicadores_economicos.dart';
 Future<List<HistoricalData>> obtenerDatosHistoricos(
     String symbol, String interval) async {
   final response = await http.get(Uri.parse(
-      'http://10.0.2.2:5000/historical_data?symbol=$symbol&interval=$interval'));
+      'http://10.0.2.2:5000/finance/historical_data?symbol=$symbol&interval=$interval'));
 
   if (response.statusCode == 200) {
     final Map<String, dynamic> data = json.decode(response.body);

@@ -53,7 +53,7 @@ class _LoadingPageState extends State<LoadingPage> {
             height: 50,
             child: LoadingIndicator(
               indicatorType: Indicator.lineScale,
-              colors: const [Colors.green],
+              colors: const [Color(0xFF2F8B62)],
             ),
           ),
         ),

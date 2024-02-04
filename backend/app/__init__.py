@@ -4,6 +4,7 @@ from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from .extensions import db, login_manager
 
+
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'una_clave_secreta_muy_segura'
@@ -13,16 +14,25 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
     
-    from app.models import Usuario
-    admin = Admin(app, name='MiAdmin', template_mode='bootstrap3')
-    admin.add_view(ModelView(Usuario, db.session))
+    from app.models import Usuario, Accion, AccionesFavoritas, AccionesFavoritasModelView
     
-    from .routes import bp as routes_bp
-    app.register_blueprint(routes_bp, url_prefix='/')
+    admin = Admin(app, name='Grownomics', template_mode='bootstrap3')
+
+    admin.add_view(ModelView(Usuario, db.session))
+    admin.add_view(ModelView(Accion, db.session, name='Tabla Accion'))
+    admin.add_view(AccionesFavoritasModelView(AccionesFavoritas, db.session, name='Tabla Acciones Favoritas'))
+    
+    from .routes import register_blueprints
+    register_blueprints(app)
 
     @login_manager.user_loader
     def load_user(user_id):
         return Usuario.query.get(int(user_id))
+
+    # Esto sirve para rellenar la base de datos de las acciones
+    # from .finance_data import actualizar_acciones_global_tickers
+    # with app.app_context():
+    #    actualizar_acciones_global_tickers()
 
     return app
 
