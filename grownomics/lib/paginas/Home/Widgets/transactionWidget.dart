@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class FavoriteCard extends StatelessWidget {
+class TransaccionesCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
@@ -20,14 +20,14 @@ class FavoriteCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(
-                  'Acciones Favoritas',
+                  'Ultimas Transacciones',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Icon(Icons.star, color: Colors.yellow, size: 30)
+                Icon(Icons.call_to_action_rounded, color: Colors.white, size: 30)
               ],
             ),
             Divider(

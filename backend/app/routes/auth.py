@@ -54,10 +54,11 @@ def logout():
 def get_id():
     email = request.args.get('email')
     if email:
-        try:
-            id_usuario = obtener_id_usuario(email)
+        usuario = Usuario.query.filter_by(email=email).first()
+        if usuario:
+            id_usuario = usuario.id
             return jsonify({'idUsuario': id_usuario}), 200
-        except Exception as e:
-            return jsonify({'error': str(e)}), 500
+        else:
+            return jsonify({'error': 'Usuario no encontrado'}), 404
     else:
         return jsonify({'error': 'Correo electrónico no proporcionado'}), 400

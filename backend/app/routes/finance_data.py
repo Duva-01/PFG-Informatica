@@ -65,70 +65,70 @@ def actualizar_acciones_global_tickers():
 
 @finance_bp.route('/popular_stocks_data')
 def get_popular_stocks_data():
-    # Obtener parámetros de la solicitud
     page = request.args.get('page', default=1, type=int)
     per_page = request.args.get('per_page', default=10, type=int)
     
-    # Calcular el rango de acciones a cargar
     start_index = (page - 1) * per_page
-    end_index = start_index + per_page
-    
-    # Consultar las acciones de la base de datos en el rango especificado
     acciones = Accion.query.offset(start_index).limit(per_page).all()
     
     end_date = datetime.now()
-    start_date = end_date - timedelta(days=1)
+    start_date = end_date - timedelta(days=3)
     popular_stocks_data = {}
     
     for accion in acciones:
         ticker_symbol = accion.codigoticker
         ticker = yf.Ticker(ticker_symbol)
-        data = ticker.history(start=start_date.strftime('%Y-%m-%d'), end=end_date.strftime('%Y-%m-%d'))
-        
+        data = ticker.history(start=start_date, end=end_date)
         if not data.empty:
             last_row = data.iloc[-1]
             stock_info = {
-                'name': ticker.info.get('longName', 'Unknown'),  # Usar get para manejar la posibilidad de que 'longName' no esté disponible
+                'id': accion.id_accion,  # Asume que tu modelo tiene este campo como ID
+                'name': ticker.info.get('longName', 'Unknown'),
                 'ticker_symbol': ticker_symbol,
                 'current_price': last_row['Close'],
                 'change': last_row['Close'] - last_row['Open'],
                 'change_percent': ((last_row['Close'] - last_row['Open']) / last_row['Open']) * 100,
             }
-            popular_stocks_data[ticker_symbol] = stock_info
+            popular_stocks_data[accion.id_accion] = stock_info  # Usar ID como clave
         else:
             print(f"No data available for ticker: {ticker_symbol}")
     
-    return jsonify(popular_stocks_data)
+    return jsonify(list(popular_stocks_data.values()))  # Convertir el diccionario a lista para la respuesta
 pass
 
 @finance_bp.route('/acciones_favs', methods=['GET'])
-def get_acciones_favoritas_usuario(id_usuario):
-    acciones_favoritas = AccionesFavoritas.query.filter_by(id_usuario=id_usuario).join(Accion).all()
-    end_date = datetime.now()
-    start_date = end_date - timedelta(days=1)
+def get_acciones_favoritas_usuario():
+    id_usuario = request.args.get('id_usuario', type=int)
+    if not id_usuario:
+        return jsonify({'error': 'ID de usuario requerido'}), 400
     
+    acciones_favoritas = AccionesFavoritas.query.filter_by(id_usuario=id_usuario).join(Accion).all()
+    
+    end_date = datetime.now()
+    start_date = end_date - timedelta(days=3)
     favoritas_data = {}
-
+    
     for favorita in acciones_favoritas:
         ticker_symbol = favorita.accion.codigoticker
         ticker = yf.Ticker(ticker_symbol)
-        data = ticker.history(start=start_date.strftime('%Y-%m-%d'), end=end_date.strftime('%Y-%m-%d'))
-
+        data = ticker.history(start=start_date, end=end_date)
         if not data.empty:
             last_row = data.iloc[-1]
             stock_info = {
+                'id': favorita.accion.id_accion,  # Asume que Accion tiene este campo como ID
                 'name': ticker.info['longName'],
                 'ticker_symbol': ticker_symbol,
                 'current_price': last_row['Close'],
                 'change': last_row['Close'] - last_row['Open'],
                 'change_percent': ((last_row['Close'] - last_row['Open']) / last_row['Open']) * 100,
             }
-            favoritas_data[ticker_symbol] = stock_info
+            favoritas_data[favorita.accion.id_accion] = stock_info  # Usar ID como clave
         else:
             print(f"No data available for ticker: {ticker_symbol}")
-            favoritas_data[ticker_symbol] = {'error': 'No data available'}
-
-    return jsonify(favoritas_data)
+            favoritas_data[favorita.accion.id_accion] = {'error': 'No data available'}
+    
+    return jsonify(list(favoritas_data.values()))  # Convertir el diccionario a lista para la respuesta
+pass
 
 
 @finance_bp.route('/historical_data')
@@ -147,17 +147,31 @@ def get_historical_data():
 pass
 
 @finance_bp.route('/agregar_accion_fav', methods=['POST'])
-def agregar_accion_favorita(id_usuario, id_accion):
+def agregar_accion_favorita():
+    # Extraer id_usuario e id_accion del cuerpo de la petición
+    data = request.get_json()
+    id_usuario = data.get('id_usuario')
+    id_accion = data.get('id_accion')
+    if not id_usuario or not id_accion:
+        return jsonify({'error': 'Faltan datos para agregar a favoritos'}), 400
     nueva_favorita = AccionesFavoritas(id_usuario=id_usuario, id_accion=id_accion)
     db.session.add(nueva_favorita)
     db.session.commit()
     return jsonify({'mensaje': 'Acción agregada a favoritas con éxito'})
+pass
 
 @finance_bp.route('/eliminar_accion_fav', methods=['POST'])
-def eliminar_accion_favorita(id_usuario, id_accion):
+def eliminar_accion_favorita():
+    # Extraer id_usuario e id_accion del cuerpo de la petición
+    data = request.get_json()
+    id_usuario = data.get('id_usuario')
+    id_accion = data.get('id_accion')
+    if not id_usuario or not id_accion:
+        return jsonify({'error': 'Faltan datos para eliminar de favoritos'}), 400
     AccionesFavoritas.query.filter_by(id_usuario=id_usuario, id_accion=id_accion).delete()
     db.session.commit()
     return jsonify({'mensaje': 'Acción eliminada de favoritas con éxito'})
+pass
 
 
 

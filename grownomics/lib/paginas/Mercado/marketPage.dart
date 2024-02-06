@@ -8,18 +8,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import './pagina_accion.dart';
 
 class PaginaMercado extends StatefulWidget {
+
+  final String userEmail;
+  PaginaMercado({required this.userEmail});
+
   @override
   _PaginaMercadoState createState() => _PaginaMercadoState();
 }
 
 class _PaginaMercadoState extends State<PaginaMercado> {
-  
-  Map<String, dynamic> acciones = {};
-  TextEditingController _searchController = TextEditingController();
-  Set<String> accionesFavoritas = Set<String>();
-  
-
-  int selectedCategoryIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -37,51 +34,8 @@ class _PaginaMercadoState extends State<PaginaMercado> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
-              padding: EdgeInsets.all(10),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  labelText: 'Buscar por nombre',
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.clear),
-                    onPressed: () {
-                      _searchController.clear();
-                    },
-                  ),
-                ),
-              ),
-            ),
-            CategoriesSection(
-              accionesFavoritas: accionesFavoritas,
-              toggleFavorite: (tickerSymbol) {
-                setState(() {
-                  if (accionesFavoritas.contains(tickerSymbol)) {
-                    accionesFavoritas.remove(tickerSymbol);
-                  } else {
-                    accionesFavoritas.add(tickerSymbol);
-                  }
-                });
-              },
-              onCategorySelected: (index) {
-                setState(() {
-                  selectedCategoryIndex = index; // Actualiza el índice seleccionado
-                  // Aquí puedes llamar a _loadData() si es necesario
-                });
-              },
-            ),
-            MarketList( 
-              accionesFavoritas: accionesFavoritas,
-              toggleFavorite: (tickerSymbol) {
-                setState(() {
-                  if (accionesFavoritas.contains(tickerSymbol)) {
-                    accionesFavoritas.remove(tickerSymbol);
-                  } else {
-                    accionesFavoritas.add(tickerSymbol);
-                  }
-                });
-              },
-            ),
+            MarketList(userEmail: widget.userEmail) // Usando widget.userEmail
+
           ],
         ),
       ),

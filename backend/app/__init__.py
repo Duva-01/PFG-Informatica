@@ -30,7 +30,7 @@ def create_app():
         return Usuario.query.get(int(user_id))
 
     # Esto sirve para rellenar la base de datos de las acciones
-    # from .finance_data import actualizar_acciones_global_tickers
+    # from app.routes.finance_data import actualizar_acciones_global_tickers
     # with app.app_context():
     #    actualizar_acciones_global_tickers()
 

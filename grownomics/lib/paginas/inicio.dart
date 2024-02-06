@@ -5,6 +5,7 @@ import 'package:grownomics/paginas/Cartera/pagina_cartera.dart';
 import 'package:grownomics/paginas/Home/homePage.dart';
 import 'package:grownomics/paginas/Mercado/marketPage.dart';
 import '../widgets/menu_controller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final ZoomDrawerController controller = ZoomDrawerController();
 
@@ -15,6 +16,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;  // índice de la página seleccionada
+  late String userEmail = "grownomicero@gmail.com"; // Valor predeterminado
 
   void _onItemTapped(int index) {
     setState(() {
@@ -23,8 +25,21 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _loadUserEmail();
+  }
+
+  Future<void> _loadUserEmail() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userEmail = prefs.getString('userEmail') ?? userEmail;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final pages = [PaginaInicio(), PaginaMercado(), PaginaCartera(),PaginaCartera(), PaginaCartera(), PaginaCartera(), PaginaCartera()];  // lista de páginas
+    final pages = [PaginaInicio(userEmail: userEmail), PaginaMercado(userEmail: userEmail), PaginaCartera(), PaginaCartera(), PaginaCartera(), PaginaCartera(), PaginaCartera()];
 
     return ZoomDrawer(
       controller: controller,
