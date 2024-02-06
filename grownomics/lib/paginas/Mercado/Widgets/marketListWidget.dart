@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:grownomics/api/authAPI.dart';
 import 'package:grownomics/api/marketAPI.dart'; // Asegúrate de tener esta API implementada correctamente.
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:grownomics/paginas/Mercado/pagina_accion.dart';
+import 'package:grownomics/paginas/Mercado/stockPage.dart';
 
 class MarketList extends StatefulWidget {
   final String userEmail;

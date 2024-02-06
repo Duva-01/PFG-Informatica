@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
 
     MaterialColor primarySwatch = const MaterialColor(
-      0xFF2F8B62, // Color primario en formato hexadecimal
+      0xFF2F8B62, 
       <int, Color>{
         50: Color(0xFFE0F3EA),
         100: Color(0xFFB3DFCC),

@@ -143,6 +143,7 @@ def get_historical_data():
     data = ticker.history(period=interval)
     data.index = data.index.strftime('%Y-%m-%d')
 
+    print(data.to_dict(orient='index'))
     return jsonify(data.to_dict(orient='index'))
 pass
 

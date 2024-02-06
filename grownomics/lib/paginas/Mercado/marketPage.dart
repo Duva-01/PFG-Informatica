@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:grownomics/api/marketAPI.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
-import 'package:grownomics/paginas/Mercado/Widgets/categoryButtonWidget.dart';
 import 'package:grownomics/paginas/Mercado/Widgets/marketListWidget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import './pagina_accion.dart';
+import 'stockPage.dart';
 
 class PaginaMercado extends StatefulWidget {
 
