@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
-import 'package:grownomics/paginas/Cartera/pagina_cartera.dart';
+import 'package:grownomics/paginas/Cartera/portfolioPage.dart';
+import 'package:grownomics/paginas/Configuracion/configPage.dart';
 
 import 'package:grownomics/paginas/Home/homePage.dart';
 import 'package:grownomics/paginas/Mercado/marketPage.dart';
+import 'package:grownomics/paginas/Noticias/newsPage.dart';
 import '../widgets/menu_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -39,11 +41,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final pages = [PaginaInicio(userEmail: userEmail), PaginaMercado(userEmail: userEmail), PaginaCartera(), PaginaCartera(), PaginaCartera(), PaginaCartera(), PaginaCartera()];
+    final pages = [PaginaInicio(userEmail: userEmail), PaginaMercado(userEmail: userEmail), PaginaCartera(), PaginaCartera(), PaginaNoticias(), PaginaCartera(), PaginaConfiguracion()];
 
     return ZoomDrawer(
       controller: controller,
-      mainScreen: pages[_selectedIndex],  // mostrar la página seleccionada
+      mainScreen: pages[_selectedIndex],  
       menuScreen: MenuScreen(controller: controller, onItemTapped: _onItemTapped),
       borderRadius: 24,
       showShadow: true,

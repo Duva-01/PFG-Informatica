@@ -45,6 +45,7 @@ dependencies:
   auto_size_text: ^3.0.0
   candlesticks: ^2.1.0
   k_chart: ^0.7.1
+  webview_flutter: ^4.4.2
   
 dev_dependencies:
   flutter_test:

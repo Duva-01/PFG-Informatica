@@ -7,3 +7,6 @@ pandas
 Flask-SQLAlchemy
 psycopg2
 flask_login
+pytest
+Flask-Testing
+flask-restplus
