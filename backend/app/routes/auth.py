@@ -50,14 +50,19 @@ def logout():
     # Devuelve una respuesta JSON confirmando el cierre de sesión
     return jsonify({'success': True, 'message': 'Has cerrado sesión correctamente.'}), 200
 
-@auth_bp.route('/get_id', methods=['GET'])
-def get_id():
+@auth_bp.route('/get_user', methods=['GET'])
+def get_user():
     email = request.args.get('email')
     if email:
         usuario = Usuario.query.filter_by(email=email).first()
         if usuario:
-            id_usuario = usuario.id
-            return jsonify({'idUsuario': id_usuario}), 200
+            usuario_data = {
+                'id': usuario.id,
+                'nombre': usuario.nombre,
+                'apellido': usuario.apellido,
+                'email': usuario.email,
+            }
+            return jsonify(usuario_data), 200
         else:
             return jsonify({'error': 'Usuario no encontrado'}), 404
     else:

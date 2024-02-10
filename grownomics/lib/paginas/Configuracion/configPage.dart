@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 
 class PaginaConfiguracion extends StatefulWidget {
+
+  final String userEmail;
+  final String nombre;
+  final String apellido;
+  PaginaConfiguracion({required this.userEmail, required this.nombre, required this.apellido});
+
   @override
   _PaginaConfiguracionState createState() => _PaginaConfiguracionState();
 }
@@ -27,12 +33,15 @@ class _PaginaConfiguracionState extends State<PaginaConfiguracion> {
       body: ListView(
         children: <Widget>[
           UserAccountsDrawerHeader(
-            accountName: Text("David Martinez Diaz"),
+            accountName: Text(
+              widget.nombre + " " + widget.apellido,
+              style: TextStyle(fontSize: 20),
+            ),
             accountEmail: Text("Ajustes de Cuenta"),
             currentAccountPicture: CircleAvatar(
               backgroundColor: Colors.white,
               child: Text(
-                "D",
+                widget.nombre[0],
                 style: TextStyle(fontSize: 40.0),
               ),
             ),

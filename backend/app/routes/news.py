@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 import requests
 
 news_bp = Blueprint('news', __name__)
@@ -6,7 +6,8 @@ news_bp = Blueprint('news', __name__)
 @news_bp.route('/financial_news')
 def get_financial_news():
     api_key = 'a7fb25368aa74e8986c641a4f559e5c9'
-    url = f'https://newsapi.org/v2/everything?q=finanzas&language=es&apiKey={api_key}'
+    tematica = request.args.get('tematica', 'finanzas') 
+    url = f'https://newsapi.org/v2/everything?q={tematica}&language=es&apiKey={api_key}'
 
     response = requests.get(url)
 

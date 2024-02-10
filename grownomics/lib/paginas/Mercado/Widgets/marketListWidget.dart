@@ -30,10 +30,13 @@ class _MarketListState extends State<MarketList> {
   @override
   void initState() {
     super.initState();
-    obtenerIdUsuario(widget.userEmail).then((id) {
-      idUsuario = id;
+    obtenerDatosUsuario(widget.userEmail).then((datos) {
+      setState(() {
+        idUsuario = datos['id']; 
+      });
       _loadFavoritas();
     });
+
     _loadData();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=

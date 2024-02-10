@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
+import 'package:grownomics/api/authAPI.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MenuScreen extends StatefulWidget {
@@ -13,20 +14,34 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
-  late String userEmail = "grownomicero@gmail.com"; // Valor predeterminado
+  late String userEmail = "grownomicero@gmail.com";
+  late String nombre = "Grownomicero";
+  late String apellido = "";
 
   @override
   void initState() {
     super.initState();
-    _loadUserEmail();
+    _loadUser();
   }
 
-  Future<void> _loadUserEmail() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      userEmail = prefs.getString('userEmail') ?? userEmail;
-    });
+ Future<void> _loadUser() async {
+  final prefs = await SharedPreferences.getInstance();
+  final emailObtenido = prefs.getString('userEmail') ?? userEmail;
+
+  try {
+    final datos = await obtenerDatosUsuario(emailObtenido);
+    if (datos['nombre'] != null && datos['apellido'] != null) {
+      setState(() {
+        userEmail = emailObtenido;
+        nombre = datos['nombre'];
+        apellido = datos['apellido'];
+      });
+    }
+  } catch (e) {
+    print('Hubo un error al obtener los datos del usuario: $e');
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +51,7 @@ class _MenuScreenState extends State<MenuScreen> {
         children: [
           UserAccountsDrawerHeader(
             accountName: Text(
-              'Grownomicero',
+              nombre + " " + apellido,
               style: TextStyle(fontSize: 20),
             ),
             accountEmail: Text(userEmail),

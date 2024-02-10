@@ -3,22 +3,18 @@ import 'package:http/http.dart' as http;
 
 const String baseUrl = 'http://10.0.2.2:5000';
 
-Future<int> obtenerIdUsuario(String email) async {
-  final Uri url = Uri.parse('$baseUrl/auth/get_id?email=$email');
+Future<Map<String, dynamic>> obtenerDatosUsuario(String email) async {
+  final Uri url = Uri.parse('$baseUrl/auth/get_user?email=$email');
   final respuesta = await http.get(url);
 
   if (respuesta.statusCode == 200) {
     final responseData = json.decode(respuesta.body);
-    final idUsuario = responseData['idUsuario'];
-    if (idUsuario is int) {
-      return idUsuario;
-    } else {
-      throw Exception('El ID de usuario no es un entero');
-    }
+    return responseData; 
   } else {
-    throw Exception('Falló la carga de las acciones');
+    throw Exception('Falló la carga de los datos del usuario');
   }
 }
+
 
 
 Future<bool> loginUser(String email, String password) async {

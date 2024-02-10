@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:animated_button_bar/animated_button_bar.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -134,28 +136,9 @@ Widget buildChart(List<HistoricalData> data) {
   final double midY = ((minY + maxY) / 2).roundToDouble();
 
   final int midXIndex = (data.length / 2).floor();
-  final DateTime midX = data[midXIndex].date;
 
   return LineChart(
     LineChartData(
-      gridData: FlGridData(
-        show: true,
-        drawVerticalLine: true,
-        horizontalInterval: 1,
-        verticalInterval: 1,
-        getDrawingHorizontalLine: (value) {
-          return FlLine(
-            color: Colors.grey,
-            strokeWidth: 1,
-          );
-        },
-        getDrawingVerticalLine: (value) {
-          return FlLine(
-            color: Colors.grey,
-            strokeWidth: 1,
-          );
-        },
-      ),
       titlesData: FlTitlesData(
         show: true,
         bottomTitles: SideTitles(
@@ -177,8 +160,10 @@ Widget buildChart(List<HistoricalData> data) {
         leftTitles: SideTitles(
           showTitles: true,
           getTitles: (value) {
-            if (value == minY || value == maxY || value == midY) {
+            if (value == minY || value == maxY) {
               return value.toInt().toString();
+            } else if (value == midY) {
+              return "AVG" + value.toInt().toString();
             }
             return '';
           },
@@ -186,7 +171,7 @@ Widget buildChart(List<HistoricalData> data) {
       ),
       borderData: FlBorderData(
         show: true,
-        border: Border.all(color: const Color(0xff37434d), width: 1),
+        border: Border.all(color: const Color(0xff37434d), width: 4),
       ),
       minX: 0,
       maxX: (data.length.toDouble() - 1),
@@ -200,10 +185,15 @@ Widget buildChart(List<HistoricalData> data) {
             return FlSpot(index.toDouble(), value.close);
           }).toList(),
           isCurved: true,
-          colors: [Colors.blue],
+          colors: [Colors.green],
           barWidth: 4,
           isStrokeCapRound: true,
-          belowBarData: BarAreaData(show: false),
+          belowBarData: BarAreaData(
+            show: true,
+            colors: [
+              Color(0xFF2F8B62).withOpacity(0.6),
+            ],
+          ),
         ),
       ],
     ),
@@ -214,7 +204,7 @@ Widget buildCandleChart(List<HistoricalData> data) {
   List<KLineEntity> kLineData = [];
 
   for (var historicalData in data) {
-    double volume = historicalData.volume ?? 1.0; 
+    double volume = historicalData.volume ?? 1.0;
     KLineEntity entity = KLineEntity.fromCustom(
       time: historicalData.date.millisecondsSinceEpoch,
       open: historicalData.open,
@@ -246,16 +236,15 @@ Widget buildCandleChart(List<HistoricalData> data) {
       ;
 
   ChartStyle chartStyle = ChartStyle()
-        ..topPadding = 30.0
-        ..bottomPadding = 20.0
-        ..childPadding = 12.0
-        ..candleWidth = 8.5
-        ..candleLineWidth = 1.5
-        ..volWidth = 8.5
-        ..macdWidth = 3.0
-        ..vCrossWidth = 8.5
-        ..hCrossWidth = 0.5
-      ;
+    ..topPadding = 30.0
+    ..bottomPadding = 20.0
+    ..childPadding = 12.0
+    ..candleWidth = 8.5
+    ..candleLineWidth = 1.5
+    ..volWidth = 8.5
+    ..macdWidth = 3.0
+    ..vCrossWidth = 8.5
+    ..hCrossWidth = 0.5;
   return KChartWidget(
     kLineData,
     chartStyle,
