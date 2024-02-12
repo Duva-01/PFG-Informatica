@@ -40,16 +40,15 @@ def get_global_trending_tickers():
     return global_tickers
 pass
 
+# Actualizar las acciones con los tickers globales populares
 def actualizar_acciones_global_tickers():
     global_tickers = get_global_trending_tickers()
 
     for ticker_symbol in global_tickers:
         ticker = yf.Ticker(ticker_symbol)
         try:
-            # Intenta obtener el nombre largo de la acción
             nombre = ticker.info.get('longName', None)
             if nombre:
-                # Verifica si ya existe en la base de datos
                 if not Accion.query.filter_by(codigoticker=ticker_symbol).first():
                     nueva_accion = Accion(nombre=nombre, codigoticker=ticker_symbol)
                     db.session.add(nueva_accion)
@@ -59,10 +58,7 @@ def actualizar_acciones_global_tickers():
 
     db.session.commit()
 
-# ----------------------------------------------------------------------   
-# ---------------------------------------------------------------------- 
-# ----------------------------------------------------------------------
-
+# Ruta para obtener datos de acciones populares
 @finance_bp.route('/popular_stocks_data')
 def get_popular_stocks_data():
     page = request.args.get('page', default=1, type=int)
@@ -89,18 +85,18 @@ def get_popular_stocks_data():
                 'change': last_row['Close'] - last_row['Open'],
                 'change_percent': ((last_row['Close'] - last_row['Open']) / last_row['Open']) * 100,
             }
-            popular_stocks_data[accion.id_accion] = stock_info  # Usar ID como clave
+            popular_stocks_data[accion.id_accion] = stock_info
         else:
-            print(f"No data available for ticker: {ticker_symbol}")
+            print(f"No hay datos disponibles para el ticker: {ticker_symbol}")
     
-    return jsonify(list(popular_stocks_data.values()))  # Convertir el diccionario a lista para la respuesta
-pass
+    return jsonify(list(popular_stocks_data.values()))
 
+# Ruta para obtener acciones favoritas de un usuario
 @finance_bp.route('/acciones_favs', methods=['GET'])
 def get_acciones_favoritas_usuario():
     id_usuario = request.args.get('id_usuario', type=int)
     if not id_usuario:
-        return jsonify({'error': 'ID de usuario requerido'}), 400
+        return jsonify({'error': 'Se requiere el ID de usuario'}), 400
     
     acciones_favoritas = AccionesFavoritas.query.filter_by(id_usuario=id_usuario).join(Accion).all()
     
@@ -115,41 +111,38 @@ def get_acciones_favoritas_usuario():
         if not data.empty:
             last_row = data.iloc[-1]
             stock_info = {
-                'id': favorita.accion.id_accion,  # Asume que Accion tiene este campo como ID
+                'id': favorita.accion.id_accion,
                 'name': ticker.info['longName'],
                 'ticker_symbol': ticker_symbol,
                 'current_price': last_row['Close'],
                 'change': last_row['Close'] - last_row['Open'],
                 'change_percent': ((last_row['Close'] - last_row['Open']) / last_row['Open']) * 100,
             }
-            favoritas_data[favorita.accion.id_accion] = stock_info  # Usar ID como clave
+            favoritas_data[favorita.accion.id_accion] = stock_info
         else:
-            print(f"No data available for ticker: {ticker_symbol}")
-            favoritas_data[favorita.accion.id_accion] = {'error': 'No data available'}
+            print(f"No hay datos disponibles para el ticker: {ticker_symbol}")
+            favoritas_data[favorita.accion.id_accion] = {'error': 'No hay datos disponibles'}
     
-    return jsonify(list(favoritas_data.values()))  # Convertir el diccionario a lista para la respuesta
-pass
+    return jsonify(list(favoritas_data.values()))
 
-
+# Ruta para obtener datos históricos de una acción
 @finance_bp.route('/historical_data')
 def get_historical_data():
     ticker_symbol = request.args.get('symbol')
     interval = request.args.get('interval', default='1mo')  # Puede ser 1d, 1wk, 1mo, 3mo, 1y, etc.
 
     if not ticker_symbol:
-        return jsonify(error='Ticker symbol is required'), 400
+        return jsonify(error='Se requiere el símbolo del ticker'), 400
 
     ticker = yf.Ticker(ticker_symbol)
     data = ticker.history(period=interval)
     data.index = data.index.strftime('%Y-%m-%d')
 
-    print(data.to_dict(orient='index'))
     return jsonify(data.to_dict(orient='index'))
-pass
 
+# Ruta para agregar una acción a favoritos
 @finance_bp.route('/agregar_accion_fav', methods=['POST'])
 def agregar_accion_favorita():
-    # Extraer id_usuario e id_accion del cuerpo de la petición
     data = request.get_json()
     id_usuario = data.get('id_usuario')
     id_accion = data.get('id_accion')
@@ -158,12 +151,11 @@ def agregar_accion_favorita():
     nueva_favorita = AccionesFavoritas(id_usuario=id_usuario, id_accion=id_accion)
     db.session.add(nueva_favorita)
     db.session.commit()
-    return jsonify({'mensaje': 'Acción agregada a favoritas con éxito'})
-pass
+    return jsonify({'mensaje': 'Acción agregada a favoritos con éxito'})
 
+# Ruta para eliminar una acción de favoritos
 @finance_bp.route('/eliminar_accion_fav', methods=['POST'])
 def eliminar_accion_favorita():
-    # Extraer id_usuario e id_accion del cuerpo de la petición
     data = request.get_json()
     id_usuario = data.get('id_usuario')
     id_accion = data.get('id_accion')
@@ -171,8 +163,4 @@ def eliminar_accion_favorita():
         return jsonify({'error': 'Faltan datos para eliminar de favoritos'}), 400
     AccionesFavoritas.query.filter_by(id_usuario=id_usuario, id_accion=id_accion).delete()
     db.session.commit()
-    return jsonify({'mensaje': 'Acción eliminada de favoritas con éxito'})
-pass
-
-
-
+    return jsonify({'mensaje': 'Acción eliminada de favoritos con éxito'})

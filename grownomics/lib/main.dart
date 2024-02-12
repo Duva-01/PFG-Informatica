@@ -12,7 +12,7 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
+    // Definir el MaterialColor personalizado para el tema
     MaterialColor primarySwatch = const MaterialColor(
       0xFF2F8B62, 
       <int, Color>{
@@ -30,24 +30,25 @@ class MyApp extends StatelessWidget {
     );
 
     return MaterialApp(
+      // Configurar el tema de la aplicación
       theme: ThemeData(
-        primarySwatch: primarySwatch,  // Color primario verde
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+        primarySwatch: primarySwatch,  // Establecer el color primario del tema
+        visualDensity: VisualDensity.adaptivePlatformDensity, // Ajustar la densidad visual para plataformas adaptables
       ),
-      initialRoute: '/',
+      initialRoute: '/', // Ruta inicial de la aplicación
       routes: {
+        // Definir rutas y asignar widgets a cada ruta
         // Ruta inicial que muestra la página de LoadingPage.
-        '/': (context) => LoadingPage(),
+        '/': (context) => PaginaCarga(),
 
-        // Inicio
-        '/welcome': (context) => WelcomePage(),
-        '/login': (context) => LoginPage(),
-        '/register': (context) => RegisterPage(),
+        // Páginas de inicio de sesión y registro
+        '/bienvenida': (context) => PaginaBienvenida(),
+        '/iniciar_sesion': (context) => PaginaInicioSesion(),
+        '/registrar': (context) => PaginaRegistro(),
 
         // Ruta '/home' que muestra la página MyHomeScreen.
-        '/home': (context) => HomeScreen(),
+        '/home': (context) => PantallaInicio(),
       },
     );
   }
 }
-

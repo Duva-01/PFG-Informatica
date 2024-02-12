@@ -1,26 +1,31 @@
-<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html>  <!-- Declaración del tipo de documento HTML -->
+<html lang="es">  <!-- Especificar el idioma del documento -->
+
 <head>
-    <meta charset="UTF-8">
-    <title>Inicio - Grownomics</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <meta charset="UTF-8">  <!-- Especificar la codificación de caracteres UTF-8 -->
+    <title>Inicio - Grownomics</title>  <!-- Título de la página -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">  <!-- Enlace a la hoja de estilos CSS -->
 </head>
+
 <body>
     <header>
         <nav>
             <ul>
-                <li><a href="{{ url_for('home.home') }}">Inicio</a></li>
-                <li><a href="{{ url_for('admin.index') }}">Administrar</a></li>
+                <li><a href="{{ url_for('home.home') }}">Inicio</a></li>  <!-- Enlace a la página de inicio -->
+                <li><a href="{{ url_for('admin.index') }}">Administrar</a></li>  <!-- Enlace a la página de administración -->
             </ul>
         </nav>
         
-        <h1>Bienvenido a Grownomics</h1>
+        <h1>Bienvenido a Grownomics</h1>  <!-- Título principal de la página -->
     </header>
+    
     <main>
-        <p>Esta es la página de inicio de Grownomics. Aquí puedes gestionar tu cartera, ver noticias financieras, aprender sobre inversiones y mucho más.</p>
+        <p>Esta es la página de inicio de Grownomics. Aquí puedes gestionar tu cartera, ver noticias financieras, aprender sobre inversiones y mucho más.</p>  <!-- Texto principal de la página -->
     </main>
+    
     <footer>
-        <p>&copy; 2024 Grownomics. Todos los derechos reservados.</p>
+        <p>&copy; 2024 Grownomics. Todos los derechos reservados.</p>  <!-- Pie de página con derechos de autor -->
     </footer>
 </body>
+
 </html>

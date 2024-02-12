@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:grownomics/api/newsAPI.dart';
-import 'package:grownomics/modelos/newsArticle.dart';
+import 'package:grownomics/api/newsAPI.dart'; // Importación del archivo de API para obtener noticias
+import 'package:grownomics/modelos/newsArticle.dart'; // Importación del modelo de artículo de noticias
 
 class PaginaNoticias extends StatefulWidget {
   @override
@@ -10,9 +10,9 @@ class PaginaNoticias extends StatefulWidget {
 }
 
 class _PaginaNoticiasState extends State<PaginaNoticias> {
-  late Future<List<NewsArticle>> futureNewsArticles;
-  List<NewsArticle> filteredArticles = [];
-  List<String> tematicas = [
+  late Future<List<NewsArticle>> futurasNoticias; // Futuro para almacenar la lista de noticias
+  List<NewsArticle> articulosFiltrados = []; // Lista de artículos de noticias filtrados
+  List<String> tematicas = [ // Lista de temas de noticias
     'Finanzas',
     'Economía',
     'Inversiones',
@@ -21,24 +21,24 @@ class _PaginaNoticiasState extends State<PaginaNoticias> {
     'Tecnología',
     'Criptomonedas'
   ];
-  String tematicaSeleccionada = 'finanzas';
+  String tematicaSeleccionada = 'finanzas'; // Tema seleccionado por defecto
 
   @override
   void initState() {
     super.initState();
-    futureNewsArticles = obtenerNoticias(tematicaSeleccionada);
+    futurasNoticias = obtenerNoticias(tematicaSeleccionada); // Inicialización de la lista de noticias con el tema seleccionado
   }
 
   @override
   Widget build(BuildContext context) {
-    final controller = ZoomDrawer.of(context);
+    final controlador = ZoomDrawer.of(context); // Controlador para el cajón de navegación
     return Scaffold(
       appBar: AppBar(
-        title: Text('Noticias Financieras'),
+        title: Text('Noticias Financieras'), // Título de la página de noticias
         leading: IconButton(
           icon: Icon(Icons.menu),
           onPressed: () {
-            controller?.toggle();
+            controlador?.toggle(); // Botón del menú para abrir el cajón de navegación
           },
         ),
       ),
@@ -48,84 +48,87 @@ class _PaginaNoticiasState extends State<PaginaNoticias> {
             padding: const EdgeInsets.all(8.0),
             child: TextField(
               decoration: InputDecoration(
-                labelText: 'Buscar noticias',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
+                labelText: 'Buscar noticias', // Etiqueta para el campo de búsqueda
+                prefixIcon: Icon(Icons.search), // Icono de búsqueda
+                border: OutlineInputBorder(), // Estilo del borde del campo de búsqueda
               ),
               onChanged: (value) {
-                filterArticles(value);
+                filtrarArticulos(value); // Función para filtrar los artículos de noticias según la consulta
               },
             ),
           ),
           SizedBox(
-  height: 40, // Altura de la lista horizontal
-  child: ListView.builder(
-    scrollDirection: Axis.horizontal,
-    itemCount: tematicas.length,
-    itemBuilder: (context, index) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: ChoiceChip(
-          label: Text(tematicas[index]),
-          selected: tematicaSeleccionada == tematicas[index].toLowerCase(),
-          onSelected: (bool selected) {
-            setState(() {
-              tematicaSeleccionada = tematicas[index].toLowerCase();
-              futureNewsArticles = obtenerNoticias(tematicaSeleccionada);
-            });
-          },
-          backgroundColor: tematicaSeleccionada == tematicas[index].toLowerCase()
-              ? Color(0xFF124E2E) // Color seleccionado
-              : Color(0xFF2F8B62), // Color no seleccionado
-          selectedColor: Color(0xFF124E2E), // Color de fondo cuando seleccionado
-          labelStyle: TextStyle(
-            color: Colors.white, // Color del texto
-          ),
-        ),
-      );
-    },
-  ),
-),
-
-          Container(
-          margin: const EdgeInsets.only(top: 10),
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Text(
-            'Mas Populares',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.blueGrey[800],
+            height: 40, // Altura de la lista horizontal de temas de noticias
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: tematicas.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ChoiceChip(
+                    label: Text(tematicas[index]), // Texto del tema de noticias
+                    selected:
+                        tematicaSeleccionada == tematicas[index].toLowerCase(), // Verifica si el tema está seleccionado
+                    onSelected: (bool selected) {
+                      setState(() {
+                        tematicaSeleccionada = tematicas[index].toLowerCase(); // Actualiza el tema seleccionado
+                        futurasNoticias =
+                            obtenerNoticias(tematicaSeleccionada); // Obtiene las noticias del nuevo tema seleccionado
+                      });
+                    },
+                    backgroundColor:
+                        tematicaSeleccionada == tematicas[index].toLowerCase()
+                            ? Color(0xFF124E2E) // Color seleccionado
+                            : Color(0xFF2F8B62), // Color no seleccionado
+                    selectedColor:
+                        Color(0xFF124E2E), // Color de fondo cuando seleccionado
+                    labelStyle: TextStyle(
+                      color: Colors.white, // Color del texto
+                    ),
+                  ),
+                );
+              },
             ),
           ),
-        ),
-        Divider(
-          color: Colors.blueGrey[800],
-          thickness: 2,
-          height: 20,
-          indent: 16,
-          endIndent: 16,
-        ),
+          Container(
+            margin: const EdgeInsets.only(top: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text(
+              'Mas Populares', // Título de la sección de noticias más populares
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.blueGrey[800],
+              ),
+            ),
+          ),
+          Divider(
+            color: Colors.blueGrey[800],
+            thickness: 2,
+            height: 20,
+            indent: 16,
+            endIndent: 16,
+          ),
           Expanded(
             child: FutureBuilder<List<NewsArticle>>(
-              future: futureNewsArticles,
+              future: futurasNoticias,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return Center(child: CircularProgressIndicator()); // Muestra un indicador de carga mientras se obtienen las noticias
                 } else if (snapshot.hasError) {
-                  return Center(child: Text("Error: ${snapshot.error}"));
+                  return Center(child: Text("Error: ${snapshot.error}")); // Muestra un mensaje de error si ocurre un error al obtener las noticias
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text("No hay noticias disponibles"));
+                  return Center(child: Text("No hay noticias disponibles")); // Muestra un mensaje si no hay noticias disponibles
                 } else {
-                  List<NewsArticle> articles = snapshot.data!;
+                  List<NewsArticle> articulos = snapshot.data!; // Lista de noticias obtenidas
                   return ListView.builder(
-                    itemCount: filteredArticles.isNotEmpty
-                        ? filteredArticles.length
-                        : articles.length,
+                    itemCount: articulosFiltrados.isNotEmpty
+                        ? articulosFiltrados.length
+                        : articulos.length,
                     itemBuilder: (context, index) {
-                      NewsArticle article = filteredArticles.isNotEmpty
-                          ? filteredArticles[index]
-                          : articles[index];
+                      NewsArticle articulo = articulosFiltrados.isNotEmpty
+                          ? articulosFiltrados[index]
+                          : articulos[index]; // Obtiene el artículo de noticias actual
                       return GestureDetector(
                         child: Card(
                           margin: EdgeInsets.all(10),
@@ -133,15 +136,15 @@ class _PaginaNoticiasState extends State<PaginaNoticias> {
                           child: Column(
                             children: [
                               Image.network(
-                                article.urlToImage,
+                                articulo.urlToImage,
                                 fit: BoxFit.cover,
                                 height: 200,
                                 width: double.infinity,
-                              ),
+                              ), // Imagen de la noticia
                               ListTile(
-                                title: Text(article.title),
+                                title: Text(articulo.title), // Título de la noticia
                                 subtitle: Text(
-                                  article.description,
+                                  articulo.description, // Descripción de la noticia
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -153,12 +156,12 @@ class _PaginaNoticiasState extends State<PaginaNoticias> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ArticleWebView(
-                                title: article.title,
-                                url: article.articleUrl,
+                              builder: (context) => WebViewArticulo(
+                                titulo: articulo.title,
+                                url: articulo.articleUrl, // URL del artículo de noticias
                               ),
                             ),
-                          );
+                          ); // Navegación a la vista web del artículo de noticias
                         },
                       );
                     },
@@ -172,34 +175,33 @@ class _PaginaNoticiasState extends State<PaginaNoticias> {
     );
   }
 
-  void filterArticles(String query) async {
-  List<NewsArticle> articles = await futureNewsArticles;
-  setState(() {
-    if (query.isNotEmpty) {
-      filteredArticles = articles
-          .where((article) =>
-              article.title.toLowerCase().contains(query.toLowerCase()))
-          .toList();
-    } else {
-      filteredArticles = [];
-    }
-  });
+  void filtrarArticulos(String consulta) async {
+    List<NewsArticle> articulos = await futurasNoticias; // Lista de noticias obtenidas
+    setState(() {
+      if (consulta.isNotEmpty) {
+        articulosFiltrados = articulos
+            .where((articulo) =>
+                articulo.title.toLowerCase().contains(consulta.toLowerCase()))
+            .toList(); // Filtra los artículos de noticias según la consulta de búsqueda
+      } else {
+        articulosFiltrados = [];
+      }
+    });
+  }
 }
 
-}
-
-class ArticleWebView extends StatelessWidget {
+class WebViewArticulo extends StatelessWidget {
   final String url;
-  final String title;
+  final String titulo;
 
-  ArticleWebView({required this.url, required this.title});
+  WebViewArticulo({required this.url, required this.titulo});
 
   @override
   Widget build(BuildContext context) {
-    final controller = ZoomDrawer.of(context);
+    final controlador = ZoomDrawer.of(context); // Controlador para el cajón de navegación
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Text(titulo), // Título de la página web del artículo de noticias
       ),
       body: WebViewWidget(
         controller: WebViewController()..loadRequest(Uri.parse(url)),

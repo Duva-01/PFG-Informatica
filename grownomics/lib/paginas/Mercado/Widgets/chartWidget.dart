@@ -1,40 +1,43 @@
+// Importaciones de paquetes y bibliotecas necesarios
 import 'dart:math';
-
-import 'package:animated_button_bar/animated_button_bar.dart';
-import 'package:fl_chart/fl_chart.dart';
+import 'package:animated_button_bar/animated_button_bar.dart'; // Paquete para botones animados
+import 'package:fl_chart/fl_chart.dart'; // Paquete para gráficos FL
 import 'package:flutter/material.dart';
-import 'package:grownomics/api/marketAPI.dart';
-import 'package:intl/intl.dart';
-import '../../../modelos/HistoricalData.dart';
-import 'package:candlesticks/candlesticks.dart';
-import 'package:k_chart/flutter_k_chart.dart';
+import 'package:grownomics/api/marketAPI.dart'; // Funciones relacionadas con el mercado
+import 'package:intl/intl.dart'; // Paquete para formatear fechas
+import '../../../modelos/HistoricalData.dart'; // Modelo de datos históricos
+import 'package:candlesticks/candlesticks.dart'; // Paquete para gráficos de velas
+import 'package:k_chart/flutter_k_chart.dart'; // Paquete para gráficos KChart
 
-enum ChartType { line, candle }
+// Enumeración para definir el tipo de gráfico
+enum TipoGrafico { linea, vela }
 
-class ChartWidget extends StatefulWidget {
-  final String symbol;
+// Widget para el gráfico
+class WidgetGrafico extends StatefulWidget {
+  final String symbol; // Símbolo del gráfico
 
-  ChartWidget({required this.symbol});
+  WidgetGrafico({required this.symbol}); // Constructor
 
   @override
-  _ChartWidgetState createState() => _ChartWidgetState();
+  _EstadoWidgetGrafico createState() => _EstadoWidgetGrafico(); // Crea el estado del widget
 }
 
-class _ChartWidgetState extends State<ChartWidget> {
-  String _interval = '1wk'; // Puedes inicializar con el valor que desees
-  List<HistoricalData> _historicalData = [];
-  ChartType _chartType = ChartType.candle;
+class _EstadoWidgetGrafico extends State<WidgetGrafico> {
+  String _intervalo = '1wk'; // Intervalo de tiempo inicial
+  List<HistoricalData> _datosHistoricos = []; // Lista de datos históricos
+  TipoGrafico _tipoGrafico = TipoGrafico.vela; // Tipo de gráfico inicial
 
   @override
   void initState() {
     super.initState();
-    _loadData();
+    _cargarDatos(); // Carga los datos históricos al iniciar el widget
   }
 
-  void _loadData() async {
-    final data = await obtenerDatosHistoricos(widget.symbol, _interval);
+  // Función para cargar los datos históricos
+  void _cargarDatos() async {
+    final datos = await obtenerDatosHistoricos(widget.symbol, _intervalo); // Obtiene los datos históricos del mercado
     setState(() {
-      _historicalData = data;
+      _datosHistoricos = datos; // Actualiza los datos históricos en el estado del widget
     });
   }
 
@@ -42,31 +45,32 @@ class _ChartWidgetState extends State<ChartWidget> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        // Row para seleccionar el tipo de gráfico
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: () => setState(() => _chartType = ChartType.candle),
+              onPressed: () => setState(() => _tipoGrafico = TipoGrafico.vela),
               child: Text('Gráfico de Velas'),
               style: ElevatedButton.styleFrom(
-                primary: _chartType == ChartType.candle
+                primary: _tipoGrafico == TipoGrafico.vela
                     ? Color(0xFF2F8B62)
                     : Colors.grey,
               ),
             ),
             SizedBox(width: 10), // Espaciador entre botones
-
             ElevatedButton(
-              onPressed: () => setState(() => _chartType = ChartType.line),
+              onPressed: () => setState(() => _tipoGrafico = TipoGrafico.linea),
               child: Text('Gráfico de Línea'),
               style: ElevatedButton.styleFrom(
-                primary: _chartType == ChartType.line
+                primary: _tipoGrafico == TipoGrafico.linea
                     ? Color(0xFF2F8B62)
                     : Colors.grey,
               ),
             ),
           ],
         ),
+        // Sección para seleccionar el intervalo de tiempo
         Padding(
           padding: const EdgeInsets.all(3.0),
           child: AnimatedButtonBar(
@@ -76,51 +80,52 @@ class _ChartWidgetState extends State<ChartWidget> {
               ButtonBarEntry(
                 onTap: () {
                   setState(() {
-                    _interval = '1wk';
-                    _loadData();
+                    _intervalo = '1wk'; // Intervalo de 1 semana
+                    _cargarDatos(); // Carga los datos con el nuevo intervalo
                   });
                 },
-                child: Text('1 Week'),
+                child: Text('1 Semana'),
               ),
               ButtonBarEntry(
                 onTap: () {
                   setState(() {
-                    _interval = '1mo';
-                    _loadData();
+                    _intervalo = '1mo'; // Intervalo de 1 mes
+                    _cargarDatos(); // Carga los datos con el nuevo intervalo
                   });
                 },
-                child: Text('1 Month'),
+                child: Text('1 Mes'),
               ),
               ButtonBarEntry(
                 onTap: () {
                   setState(() {
-                    _interval = '3mo';
-                    _loadData();
+                    _intervalo = '3mo'; // Intervalo de 3 meses
+                    _cargarDatos(); // Carga los datos con el nuevo intervalo
                   });
                 },
-                child: Text('3 Months'),
+                child: Text('3 Meses'),
               ),
               ButtonBarEntry(
                 onTap: () {
                   setState(() {
-                    _interval = '1y';
-                    _loadData();
+                    _intervalo = '1y'; // Intervalo de 1 año
+                    _cargarDatos(); // Carga los datos con el nuevo intervalo
                   });
                 },
-                child: Text('1 Year'),
+                child: Text('1 Año'),
               ),
             ],
           ),
         ),
+        // Sección para mostrar el gráfico
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: SizedBox(
-            height: 300, // Establece la altura de la tabla
-            child: _historicalData == null || _historicalData.isEmpty
-                ? Center(child: CircularProgressIndicator())
-                : _chartType == ChartType.line
-                    ? buildChart(_historicalData)
-                    : buildCandleChart(_historicalData),
+            height: 300, // Altura del área del gráfico
+            child: _datosHistoricos == null || _datosHistoricos.isEmpty
+                ? Center(child: CircularProgressIndicator()) // Muestra un indicador de carga si no hay datos
+                : _tipoGrafico == TipoGrafico.linea
+                    ? construirGrafico(_datosHistoricos) // Construye un gráfico de línea si es seleccionado
+                    : construirGraficoVelas(_datosHistoricos), // Construye un gráfico de velas si es seleccionado
           ),
         ),
       ],
@@ -128,14 +133,15 @@ class _ChartWidgetState extends State<ChartWidget> {
   }
 }
 
-Widget buildChart(List<HistoricalData> data) {
+// Función para construir un gráfico de línea
+Widget construirGrafico(List<HistoricalData> datos) {
+  // Cálculo de valores mínimos y máximos para el eje Y
   final double minY =
-      (data.map((e) => e.low).reduce((a, b) => a < b ? a : b)).floorToDouble();
+      (datos.map((e) => e.low).reduce((a, b) => a < b ? a : b)).floorToDouble();
   final double maxY =
-      (data.map((e) => e.high).reduce((a, b) => a > b ? a : b)).ceilToDouble();
+      (datos.map((e) => e.high).reduce((a, b) => a > b ? a : b)).ceilToDouble();
   final double midY = ((minY + maxY) / 2).roundToDouble();
-
-  final int midXIndex = (data.length / 2).floor();
+  final int midXIndex = (datos.length / 2).floor(); // Índice medio para el eje X
 
   return LineChart(
     LineChartData(
@@ -146,14 +152,13 @@ Widget buildChart(List<HistoricalData> data) {
           getTitles: (value) {
             final int index = value.toInt();
             if (index == 0 || index == midXIndex) {
-              final date = data[index].date;
+              final date = datos[index].date;
               return DateFormat('yMd').format(date);
             }
-            if (index == data.length - 1) {
-              final date = data[index].date;
+            if (index == datos.length - 1) {
+              final date = datos[index].date;
               return DateFormat('Md').format(date);
             }
-
             return '';
           },
         ),
@@ -174,12 +179,12 @@ Widget buildChart(List<HistoricalData> data) {
         border: Border.all(color: const Color(0xff37434d), width: 4),
       ),
       minX: 0,
-      maxX: (data.length.toDouble() - 1),
+      maxX: (datos.length.toDouble() - 1),
       minY: minY,
       maxY: maxY,
       lineBarsData: [
         LineChartBarData(
-          spots: data.asMap().entries.map((entry) {
+          spots: datos.asMap().entries.map((entry) {
             final index = entry.key;
             final value = entry.value;
             return FlSpot(index.toDouble(), value.close);
@@ -200,42 +205,46 @@ Widget buildChart(List<HistoricalData> data) {
   );
 }
 
-Widget buildCandleChart(List<HistoricalData> data) {
-  List<KLineEntity> kLineData = [];
+// Función para construir un gráfico de velas
+Widget construirGraficoVelas(List<HistoricalData> datos) {
+  List<KLineEntity> datosKLinea = [];
 
-  for (var historicalData in data) {
-    double volume = historicalData.volume ?? 1.0;
-    KLineEntity entity = KLineEntity.fromCustom(
-      time: historicalData.date.millisecondsSinceEpoch,
-      open: historicalData.open,
-      high: historicalData.high,
-      low: historicalData.low,
-      close: historicalData.close,
-      vol: volume,
+  // Convierte los datos históricos en datos de velas
+  for (var datoHistorico in datos) {
+    double volumen = datoHistorico.volume ?? 1.0;
+    KLineEntity entidad = KLineEntity.fromCustom(
+      time: datoHistorico.date.millisecondsSinceEpoch,
+      open: datoHistorico.open,
+      high: datoHistorico.high,
+      low: datoHistorico.low,
+      close: datoHistorico.close,
+      vol: volumen,
     );
-    kLineData.add(entity);
+    datosKLinea.add(entidad);
   }
 
-  DataUtil.calculate(kLineData);
-  ChartColors chartColors = ChartColors()
+  // Calcula los datos necesarios para el gráfico de velas
+  DataUtil.calculate(datosKLinea);
+
+  // Define los colores y estilos del gráfico de velas
+  ChartColors coloresGrafico = ChartColors()
         ..bgColor = [
           Colors.white,
           Colors.white
-        ] // Establece el color de fondo a blanco
+        ] // Fondo blanco
         ..defaultTextColor =
-            Colors.black // Asegura que el texto sea visible sobre fondo blanco
+            Colors.black // Texto negro sobre fondo blanco
         ..gridColor =
-            Colors.grey[300]! // Color de la línea de la cuadrícula más suave
+            Colors.grey[300]! // Color de la línea de la cuadrícula
         ..ma5Color = Colors
-            .blueAccent // Ajusta los colores de las líneas MA para asegurar visibilidad
+            .blueAccent // Colores para las líneas MA
         ..ma10Color = Colors.orange
         ..ma30Color = Colors.purple
         ..upColor = Colors.green // Color para precios en aumento
-        ..dnColor = Colors.red // Color para precios en descenso
+        ..dnColor = Colors.red; // Color para precios en descenso
 
-      ;
-
-  ChartStyle chartStyle = ChartStyle()
+  // Estilo del gráfico de velas
+  ChartStyle estiloGrafico = ChartStyle()
     ..topPadding = 30.0
     ..bottomPadding = 20.0
     ..childPadding = 12.0
@@ -245,11 +254,13 @@ Widget buildCandleChart(List<HistoricalData> data) {
     ..macdWidth = 3.0
     ..vCrossWidth = 8.5
     ..hCrossWidth = 0.5;
+
+  // Retorna el widget del gráfico de velas
   return KChartWidget(
-    kLineData,
-    chartStyle,
-    chartColors,
-    isTrendLine: false, // Ajusta según necesidad
+    datosKLinea,
+    estiloGrafico,
+    coloresGrafico,
+    isTrendLine: false, // No muestra línea de tendencia
     xFrontPadding: 100,
     mainState: MainState.NONE,
     secondaryState: SecondaryState.NONE,
@@ -262,7 +273,6 @@ Widget buildCandleChart(List<HistoricalData> data) {
     showNowPrice: true,
     showInfoDialog: true,
     materialInfoDialog: true,
-
     timeFormat: TimeFormat.YEAR_MONTH_DAY,
     fixedLength: 2,
     maDayList: [5, 10, 20],

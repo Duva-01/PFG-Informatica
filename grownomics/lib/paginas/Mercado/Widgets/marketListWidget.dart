@@ -1,286 +1,285 @@
-import 'package:flutter/material.dart';
-import 'package:grownomics/api/authAPI.dart';
-import 'package:grownomics/api/marketAPI.dart'; // Asegúrate de tener esta API implementada correctamente.
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:grownomics/paginas/Mercado/stockPage.dart';
+import 'package:flutter/material.dart'; // Importa el paquete de Flutter para crear interfaces de usuario
+import 'package:grownomics/api/authAPI.dart'; // Importa la API de autenticación
+import 'package:grownomics/api/marketAPI.dart'; // Importa la API del mercado
+import 'package:shared_preferences/shared_preferences.dart'; // Importa el paquete para manejar preferencias compartidas
+import 'package:grownomics/paginas/Mercado/stockPage.dart'; // Importa la página de detalles de acciones del mercado
 
-class MarketList extends StatefulWidget {
-  final String userEmail;
+class ListaMercado extends StatefulWidget { // Define una clase StatefulWidget llamada ListaMercado
+  final String correoElectronico; // Declara una variable final para almacenar el correo electrónico
 
-  MarketList({required this.userEmail});
+  ListaMercado({required this.correoElectronico}); // Constructor de la clase que recibe un parámetro obligatorio
 
   @override
-  _MarketListState createState() => _MarketListState();
+  _ListaMercadoEstado createState() => _ListaMercadoEstado(); // Método que devuelve una instancia de _ListaMercadoEstado
 }
 
-class _MarketListState extends State<MarketList> {
-  int page = 1;
-  List<dynamic> acciones = [];
-  bool _isLoading = false;
-  bool cargarFavoritas = false;
-  int idUsuario = 0;
-  Set<int> favoritasIds = Set<int>();
+class _ListaMercadoEstado extends State<ListaMercado> { // Define una clase privada que extiende State<ListaMercado>
+  int pagina = 1; // Variable para el número de página de la lista de acciones
+  List<dynamic> acciones = []; // Lista para almacenar las acciones del mercado
+  bool _cargando = false; // Variable para controlar si se están cargando datos
+  bool cargarFavoritas = false; // Variable para indicar si se están cargando acciones favoritas
+  int idUsuario = 0; // Variable para almacenar el ID del usuario
+  Set<int> idsFavoritas = Set<int>(); // Conjunto para almacenar los IDs de las acciones favoritas del usuario
 
-  List<dynamic> accionesFiltradas = [];
-  bool estaFiltrando = false;
+  List<dynamic> accionesFiltradas = []; // Lista para almacenar las acciones filtradas según la búsqueda
+  bool filtrando = false; // Variable para indicar si se está aplicando un filtro de búsqueda
 
-  ScrollController _scrollController = ScrollController();
-  TextEditingController _searchController = TextEditingController();
+  ScrollController _controladorScroll = ScrollController(); // Controlador para el desplazamiento de la lista
+  TextEditingController _controladorBusqueda = TextEditingController(); // Controlador para el campo de búsqueda
 
   @override
-  void initState() {
-    super.initState();
-    obtenerDatosUsuario(widget.userEmail).then((datos) {
-      setState(() {
-        idUsuario = datos['id']; 
+  void initState() { // Método que se llama al inicializar el estado del widget
+    super.initState(); // Llama al método initState de la clase padre
+
+    obtenerDatosUsuario(widget.correoElectronico).then((datos) { // Obtiene los datos del usuario
+      setState(() { // Actualiza el estado del widget con los datos obtenidos
+        idUsuario = datos['id']; // Obtiene el ID del usuario
       });
-      _loadFavoritas();
+      _cargarFavoritas(); // Carga las acciones favoritas del usuario
     });
 
-    _loadData();
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels >=
-          0.9 * _scrollController.position.maxScrollExtent) {
-        _loadData();
+    _cargarDatos(); // Carga los datos de las acciones del mercado
+    _controladorScroll.addListener(() { // Agrega un listener para detectar el desplazamiento de la lista
+      if (_controladorScroll.position.pixels >= 0.9 * _controladorScroll.position.maxScrollExtent) { // Verifica si se ha llegado al final de la lista
+        _cargarDatos(); // Carga más datos de acciones del mercado
       }
     });
-    _searchController.addListener(_filtrarAcciones);
+    _controladorBusqueda.addListener(_filtrarAcciones); // Agrega un listener para filtrar las acciones según la búsqueda
   }
 
-  void _loadData() async {
-    if (!_isLoading) {
-      setState(() => _isLoading = true);
+  void _cargarDatos() async { // Método para cargar los datos de las acciones del mercado
+    if (!_cargando) { // Verifica si no se están cargando datos actualmente
+      setState(() => _cargando = true); // Actualiza el estado para indicar que se están cargando datos
 
-      try {
-        List<dynamic> newAcciones;
-        if (cargarFavoritas) {
-          newAcciones = await obtenerAccionesFavoritas(idUsuario);
-        } else {
-          newAcciones = await obtenerAcciones(page);
+      try { // Maneja posibles errores durante la carga de datos
+        List<dynamic> nuevasAcciones; // Declara una lista para almacenar las nuevas acciones cargadas
+        if (cargarFavoritas) { // Verifica si se deben cargar solo las acciones favoritas
+          nuevasAcciones = await obtenerAccionesFavoritas(idUsuario); // Obtiene las acciones favoritas del usuario
+        } else { // Si no se están cargando acciones favoritas
+          nuevasAcciones = await obtenerAcciones(pagina); // Obtiene las acciones del mercado de acuerdo a la página actual
         }
-        setState(() {
-          acciones.addAll(newAcciones); // Aquí acciones es List<dynamic>
-          page++;
+        setState(() { // Actualiza el estado del widget con las nuevas acciones cargadas
+          acciones.addAll(nuevasAcciones); // Agrega las nuevas acciones a la lista de acciones
+          pagina++; // Incrementa el número de página para cargar más datos en la próxima llamada
         });
-      } catch (e) {
-        print(e);
-      } finally {
-        setState(() => _isLoading = false);
+      } catch (e) { // Captura y maneja cualquier error durante la carga de datos
+        print(e); // Imprime el error en la consola
+      } finally { // Se ejecuta después del bloque try o catch, independientemente de si ocurrió un error o no
+        setState(() => _cargando = false); // Actualiza el estado para indicar que se ha completado la carga de datos
       }
     }
-    if (!estaFiltrando) {
-      accionesFiltradas = List.from(
-          acciones); // Asegura que accionesFiltradas también se actualice cuando no estás filtrando.
+    if (!filtrando) { // Verifica si no se está aplicando un filtro de búsqueda
+      accionesFiltradas = List.from(acciones); // Actualiza la lista de acciones filtradas con todas las acciones
     }
   }
 
-  void _filtrarAcciones() {
-    final query = _searchController.text.toLowerCase();
+  void _filtrarAcciones() { // Método para filtrar las acciones según el texto de búsqueda
+    final consulta = _controladorBusqueda.text.toLowerCase(); // Obtiene el texto de búsqueda en minúsculas
 
-    if (query.isNotEmpty) {
-      estaFiltrando = true;
-      accionesFiltradas = acciones.where((accion) {
-        final nombreAccion = accion['name'].toLowerCase();
-        return nombreAccion.contains(query);
-      }).toList();
-    } else {
-      estaFiltrando = false;
-      accionesFiltradas = List.from(acciones);
+    if (consulta.isNotEmpty) { // Verifica si la consulta de búsqueda no está vacía
+      filtrando = true; // Actualiza la variable para indicar que se está aplicando un filtro de búsqueda
+      accionesFiltradas = acciones.where((accion) { // Filtra las acciones basadas en el nombre
+        final nombreAccion = accion['name'].toLowerCase(); // Obtiene el nombre de la acción en minúsculas
+        return nombreAccion.contains(consulta); // Devuelve true si el nombre de la acción contiene la consulta de búsqueda
+      }).toList(); // Convierte el resultado a una lista
+    } else { // Si la consulta de búsqueda está vacía
+      filtrando = false; // Actualiza la variable para indicar que no se está aplicando un filtro de búsqueda
+      accionesFiltradas = List.from(acciones); // Actualiza la lista de acciones filtradas con todas las acciones
     }
 
-    setState(() {});
+    setState(() {}); // Actualiza el estado del widget para reflejar los cambios en las acciones filtradas
   }
 
-  Future<void> _loadFavoritas() async {
-    try {
-      var favoritas = await obtenerAccionesFavoritas(
-          idUsuario); // Asegura que esta función devuelve una List<dynamic>
-      setState(() {
-        // Actualiza el Set de IDs de favoritas
-        favoritasIds.clear();
-        favoritas.forEach((accion) {
-          favoritasIds.add(accion['id']);
+  Future<void> _cargarFavoritas() async { // Método para cargar las acciones favoritas del usuario
+    try { // Maneja posibles errores durante la carga de las acciones favoritas
+      var favoritas = await obtenerAccionesFavoritas(idUsuario); // Obtiene las acciones favoritas del usuario
+      setState(() { // Actualiza el estado del widget con las acciones favoritas obtenidas
+        idsFavoritas.clear(); // Limpia el conjunto de IDs de acciones favoritas
+        favoritas.forEach((accion) { // Itera sobre cada acción favorita
+          idsFavoritas.add(accion['id']); // Agrega el ID de la acción favorita al conjunto
         });
       });
-    } catch (e) {
-      print(
-          e); // Considera manejar este error de manera más visible para el usuario
+    } catch (e) { // Captura y maneja cualquier error durante la carga de las acciones favoritas
+      print(e); // Imprime el error en la consola
     }
   }
 
-  Future<void> toggleFavorita(int accionId) async {
-    setState(() => _isLoading = true);
-    try {
-      if (favoritasIds.contains(accionId)) {
-        await eliminarAccionFavorita(idUsuario, accionId);
-        favoritasIds.remove(accionId);
-      } else {
-        await agregarAccionFavorita(idUsuario, accionId);
-        favoritasIds.add(accionId);
+  Future<void> alternarFavorita(int idAccion) async { // Método para alternar el estado de una acción como favorita o no favorita
+    setState(() => _cargando = true); // Actualiza el estado para indicar que se está realizando la alternancia de favorita
+
+    try { // Maneja posibles errores durante la alternancia de favorita
+      if (idsFavoritas.contains(idAccion)) { // Verifica si la acción ya está marcada como favorita
+        await eliminarAccionFavorita(idUsuario, idAccion); // Elimina la acción de la lista de favoritas del usuario
+        idsFavoritas.remove(idAccion); // Remueve el ID de la acción de las acciones favoritas
+      } else { // Si la acción no está marcada como favorita
+        await agregarAccionFavorita(idUsuario, idAccion); // Agrega la acción a la lista de favoritas del usuario
+        idsFavoritas.add(idAccion); // Agrega el ID de la acción a las acciones favoritas
       }
-      await _loadFavoritas(); // Recarga las favoritas para reflejar el cambio
-    } catch (e) {
-      print(
-          e); // Considera manejar este error de manera más visible para el usuario
-    } finally {
-      setState(() => _isLoading = false);
+      await _cargarFavoritas(); // Recarga las acciones favoritas para reflejar el cambio
+    } catch (e) { // Captura y maneja cualquier error durante la alternancia de favorita
+      print(e); // Imprime el error en la consola
+    } finally { // Se ejecuta después del bloque try o catch, independientemente de si ocurrió un error o no
+      setState(() => _cargando = false); // Actualiza el estado para indicar que se ha completado la alternancia de favorita
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          padding: EdgeInsets.all(10),
-          child: TextField(
-            controller: _searchController,
-            decoration: InputDecoration(
-              labelText: 'Buscar por nombre',
-              suffixIcon: IconButton(
-                icon: Icon(Icons.clear),
-                onPressed: () {
-                  _searchController.clear();
+  Widget build(BuildContext context) { // Método que construye la interfaz de usuario de la lista de mercado
+    return Column( // Devuelve un widget Column que contiene todos los elementos de la interfaz de usuario
+      children: [ // Lista de widgets hijos dentro del Column
+        Container( // Widget contenedor para el campo de búsqueda
+          padding: EdgeInsets.all(10), // Añade un espacio de relleno de 10 en todos los lados del contenedor
+          child: TextField( // Widget TextField para ingresar texto de búsqueda
+            controller: _controladorBusqueda, // Asigna el controlador para manejar el campo de búsqueda
+            decoration: InputDecoration( // Configuración de decoración para el campo de búsqueda
+              labelText: 'Buscar por nombre', // Etiqueta del campo de búsqueda
+              suffixIcon: IconButton( // Ícono de botón para borrar el texto de búsqueda
+                icon: Icon(Icons.clear), // Ícono para borrar el texto de búsqueda
+                onPressed: () { // Función que se ejecuta cuando se presiona el botón de borrar
+                  _controladorBusqueda.clear(); // Borra el texto del campo de búsqueda
                 },
               ),
             ),
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  cargarFavoritas = false;
-                  acciones.clear();
-                  page = 1;
-                  _loadData();
+        Row( // Widget Row para alinear los botones de filtrado
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Alinea los botones de manera uniforme en el espacio disponible
+          children: [ // Lista de widgets hijos dentro del Row
+            ElevatedButton( // Botón elevado para mostrar todas las acciones
+              onPressed: () { // Función que se ejecuta cuando se presiona el botón
+                setState(() { // Actualiza el estado del widget al presionar el botón
+                  cargarFavoritas = false; // Cambia la bandera para cargar todas las acciones
+                  acciones.clear(); // Limpia la lista de acciones
+                  pagina = 1; // Reinicia el contador de páginas a 1
+                  _cargarDatos(); // Carga los datos de las acciones
                 });
               },
-              child: Row(
-                children: [
-                  Text('Todos'),
-                  Icon(Icons.assessment_rounded),
+              child: Row( // Widget Row para alinear el texto e ícono del botón
+                children: [ // Lista de widgets hijos dentro del Row
+                  Text('Todos'), // Texto del botón para mostrar todas las acciones
+                  Icon(Icons.assessment_rounded), // Ícono del botón para mostrar todas las acciones
                 ],
               ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  cargarFavoritas = true;
-                  acciones.clear();
-                  page = 1;
-                  _loadData();
+            ElevatedButton( // Botón elevado para mostrar solo las acciones favoritas
+              onPressed: () { // Función que se ejecuta cuando se presiona el botón
+                setState(() { // Actualiza el estado del widget al presionar el botón
+                  cargarFavoritas = true; // Cambia la bandera para cargar solo las acciones favoritas
+                  acciones.clear(); // Limpia la lista de acciones
+                  pagina = 1; // Reinicia el contador de páginas a 1
+                  _cargarDatos(); // Carga los datos de las acciones
                 });
               },
-              child: Row(
-                children: [
-                  Text('Favoritas'),
-                  Icon(Icons.star, color: Colors.yellow),
+              child: Row( // Widget Row para alinear el texto e ícono del botón
+                children: [ // Lista de widgets hijos dentro del Row
+                  Text('Favoritas'), // Texto del botón para mostrar solo las acciones favoritas
+                  Icon(Icons.star, color: Colors.yellow), // Ícono del botón para mostrar solo las acciones favoritas
                 ],
               ),
             ),
           ],
         ),
-        Container(
-          height: MediaQuery.of(context).size.height * 0.7,
-          child: _isLoading
-              ? Center(child: CircularProgressIndicator())
-              : ListView.builder(
-                  itemCount: estaFiltrando ? accionesFiltradas.length : acciones.length,
-                  controller: _scrollController,
-                  itemBuilder: (context, index) {
-                    final accion = estaFiltrando ? accionesFiltradas[index] : acciones[index];
-                    final bool isPositive = (accion?['change'] ?? 0) >= 0;
-                    bool esFavorita = favoritasIds.contains(accion['id']);
-                    return Container(
-                      margin: EdgeInsets.only(top: 10),
-                      child: Column(
-                        children: [
-                          ListTile(
-                            onTap: () {},
-                            leading: Container(
-                              width: 100,
-                              height: 60,
-                              decoration: BoxDecoration(
-                                color: Color(0xFF2F8B62),
-                                borderRadius: BorderRadius.circular(30),
+        Container( // Widget contenedor para la lista de acciones del mercado
+          height: MediaQuery.of(context).size.height * 0.7, // Establece la altura del contenedor al 70% del alto de la pantalla
+          child: _cargando // Verifica si se están cargando datos
+              ? Center(child: CircularProgressIndicator()) // Muestra un indicador de carga si se están cargando datos
+              : ListView.builder( // Constructor de lista para construir una lista de widgets de manera eficiente
+                  itemCount: filtrando // Verifica si se está aplicando un filtro de búsqueda
+                      ? accionesFiltradas.length // Usa la longitud de la lista de acciones filtradas
+                      : acciones.length, // Usa la longitud de la lista de acciones sin filtrar
+                  controller: _controladorScroll, // Asigna el controlador de desplazamiento a la lista
+                  itemBuilder: (context, index) { // Función que se llama para construir cada elemento de la lista
+                    final accion = filtrando // Verifica si se está aplicando un filtro de búsqueda
+                        ? accionesFiltradas[index] // Usa la acción filtrada en la posición index
+                        : acciones[index]; // Usa la acción sin filtrar en la posición index
+                    final bool esPositivo = (accion?['change'] ?? 0) >= 0; // Verifica si el cambio de la acción es positivo
+                    bool esFavorita = idsFavoritas.contains(accion['id']); // Verifica si la acción es favorita
+                    return Container( // Widget contenedor para cada elemento de la lista
+                      margin: EdgeInsets.only(top: 10), // Establece un margen en la parte superior del contenedor
+                      child: Column( // Widget Column para alinear los elementos en una columna vertical
+                        children: [ // Lista de widgets hijos dentro del Column
+                          ListTile( // Widget ListTile para mostrar cada acción en la lista
+                            onTap: () {}, // Función que se ejecuta al hacer clic en la acción
+                            leading: Container( // Widget contenedor para el elemento líder (izquierda) de la lista
+                              width: 100, // Establece el ancho del contenedor líder
+                              height: 60, // Establece la altura del contenedor líder
+                              decoration: BoxDecoration( // Configuración de decoración para el contenedor líder
+                                color: Color(0xFF2F8B62), // Color de fondo del contenedor líder
+                                borderRadius: BorderRadius.circular(30), // Establece bordes redondeados
                               ),
-                              child: Center(
-                                child: Text(
-                                  '${accion['ticker_symbol'] ?? 'Desconocido'}',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
+                              child: Center( // Widget Center para alinear el texto en el centro del contenedor líder
+                                child: Text( // Widget Text para mostrar el símbolo de la acción
+                                  '${accion['ticker_symbol'] ?? 'Desconocido'}', // Obtiene el símbolo de la acción o muestra 'Desconocido'
+                                  style: TextStyle( // Estilo de texto para el símbolo de la acción
+                                    color: Colors.white, // Color del texto
+                                    fontWeight: FontWeight.bold, // Establece el peso del texto como negrita
                                   ),
                                 ),
                               ),
                             ),
-                            title: Text(
-                              '${accion['name'] ?? 'Desconocido'}',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
+                            title: Text( // Widget Text para mostrar el nombre de la acción
+                              '${accion['name'] ?? 'Desconocido'}', // Obtiene el nombre de la acción o muestra 'Desconocido'
+                              style: TextStyle( // Estilo de texto para el nombre de la acción
+                                color: Colors.black, // Color del texto
+                                fontWeight: FontWeight.bold, // Establece el peso del texto como negrita
                               ),
                             ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '${accion['current_price']?.toStringAsFixed(2) + '€' ?? 'Desconocido'}',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
+                            subtitle: Column( // Widget Column para alinear los subtítulos en una columna vertical
+                              crossAxisAlignment: CrossAxisAlignment.start, // Alinea los subtítulos a la izquierda
+                              children: [ // Lista de widgets hijos dentro del Column
+                                Text( // Widget Text para mostrar el precio actual de la acción
+                                  '${accion['current_price']?.toStringAsFixed(2) + '€' ?? 'Desconocido'}', // Obtiene el precio actual de la acción o muestra 'Desconocido'
+                                  style: TextStyle( // Estilo de texto para el precio actual de la acción
+                                    fontWeight: FontWeight.bold, // Establece el peso del texto como negrita
                                   ),
                                 ),
-                                Text(
-                                  'Cambio: ${accion['change']?.toStringAsFixed(2) ?? 'Desconocido'} '
-                                  '(${accion['change_percent']?.toStringAsFixed(2) ?? 'Desconocido'}%)',
-                                  style: TextStyle(
-                                    color:
-                                        isPositive ? Colors.green : Colors.red,
-                                    fontWeight: FontWeight.bold,
+                                Text( // Widget Text para mostrar el cambio de la acción
+                                  'Cambio: ${accion['change']?.toStringAsFixed(2) ?? 'Desconocido'} ' // Obtiene el cambio de la acción o muestra 'Desconocido'
+                                  '(${accion['change_percent']?.toStringAsFixed(2) ?? 'Desconocido'}%)', // Obtiene el cambio porcentual de la acción o muestra 'Desconocido'
+                                  style: TextStyle( // Estilo de texto para el cambio de la acción
+                                    color: esPositivo ? Colors.green : Colors.red, // Establece el color del texto según el cambio positivo o negativo
+                                    fontWeight: FontWeight.bold, // Establece el peso del texto como negrita
                                   ),
                                 ),
                               ],
                             ),
-                            trailing: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                GestureDetector(
-                                  onTap: () => toggleFavorita(accion['id']),
-                                  child: Icon(
-                                    Icons.star,
-                                    color: esFavorita
-                                        ? Colors.yellow
-                                        : Colors.grey,
-                                    size: 30,
+                            trailing: Row( // Widget Row para alinear los elementos secundarios (derecha) de la lista
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween, // Alinea los elementos secundarios de manera uniforme en el espacio disponible
+                              mainAxisSize: MainAxisSize.min, // Establece el tamaño principal como mínimo
+                              children: [ // Lista de widgets hijos dentro del Row
+                                GestureDetector( // Widget GestureDetector para detectar gestos en el ícono de favorito
+                                  onTap: () => alternarFavorita(accion['id']), // Función que se ejecuta al hacer clic en el ícono de favorito
+                                  child: Icon( // Widget Icon para mostrar el ícono de favorito
+                                    Icons.star, // Ícono de estrella para indicar una acción favorita
+                                    color: esFavorita ? Colors.yellow : Colors.grey, // Establece el color del ícono según la acción sea favorita o no
+                                    size: 30, // Establece el tamaño del ícono
                                   ),
                                 ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.push(
+                                ElevatedButton( // Botón elevado para ver detalles de la acción
+                                  onPressed: () { // Función que se ejecuta al presionar el botón
+                                    Navigator.push( // Navega a la página de detalles de la acción
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => DetallesAccion(
-                                            accion['ticker_symbol']!),
+                                        builder: (context) => DetallesAccion( // Constructor de la página de detalles de la acción
+                                          correoElectronico: widget.correoElectronico, // Pasa el correo electrónico del usuario a la página de detalles
+                                          symbol: accion['ticker_symbol'], // Pasa el símbolo de la acción a la página de detalles
+                                        ),
                                       ),
                                     );
                                   },
-                                  child: Text(
-                                    'Ver',
-                                    style: TextStyle(
-                                      color: Colors.white,
+                                  child: Text( // Widget Text para mostrar el texto del botón
+                                    'Ver', // Texto del botón para ver detalles de la acción
+                                    style: TextStyle( // Estilo de texto para el texto del botón
+                                      color: Colors.white, // Color del texto
                                     ),
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          Divider(
-                            thickness: 2,
-                            color: Colors.green[800],
+                          Divider( // Widget Divider para agregar una línea divisoria entre cada elemento de la lista
+                            thickness: 2, // Establece el grosor de la línea divisoria
+                            color: Colors.green[800], // Establece el color de la línea divisoria
                           ),
                         ],
                       ),
@@ -293,9 +292,9 @@ class _MarketListState extends State<MarketList> {
   }
 
   @override
-  void dispose() {
-    _searchController.removeListener(_filtrarAcciones);
-    _scrollController.dispose();
-    super.dispose();
+  void dispose() { // Método que se llama al eliminar el widget del árbol de widgets
+    _controladorBusqueda.removeListener(_filtrarAcciones); // Elimina el listener del campo de búsqueda para evitar fugas de memoria
+    _controladorScroll.dispose(); // Libera los recursos del controlador de desplazamiento
+    super.dispose(); // Llama al método dispose de la clase padre
   }
 }

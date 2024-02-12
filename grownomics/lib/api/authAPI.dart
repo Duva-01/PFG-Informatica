@@ -1,32 +1,33 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+// URL base para las solicitudes HTTP
 const String baseUrl = 'http://10.0.2.2:5000';
 
-Future<Map<String, dynamic>> obtenerDatosUsuario(String email) async {
-  final Uri url = Uri.parse('$baseUrl/auth/get_user?email=$email');
-  final respuesta = await http.get(url);
+// Función para obtener los datos de un usuario dado su correo electrónico
+Future<Map<String, dynamic>> obtenerDatosUsuario(String correo) async {
+  final Uri url = Uri.parse('$baseUrl/auth/get_user?email=$correo'); // URL para la solicitud de datos de usuario
+  final respuesta = await http.get(url); // Realizar la solicitud GET
 
   if (respuesta.statusCode == 200) {
-    final responseData = json.decode(respuesta.body);
-    return responseData; 
+    final responseData = json.decode(respuesta.body); // Decodificar la respuesta JSON
+    return responseData; // Devolver los datos del usuario
   } else {
-    throw Exception('Falló la carga de los datos del usuario');
+    throw Exception('Falló la carga de los datos del usuario'); // Lanzar una excepción si falla la solicitud
   }
 }
 
-
-
-Future<bool> loginUser(String email, String password) async {
-  print("Email: $email"); // Muestra el correo electrónico en la consola
-  print("Password: $password"); // Muestra la contraseña en la consola
+// Función para iniciar sesión de usuario
+Future<bool> iniciarUsuario(String correo, String contrasena) async {
+  print("Correo electrónico: $correo"); // Mostrar el correo electrónico en la consola
+  print("Contraseña: $contrasena"); // Mostrar la contraseña en la consola
 
   try {
     final response = await http.post(
-      Uri.parse('$baseUrl/auth/login'), // Endpoint para el inicio de sesión
+      Uri.parse('$baseUrl/auth/login'), // Endpoint para iniciar sesión
       body: {
-        'email': email,
-        'password': password,
+        'email': correo,
+        'password': contrasena,
       },
     );
 
@@ -50,15 +51,16 @@ Future<bool> loginUser(String email, String password) async {
   }
 }
 
-Future<bool> registerUser(String name, String surname, String email, String password) async {
+// Función para registrar un nuevo usuario
+Future<bool> registrarUsuario(String nombre, String apellido, String correo, String contrasena) async {
   try {
     final response = await http.post(
       Uri.parse('$baseUrl/auth/register'), // Endpoint para el registro
       body: {
-        'username': name,
-        'apellido': surname,
-        'email': email,
-        'password': password,
+        'nombre': nombre,
+        'apellido': apellido,
+        'email': correo,
+        'password': contrasena,
       },
     );
 
