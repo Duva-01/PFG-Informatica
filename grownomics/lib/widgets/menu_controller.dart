@@ -88,7 +88,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   'isUserLoggedIn'); // Borrar el estado de inicio de sesión
               await prefs.remove('userEmail');
               Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/login',
+                  '/iniciar_sesion',
                   (Route<dynamic> route) =>
                       false); // Redirigir a la pantalla de inicio de sesión
             },

@@ -68,7 +68,7 @@ def get_popular_stocks_data():
     acciones = Accion.query.offset(start_index).limit(per_page).all()
     
     end_date = datetime.now()
-    start_date = end_date - timedelta(days=3)
+    start_date = end_date - timedelta(days=1)
     popular_stocks_data = {}
     
     for accion in acciones:
@@ -101,7 +101,7 @@ def get_acciones_favoritas_usuario():
     acciones_favoritas = AccionesFavoritas.query.filter_by(id_usuario=id_usuario).join(Accion).all()
     
     end_date = datetime.now()
-    start_date = end_date - timedelta(days=3)
+    start_date = end_date - timedelta(days=1)
     favoritas_data = {}
     
     for favorita in acciones_favoritas:

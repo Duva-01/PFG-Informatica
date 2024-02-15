@@ -46,6 +46,7 @@ dependencies:
   candlesticks: ^2.1.0
   k_chart: ^0.7.1
   webview_flutter: ^4.4.2
+  dcdg: ^4.1.0
   
 dev_dependencies:
   flutter_test:

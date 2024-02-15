@@ -1,0 +1,530 @@
+@startuml
+set namespaceSeparator ::
+
+class "grownomics::loadingPage.dart::PaginaCarga" {
+  +_PaginaCargaState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "grownomics::loadingPage.dart::PaginaCarga"
+
+class "grownomics::loadingPage.dart::_PaginaCargaState" {
+  +void initState()
+  +void inicializar()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "grownomics::loadingPage.dart::_PaginaCargaState"
+
+class "grownomics::logins::loginPage.dart::PaginaInicioSesion" {
+  +_PaginaInicioSesionState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "grownomics::logins::loginPage.dart::PaginaInicioSesion"
+
+class "grownomics::logins::loginPage.dart::_PaginaInicioSesionState" {
+  -TextEditingController _controladorCorreo
+  -TextEditingController _controladorContrasena
+  -bool _estaRecordado
+  +Widget build()
+}
+
+"grownomics::logins::loginPage.dart::_PaginaInicioSesionState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"flutter::src::widgets::framework.dart::State" <|-- "grownomics::logins::loginPage.dart::_PaginaInicioSesionState"
+
+class "grownomics::logins::registerPage.dart::PaginaRegistro" {
+  +_PaginaRegistroState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "grownomics::logins::registerPage.dart::PaginaRegistro"
+
+class "grownomics::logins::registerPage.dart::_PaginaRegistroState" {
+  -TextEditingController _controladorNombre
+  -TextEditingController _controladorApellido
+  -TextEditingController _controladorCorreo
+  -TextEditingController _controladorContrasena
+  +Widget build()
+}
+
+"grownomics::logins::registerPage.dart::_PaginaRegistroState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"flutter::src::widgets::framework.dart::State" <|-- "grownomics::logins::registerPage.dart::_PaginaRegistroState"
+
+class "grownomics::logins::welcomePage.dart::PaginaBienvenida" {
+  +_PaginaBienvenidaState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "grownomics::logins::welcomePage.dart::PaginaBienvenida"
+
+class "grownomics::logins::welcomePage.dart::_PaginaBienvenidaState" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "grownomics::logins::welcomePage.dart::_PaginaBienvenidaState"
+
+class "grownomics::main.dart::MyApp" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "grownomics::main.dart::MyApp"      
+
+class "grownomics::modelos::HistoricalData.dart::HistoricalData" {
+  +DateTime date
+  +double open
+  +double close
+  +double high
+  +double low
+  +double volume
+}
+
+class "grownomics::modelos::newsArticle.dart::NewsArticle" {
+  +String title
+  +String description
+  +String urlToImage
+  +String articleUrl
+}
+
+class "grownomics::modelos::Operacion.dart::Operacion" {
+  +String action
+  +double amount
+  +DateTime date
+}
+
+class "grownomics::paginas::Aprendizaje::learnDetailsPage.dart::PaginaDetallesAprendizaje" {      
+  +String title
+  +String description
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "grownomics::paginas::Aprendizaje::learnDetailsPage.dart::PaginaDetallesAprendizaje"
+
+class "grownomics::paginas::Aprendizaje::learnPage.dart::PaginaAprendizaje" {
+  +_PaginaAprendizajeState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "grownomics::paginas::Aprendizaje::learnPage.dart::PaginaAprendizaje"
+
+class "grownomics::paginas::Aprendizaje::learnPage.dart::_PaginaAprendizajeState" {
+  +List<String> tematicas
+  +String? tematicaSeleccionada
+  +void initState()
+  +Widget build()
+  -List<Widget> _buildArticulosList()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "grownomics::paginas::Aprendizaje::learnPage.dart::_PaginaAprendizajeState"
+
+class "grownomics::paginas::Cartera::portfolioPage.dart::PaginaCartera" {
+  +String userEmail
+  +_PaginaCarteraState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "grownomics::paginas::Cartera::portfolioPage.dart::PaginaCartera"
+
+class "grownomics::paginas::Cartera::portfolioPage.dart::_PaginaCarteraState" {
+  +double balance
+  +double beneficio
+  +int totalTransacciones
+  +double totalDepositado
+  +double totalRetirado
+  +List<String> transactions
+  +void initState()
+  +void cargarDatosCartera()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "grownomics::paginas::Cartera::portfolioPage.dart::_PaginaCarteraState"
+
+class "grownomics::paginas::Cartera::transactionsPage.dart::PaginaTransaccion" {
+  +String userEmail
+  +_PaginaTransaccionState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "grownomics::paginas::Cartera::transactionsPage.dart::PaginaTransaccion"
+
+class "grownomics::paginas::Cartera::transactionsPage.dart::_PaginaTransaccionState" {
+  -Future<List<dynamic>> _transaccionesFuturas
+  +void initState()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "grownomics::paginas::Cartera::transactionsPage.dart::_PaginaTransaccionState"
+
+class "grownomics::paginas::Cartera::widgets::balanceHistoryWidget.dart::HistorialWidget" {       
+  +String userEmail
+  +_HistorialWidgetState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "grownomics::paginas::Cartera::widgets::balanceHistoryWidget.dart::HistorialWidget"
+
+class "grownomics::paginas::Cartera::widgets::balanceHistoryWidget.dart::_HistorialWidgetState" { 
+  -String _interval
+  +void initState()
+  +Widget build()
+  -Widget _buildChart()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "grownomics::paginas::Cartera::widgets::balanceHistoryWidget.dart::_HistorialWidgetState"
+
+class "grownomics::paginas::Cartera::widgets::profileCardWidget.dart::DatosPerfilCard" {
+  +double balance
+  +double beneficio
+  +double totalDepositado
+  +double totalRetirado
+  +int totalTransacciones
+  +String userEmail
+  +Function onReload
+  +_DatosPerfilCardState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "grownomics::paginas::Cartera::widgets::profileCardWidget.dart::DatosPerfilCard"
+
+class "grownomics::paginas::Cartera::widgets::profileCardWidget.dart::_DatosPerfilCardState" {    
+  -void _mostrarDialogoOperacion()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "grownomics::paginas::Cartera::widgets::profileCardWidget.dart::_DatosPerfilCardState"
+
+class "grownomics::paginas::Cartera::widgets::profileCardWidget.dart::InfoRow" {
+  +String title
+  +String value
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "grownomics::paginas::Cartera::widgets::profileCardWidget.dart::InfoRow"
+
+class "grownomics::paginas::Cartera::widgets::transactionListWidget.dart::ListaTransaccionWidget" {
+  +String userEmail
+  +_ListaTransaccionWidgetState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "grownomics::paginas::Cartera::widgets::transactionListWidget.dart::ListaTransaccionWidget"
+
+class "grownomics::paginas::Cartera::widgets::transactionListWidget.dart::_ListaTransaccionWidgetState" {
+  -Future<List<dynamic>> _transaccionesFuturas
+  +void initState()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "grownomics::paginas::Cartera::widgets::transactionListWidget.dart::_ListaTransaccionWidgetState"
+
+class "grownomics::paginas::Configuracion::configPage.dart::PaginaConfiguracion" {
+  +String userEmail
+  +String nombre
+  +String apellido
+  +_PaginaConfiguracionState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "grownomics::paginas::Configuracion::configPage.dart::PaginaConfiguracion"
+
+class "grownomics::paginas::Configuracion::configPage.dart::_PaginaConfiguracionState" {
+  -bool _notificacionesActivadas
+  -bool _modoOscuroActivado
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "grownomics::paginas::Configuracion::configPage.dart::_PaginaConfiguracionState"
+
+class "grownomics::paginas::Home::homePage.dart::PaginaInicio" {
+  +String userEmail
+  +_PaginaInicioState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "grownomics::paginas::Home::homePage.dart::PaginaInicio"
+
+class "grownomics::paginas::Home::homePage.dart::_PaginaInicioState" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "grownomics::paginas::Home::homePage.dart::_PaginaInicioState"
+
+class "grownomics::paginas::Home::Widgets::balanceWidget.dart::BalanceCard" {
+  +String userEmail
+  +_BalanceCardState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "grownomics::paginas::Home::Widgets::balanceWidget.dart::BalanceCard"
+
+class "grownomics::paginas::Home::Widgets::balanceWidget.dart::_BalanceCardState" {
+  +double balance
+  +int totalTransacciones
+  +double totalDepositado
+  +double totalRetirado
+  +void initState()
+  +void cargarDatosCartera()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "grownomics::paginas::Home::Widgets::balanceWidget.dart::_BalanceCardState"
+
+class "grownomics::paginas::Home::Widgets::statsWidget.dart::StatsGrid" {
+  +_StatsGridState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "grownomics::paginas::Home::Widgets::statsWidget.dart::StatsGrid"
+
+class "grownomics::paginas::Home::Widgets::statsWidget.dart::_StatsGridState" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "grownomics::paginas::Home::Widgets::statsWidget.dart::_StatsGridState"
+
+class "grownomics::paginas::Home::Widgets::statsWidget.dart::StatCard" {
+  +String title
+  +String amount
+  +IconData iconData
+  +Color color
+  +Widget build()
+}
+
+"grownomics::paginas::Home::Widgets::statsWidget.dart::StatCard" o-- "flutter::src::widgets::icon_data.dart::IconData"
+"grownomics::paginas::Home::Widgets::statsWidget.dart::StatCard" o-- "dart::ui::Color"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "grownomics::paginas::Home::Widgets::statsWidget.dart::StatCard"
+
+class "grownomics::paginas::Home::Widgets::transactionWidget.dart::TransaccionesCard" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "grownomics::paginas::Home::Widgets::transactionWidget.dart::TransaccionesCard"
+
+class "grownomics::paginas::inicio.dart::PantallaInicio" {
+  +_PantallaInicioState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "grownomics::paginas::inicio.dart::PantallaInicio"
+
+class "grownomics::paginas::inicio.dart::_PantallaInicioState" {
+  -int _indiceSeleccionado
+  +String correoElectronico
+  +String nombre
+  +String apellido
+  -void _alItemTocar()
+  +void initState()
+  -Future<void> _cargarUsuario()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "grownomics::paginas::inicio.dart::_PantallaInicioState"
+
+class "grownomics::paginas::Mercado::marketPage.dart::PaginaMercado" {
+  +String userEmail
+  +_PaginaMercadoState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "grownomics::paginas::Mercado::marketPage.dart::PaginaMercado"
+
+class "grownomics::paginas::Mercado::marketPage.dart::_PaginaMercadoState" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "grownomics::paginas::Mercado::marketPage.dart::_PaginaMercadoState"
+
+class "grownomics::paginas::Mercado::stockPage.dart::DetallesAccion" {
+  +String symbol
+  +String correoElectronico
+  +_DetallesAccionEstado createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "grownomics::paginas::Mercado::stockPage.dart::DetallesAccion"
+
+class "grownomics::paginas::Mercado::stockPage.dart::_DetallesAccionEstado" {
+  -String _intervalo
+  -List<HistoricalData> _datosHistoricos
+  -ModoVisualizacion _modoVisualizacion
+  +void initState()
+  -void _cargarDatos()
+  -void _alternarModoVisualizacion()
+  +Widget build()
+  -void _mostrarDialogoTransaccion()
+}
+
+"grownomics::paginas::Mercado::stockPage.dart::_DetallesAccionEstado" o-- "grownomics::paginas::Mercado::stockPage.dart::ModoVisualizacion"
+"flutter::src::widgets::framework.dart::State" <|-- "grownomics::paginas::Mercado::stockPage.dart::_DetallesAccionEstado"
+
+class "grownomics::paginas::Mercado::stockPage.dart::ModoVisualizacion" {
+  +int index
+  {static} +List<ModoVisualizacion> values
+  {static} +ModoVisualizacion Grafica
+  {static} +ModoVisualizacion TablaDatos
+}
+
+"grownomics::paginas::Mercado::stockPage.dart::ModoVisualizacion" o-- "grownomics::paginas::Mercado::stockPage.dart::ModoVisualizacion"
+"dart::core::Enum" <|-- "grownomics::paginas::Mercado::stockPage.dart::ModoVisualizacion"
+
+class "grownomics::paginas::Mercado::Widgets::chartWidget.dart::WidgetGrafico" {
+  +String symbol
+  +_EstadoWidgetGrafico createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "grownomics::paginas::Mercado::Widgets::chartWidget.dart::WidgetGrafico"
+
+class "grownomics::paginas::Mercado::Widgets::chartWidget.dart::_EstadoWidgetGrafico" {
+  -String _intervalo
+  -List<HistoricalData> _datosHistoricos
+  -TipoGrafico _tipoGrafico
+  +void initState()
+  -void _cargarDatos()
+  +Widget build()
+}
+
+"grownomics::paginas::Mercado::Widgets::chartWidget.dart::_EstadoWidgetGrafico" o-- "grownomics::paginas::Mercado::Widgets::chartWidget.dart::TipoGrafico"
+"flutter::src::widgets::framework.dart::State" <|-- "grownomics::paginas::Mercado::Widgets::chartWidget.dart::_EstadoWidgetGrafico"
+
+class "grownomics::paginas::Mercado::Widgets::chartWidget.dart::TipoGrafico" {
+  +int index
+  {static} +List<TipoGrafico> values
+  {static} +TipoGrafico linea
+  {static} +TipoGrafico vela
+}
+
+"grownomics::paginas::Mercado::Widgets::chartWidget.dart::TipoGrafico" o-- "grownomics::paginas::Mercado::Widgets::chartWidget.dart::TipoGrafico"
+"dart::core::Enum" <|-- "grownomics::paginas::Mercado::Widgets::chartWidget.dart::TipoGrafico"    
+
+class "grownomics::paginas::Mercado::Widgets::dataTableWidget.dart::WidgetTablaDatos" {
+  +String symbol
+  +_EstadoWidgetTablaDatos createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "grownomics::paginas::Mercado::Widgets::dataTableWidget.dart::WidgetTablaDatos"
+
+class "grownomics::paginas::Mercado::Widgets::dataTableWidget.dart::_EstadoWidgetTablaDatos" {    
+  -String _intervalo
+  -List<HistoricalData> _datosHistoricos
+  +void initState()
+  -void _cargarDatos()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "grownomics::paginas::Mercado::Widgets::dataTableWidget.dart::_EstadoWidgetTablaDatos"
+
+class "grownomics::paginas::Mercado::Widgets::infoWidget.dart::WidgetInfo" {
+  +String symbol
+  +_EstadoWidgetInfo createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "grownomics::paginas::Mercado::Widgets::infoWidget.dart::WidgetInfo"
+
+class "grownomics::paginas::Mercado::Widgets::infoWidget.dart::_EstadoWidgetInfo" {
+  -String _intervalo
+  -List<HistoricalData> _datosHistoricos
+  +void initState()
+  -void _cargarDatos()
+  +Widget build()
+  -List<Widget> _generarInformacion()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "grownomics::paginas::Mercado::Widgets::infoWidget.dart::_EstadoWidgetInfo"
+
+class "grownomics::paginas::Mercado::Widgets::marketListWidget.dart::ListaMercado" {
+  +String correoElectronico
+  +_ListaMercadoEstado createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "grownomics::paginas::Mercado::Widgets::marketListWidget.dart::ListaMercado"
+
+class "grownomics::paginas::Mercado::Widgets::marketListWidget.dart::_ListaMercadoEstado" {       
+  +int pagina
+  +List<dynamic> acciones
+  -bool _cargando
+  +bool cargarFavoritas
+  +int idUsuario
+  +Set<int> idsFavoritas
+  +List<dynamic> accionesFiltradas
+  +bool filtrando
+  -ScrollController _controladorScroll
+  -TextEditingController _controladorBusqueda
+  +void initState()
+  -void _cargarDatos()
+  -void _filtrarAcciones()
+  -Future<void> _cargarFavoritas()
+  +Future<void> alternarFavorita()
+  +Widget build()
+  +void dispose()
+}
+
+"grownomics::paginas::Mercado::Widgets::marketListWidget.dart::_ListaMercadoEstado" o-- "flutter::src::widgets::scroll_controller.dart::ScrollController"
+"grownomics::paginas::Mercado::Widgets::marketListWidget.dart::_ListaMercadoEstado" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"flutter::src::widgets::framework.dart::State" <|-- "grownomics::paginas::Mercado::Widgets::marketListWidget.dart::_ListaMercadoEstado"
+
+class "grownomics::paginas::Mercado::Widgets::recomendationWidget.dart::WidgetRecomendacion" {    
+  +String simbolo
+  +String correoElectronico
+  +_WidgetRecomendacionState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "grownomics::paginas::Mercado::Widgets::recomendationWidget.dart::WidgetRecomendacion"
+
+class "grownomics::paginas::Mercado::Widgets::recomendationWidget.dart::_WidgetRecomendacionState" {
+  +Future<Map<String, dynamic>>? futuroRecomendacion
+  +Map<String, dynamic>? indicadoresEconomicos
+  +int indiceSeleccionado
+  +List<dynamic> estrategiasPrincipales
+  +double balance
+  -List<IconData> _iconList
+  -List<Color> _iconColors
+  +void initState()
+  +void cargarDatosCartera()
+  +void cargarIndicadoresEconomicos()
+  +Widget build()
+  +Widget construirTarjetaRecomendacion()
+  -List<Widget> _construirSeccionIndicadoresEconomicos()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "grownomics::paginas::Mercado::Widgets::recomendationWidget.dart::_WidgetRecomendacionState"
+
+class "grownomics::paginas::Noticias::newsPage.dart::PaginaNoticias" {
+  +_PaginaNoticiasState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "grownomics::paginas::Noticias::newsPage.dart::PaginaNoticias"
+
+class "grownomics::paginas::Noticias::newsPage.dart::_PaginaNoticiasState" {
+  +Future<List<NewsArticle>> futurasNoticias
+  +List<NewsArticle> articulosFiltrados
+  +List<String> tematicas
+  +String tematicaSeleccionada
+  +void initState()
+  +Widget build()
+  +void filtrarArticulos()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "grownomics::paginas::Noticias::newsPage.dart::_PaginaNoticiasState"
+
+class "grownomics::paginas::Noticias::newsPage.dart::WebViewArticulo" {
+  +String url
+  +String titulo
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "grownomics::paginas::Noticias::newsPage.dart::WebViewArticulo"
+
+class "grownomics::widgets::menu_controller.dart::MenuScreen" {
+  +ZoomDrawerController controller
+  +dynamic Function(int) onItemTapped
+  +_MenuScreenState createState()
+}
+
+"grownomics::widgets::menu_controller.dart::MenuScreen" o-- "flutter_zoom_drawer::src::drawer_controller.dart::ZoomDrawerController"
+"grownomics::widgets::menu_controller.dart::MenuScreen" o-- "null::dynamic Function(int)"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "grownomics::widgets::menu_controller.dart::MenuScreen"
+
+class "grownomics::widgets::menu_controller.dart::_MenuScreenState" {
+  +String userEmail
+  +String nombre
+  +String apellido
+  +void initState()
+  -Future<void> _loadUser()
+  +Widget build()
+  -Widget _buildMenuItem()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "grownomics::widgets::menu_controller.dart::_MenuScreenState"
+
+class "grownomics::widgets::mercado_resumen_widget.dart::MercadoResumenWidget" {
+  +Widget build()
+  +Future<Map<String, dynamic>> obtenerResumenMercado()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "grownomics::widgets::mercado_resumen_widget.dart::MercadoResumenWidget"
+
+
+@enduml

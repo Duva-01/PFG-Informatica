@@ -12,3 +12,4 @@ Flask-Testing
 flask-restplus
 backtesting
 TA-Lib
+numpy

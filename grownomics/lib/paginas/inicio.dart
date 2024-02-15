@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:grownomics/api/authAPI.dart';
+import 'package:grownomics/paginas/Analisis/analisisPage.dart';
 import 'package:grownomics/paginas/Aprendizaje/learnPage.dart';
 import 'package:grownomics/paginas/Cartera/portfolioPage.dart';
 import 'package:grownomics/paginas/Configuracion/configPage.dart';
@@ -63,8 +64,8 @@ class _PantallaInicioState extends State<PantallaInicio> {
     final paginas = [
       PaginaInicio(userEmail: correoElectronico), // Página de inicio
       PaginaMercado(userEmail: correoElectronico), // Página de mercado
+      PaginaAnalisis(userEmail: correoElectronico), // Pagina de analisis
       PaginaCartera(userEmail: correoElectronico), // Página de cartera
-      PaginaCartera(userEmail: correoElectronico), // Página de cartera (¿duplicada?)
       PaginaNoticias(), // Página de noticias
       PaginaAprendizaje(), // Página de aprendizaje
       PaginaConfiguracion(userEmail: correoElectronico, nombre: nombre, apellido: apellido) // Página de configuración con datos de usuario

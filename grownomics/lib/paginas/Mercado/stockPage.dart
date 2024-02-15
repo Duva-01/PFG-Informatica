@@ -76,7 +76,7 @@ class _DetallesAccionEstado extends State<DetallesAccion> {
                       children: [
                         WidgetGrafico(symbol: widget.symbol), // Muestra la gráfica para el símbolo de la acción
                         WidgetInfo(symbol: widget.symbol), // Muestra la información relacionada con la acción
-                        RecommendationWidget(symbol: widget.symbol, userEmail: widget.correoElectronico),
+                        WidgetRecomendacion(simbolo: widget.symbol, correoElectronico: widget.correoElectronico),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [

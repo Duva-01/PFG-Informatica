@@ -4,6 +4,7 @@ import 'package:grownomics/logins/registerPage.dart';
 import 'package:grownomics/logins/welcomePage.dart';
 import 'package:grownomics/paginas/inicio.dart';
 import 'package:grownomics/logins/loginPage.dart';
+import 'package:dcdg/dcdg.dart'; // Esto sirve para crearme los diagramas UML automaticamente
 
 void main() {
   runApp(MyApp());

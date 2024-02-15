@@ -8,7 +8,7 @@ Future<List<NewsArticle>> obtenerNoticias(String tematica) async {
   final Uri url = Uri.parse('http://10.0.2.2:5000/news/financial_news?tematica=$tematica'); // Construir la URL para obtener noticias financieras basadas en la temática
   final response = await http.get(url, headers: {
     'Connection': 'keep-alive', // Encabezado de conexión para mantener la conexión abierta
-  }).timeout(Duration(seconds: 30)); // Establecer un tiempo límite de 30 segundos para la solicitud
+  }).timeout(Duration(seconds: 60)); // Establecer un tiempo límite de 30 segundos para la solicitud
 
   if (response.statusCode == 200) { // Si la solicitud fue exitosa
     List<dynamic> newsJson = json.decode(response.body); // Decodificar la respuesta JSON y almacenar las noticias en una lista dinámica
