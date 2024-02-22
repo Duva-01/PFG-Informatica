@@ -23,9 +23,28 @@ class _PaginaTransaccionState extends State<PaginaTransaccion> { // Estado de la
   @override
   Widget build(BuildContext context) { // Construir la página
     return Scaffold( // Estructura básica de la página
-      appBar: AppBar( // Barra de aplicación
-        title: Text('Todas las Transacciones'), // Título de la barra
+      appBar: AppBar(
+    // Barra de aplicaciones en la parte superior de la página
+    title: Text(
+      "Todas mis transacciones",
+      style: TextStyle(
+        color: Colors.white, // Color del texto blanco
       ),
+    ), // Título de la aplicación
+    centerTitle: true, // Centra el título en la barra de aplicaciones
+    backgroundColor:
+        Theme.of(context).primaryColor, // Color de fondo de la AppBar según el color primario del tema
+    shadowColor: Colors.black,
+    elevation: 4,
+    leading: IconButton(
+      // Widget de icono para el botón de retroceso
+      icon: Icon(Icons.arrow_back, color: Colors.white), // Icono de flecha hacia atrás
+      onPressed: () {
+        // Manejador de eventos cuando se presiona el botón de retroceso
+        Navigator.of(context).pop(); // Volver atrás en la navegación
+      },
+    ),
+  ),
       body: FutureBuilder<List<dynamic>>( // Constructor futuro para construir basado en datos futuros
         future: _transaccionesFuturas, // Futuro para obtener transacciones
         builder: (context, snapshot) { // Constructor de contenido basado en el estado del futuro

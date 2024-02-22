@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // Definir el MaterialColor personalizado para el tema
     MaterialColor primarySwatch = const MaterialColor(
-      0xFF2F8B62, 
+      0xFF2F8B62,
       <int, Color>{
         50: Color(0xFFE0F3EA),
         100: Color(0xFFB3DFCC),
@@ -33,9 +33,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       // Configurar el tema de la aplicación
       theme: ThemeData(
-        primarySwatch: primarySwatch,  // Establecer el color primario del tema
-        visualDensity: VisualDensity.adaptivePlatformDensity, // Ajustar la densidad visual para plataformas adaptables
+        primarySwatch: primarySwatch,
+        primaryColor: Color(0xFF2F8B62),
+
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
+
       initialRoute: '/', // Ruta inicial de la aplicación
       routes: {
         // Definir rutas y asignar widgets a cada ruta

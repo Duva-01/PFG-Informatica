@@ -20,20 +20,15 @@ def get_recommendation(symbol):
     email = datos.get('email')  # Obtiene el correo electrónico del usuario de los datos de la solicitud
     usuario = Usuario.query.filter_by(email=email).first()  # Busca al usuario en la base de datos
 
-    # Verifica si el usuario existe
-    if not usuario:
-        return jsonify({"error": "Usuario no encontrado"}), 404
-    
-    cartera = Cartera.query.filter_by(id_usuario=usuario.id).first()  # Busca la cartera del usuario
+    # Establece un saldo predeterminado de 10.000 € si no se encuentra el usuario
+    if usuario:
+        cartera = Cartera.query.filter_by(id_usuario=usuario.id).first()
+        saldo = cartera.saldo if cartera else 10000  # Si no hay cartera, usa 10.000 €
+    else:
+        saldo = 10000  # Saldo predeterminado si no se encuentra el usuario
 
-    # Verifica si la cartera existe
-    if not cartera:
-        return jsonify({"error": "Cartera no encontrada"}), 404
-
-    saldo = cartera.saldo  # Utiliza el saldo de la cartera como efectivo inicial
-
-    data = yf.download(symbol, period="1y")  # Descarga datos de mercado para el símbolo especificado
-    recommendation_details = []  # Lista para almacenar detalles de recomendaciones
+    data = yf.download(symbol, period="1y")
+    recommendation_details = []# Lista para almacenar detalles de recomendaciones
 
     # Estrategias a evaluar
     strategies = [
@@ -50,32 +45,35 @@ def get_recommendation(symbol):
 
     # Itera sobre cada estrategia
     for strategy_class, name, description in strategies:
-        bt = Backtest(data, strategy_class, cash=saldo, commission=.002)  # Inicializa el backtest con la estrategia y el efectivo inicial
-        stats = bt.run()  # Ejecuta el backtest y obtiene las estadísticas
-
-        # Comprueba si la estrategia es rentable
-        if stats['Equity Final [$]'] > saldo:
-            result = "Recomendación de compra."
+        bt = Backtest(data, strategy_class, cash=saldo, commission=.002)
+        stats = bt.run()
+        
+        # Aquí identificas si la estrategia sugiere comprar, vender, o no hacer nada
+        recommendation = "Sin recomendación clara."
+        if stats['_trades'].empty:
+            recommendation = "Sin recomendación clara debido a la ausencia de operaciones."
         else:
-            result = "Sin recomendación clara."
+            last_trade = stats['_trades'].iloc[-1]
+            if last_trade['Size'] > 0:
+                recommendation = "Recomendación de compra."
+            elif last_trade['Size'] < 0:
+                recommendation = "Recomendación de venta."
 
-        # Agrega detalles de la estrategia a la lista
         recommendation_details.append({
             "estrategia": name,
             "descripcion": description,
-            "recomendacion": result,
+            "recomendacion": recommendation,
             "equity_final": stats['Equity Final [$]'],
             "retorno": stats['Return [%]']
         })
 
-    # Construye la recomendación final
     if recommendation_details:
-        recommendation = "Recomendaciones: " + ", ".join([d['estrategia'] + ": " + d['recomendacion'] for d in recommendation_details])
+        recommendation_summary = "Recomendaciones: " + ", ".join(
+            [d['estrategia'] + ": " + d['recomendacion'] for d in recommendation_details])
     else:
-        recommendation = "Mantener. No hay recomendaciones claras basadas en las estrategias aplicadas."
+        recommendation_summary = "Mantener. No hay recomendaciones claras basadas en las estrategias aplicadas."
 
-    # Retorna los resultados como un objeto JSON
-    return jsonify({'symbol': symbol, 'recommendations': recommendation_details, 'summary': recommendation})
+    return jsonify({'symbol': symbol, 'recommendations': recommendation_details, 'summary': recommendation_summary})
 
 # Ruta para obtener indicadores técnicos para un símbolo dado
 @recommendations_bp.route('/indicators/<string:symbol>', methods=['GET'])
@@ -135,6 +133,9 @@ def get_indicators(symbol):
     # Retorna los indicadores y sus descripciones como un objeto JSON
     return jsonify({'symbol': symbol, 'indicators': indicators, 'descriptions': descriptions})
 
+
+
+
 # Ruta para realizar un backtest de una estrategia de trading para un símbolo dado
 @recommendations_bp.route('/backtest/<string:symbol>', methods=['GET'])
 def backtest(symbol):
@@ -148,3 +149,81 @@ def backtest(symbol):
 
     # Retorna un mensaje de éxito y las estadísticas del backtest como un objeto JSON
     return jsonify({'success': True, 'message': 'Backtesting completado', 'stats': stats._trade_data})
+
+
+# ----------------------- Pagina de Analisis ------------------------------ #
+
+def calcular_soportes_resistencias(df):
+    # Obtiene los últimos 360 precios de cierre
+    ultimos_360_precios = df["Close"].tail(360)
+    # Calcula la media de los últimos 360 precios
+    precio_medio = ultimos_360_precios.mean()
+    # Calcula la desviación estándar de los precios
+    std_precio = ultimos_360_precios.std()
+    # Calcula los niveles de soporte y resistencia
+    precio_soporte = precio_medio - std_precio
+    precio_resistencia = precio_medio + std_precio
+    # Obtiene el último precio de cierre
+    ultimo_precio = df["Close"].iloc[-1]
+
+    # Compara el último precio con los niveles de soporte y resistencia
+    if ultimo_precio > precio_resistencia:
+        estado = "resistencia"
+        diferencia = ultimo_precio - precio_resistencia
+    elif ultimo_precio < precio_soporte:
+        estado = "soporte"
+        diferencia = precio_soporte - ultimo_precio
+    else:
+        estado = "neutral"
+        diferencia = 0
+
+    # Mensajes basados en el análisis
+    print(f"El último precio ({ultimo_precio}) está en {estado} con una diferencia de {diferencia}.")
+
+    if estado == "resistencia":
+        accion = "Vender"
+    elif estado == "soporte":
+        accion = "Comprar"
+    else:
+        accion = "Mantener/O Nada"
+
+    return precio_soporte, precio_resistencia, estado, accion
+
+@recommendations_bp.route('/analisis_tecnico/<string:simbolo>', methods=['GET'])
+def obtener_analisis_tecnico(simbolo):
+
+    intervalo = request.args.get('intervalo', '1y')  # Permite especificar el intervalo mediante parámetros URL
+
+    ticker = yf.Ticker(simbolo)
+    datos = ticker.history(period=intervalo)
+    datos.fillna(0, inplace=True)
+    datos.index = datos.index.strftime('%Y-%m-%d')
+
+    # Aquí implementas la lógica para calcular soportes y resistencias
+    precio_soporte, precio_resistencia, estado, accion_recomendada = calcular_soportes_resistencias(datos)
+
+    # Prepara los datos para enviar, incluyendo tanto los datos históricos como el análisis técnico
+    datos_analisis = {
+        'simbolo': simbolo,
+        'datos_historicos': datos.to_dict(orient='index'),  # Incluye los datos históricos en la respuesta
+        'analisis_tecnico': {
+            'precio_soporte': precio_soporte,
+            'precio_resistencia': precio_resistencia,
+            'estado': estado,
+            'accion_recomendada': accion_recomendada
+        }
+    }
+    
+    return jsonify(datos_analisis)
+
+@recommendations_bp.route('/simbolos-acciones', methods=['GET'])
+def obtener_simbolos_acciones():
+    try:
+        # Consulta todos los códigos de ticker de la tabla de acciones
+        acciones = Accion.query.with_entities(Accion.codigoticker).all()
+        # Convierte la lista de tuplas en una lista de códigos de ticker
+        codigos_ticker = [accion.codigoticker for accion in acciones]
+        # Devuelve la lista de códigos de ticker como una respuesta JSON
+        return jsonify({'codigos_ticker': codigos_ticker}), 200
+    except Exception as e:
+        return jsonify({'error': 'No se pudieron recuperar los códigos de ticker de las acciones', 'detalle': str(e)}), 500

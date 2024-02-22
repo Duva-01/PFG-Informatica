@@ -5,6 +5,8 @@ import yfinance as yf
 from app.models import Accion, AccionesFavoritas  
 from ..extensions import db 
 
+import numpy as np
+
 finance_bp = Blueprint('finance', __name__)
 
 
@@ -68,7 +70,7 @@ def get_popular_stocks_data():
     acciones = Accion.query.offset(start_index).limit(per_page).all()
     
     end_date = datetime.now()
-    start_date = end_date - timedelta(days=1)
+    start_date = end_date - timedelta(days=2)
     popular_stocks_data = {}
     
     for accion in acciones:
@@ -101,7 +103,7 @@ def get_acciones_favoritas_usuario():
     acciones_favoritas = AccionesFavoritas.query.filter_by(id_usuario=id_usuario).join(Accion).all()
     
     end_date = datetime.now()
-    start_date = end_date - timedelta(days=1)
+    start_date = end_date - timedelta(days=2)
     favoritas_data = {}
     
     for favorita in acciones_favoritas:
@@ -136,6 +138,7 @@ def get_historical_data():
 
     ticker = yf.Ticker(ticker_symbol)
     data = ticker.history(period=interval)
+    data.fillna(0, inplace=True)
     data.index = data.index.strftime('%Y-%m-%d')
 
     return jsonify(data.to_dict(orient='index'))

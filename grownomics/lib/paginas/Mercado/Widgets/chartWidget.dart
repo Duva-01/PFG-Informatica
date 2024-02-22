@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:grownomics/api/marketAPI.dart'; // Funciones relacionadas con el mercado
 import 'package:intl/intl.dart'; // Paquete para formatear fechas
 import '../../../modelos/HistoricalData.dart'; // Modelo de datos históricos
-import 'package:candlesticks/candlesticks.dart'; // Paquete para gráficos de velas
 import 'package:k_chart/flutter_k_chart.dart'; // Paquete para gráficos KChart
 
 // Enumeración para definir el tipo de gráfico
@@ -19,11 +18,12 @@ class WidgetGrafico extends StatefulWidget {
   WidgetGrafico({required this.symbol}); // Constructor
 
   @override
-  _EstadoWidgetGrafico createState() => _EstadoWidgetGrafico(); // Crea el estado del widget
+  _EstadoWidgetGrafico createState() =>
+      _EstadoWidgetGrafico(); // Crea el estado del widget
 }
 
 class _EstadoWidgetGrafico extends State<WidgetGrafico> {
-  String _intervalo = '1wk'; // Intervalo de tiempo inicial
+  String _intervalo = '1mo'; // Intervalo de tiempo inicial
   List<HistoricalData> _datosHistoricos = []; // Lista de datos históricos
   TipoGrafico _tipoGrafico = TipoGrafico.vela; // Tipo de gráfico inicial
 
@@ -35,9 +35,11 @@ class _EstadoWidgetGrafico extends State<WidgetGrafico> {
 
   // Función para cargar los datos históricos
   void _cargarDatos() async {
-    final datos = await obtenerDatosHistoricos(widget.symbol, _intervalo); // Obtiene los datos históricos del mercado
+    final datos = await obtenerDatosHistoricos(
+        widget.symbol, _intervalo); // Obtiene los datos históricos del mercado
     setState(() {
-      _datosHistoricos = datos; // Actualiza los datos históricos en el estado del widget
+      _datosHistoricos =
+          datos; // Actualiza los datos históricos en el estado del widget
     });
   }
 
@@ -46,72 +48,136 @@ class _EstadoWidgetGrafico extends State<WidgetGrafico> {
     return Column(
       children: [
         // Row para seleccionar el tipo de gráfico
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () => setState(() => _tipoGrafico = TipoGrafico.vela),
-              child: Text('Gráfico de Velas'),
-              style: ElevatedButton.styleFrom(
-                primary: _tipoGrafico == TipoGrafico.vela
-                    ? Color(0xFF2F8B62)
-                    : Colors.grey,
+        Container(
+          margin: EdgeInsets.all(10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () => setState(() => _tipoGrafico = TipoGrafico.vela),
+                child: Text('Gráfico de Velas'),
+                style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.resolveWith<Color>(
+                    (Set<MaterialState> states) {
+                      return _tipoGrafico == TipoGrafico.vela
+                          ? Colors.white
+                          : Theme.of(context).primaryColor; // Color del texto
+                    },
+                  ),
+                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                    (Set<MaterialState> states) {
+                      return _tipoGrafico == TipoGrafico.vela
+                          ? Theme.of(context).primaryColor
+                          : Colors.grey[300]!; // Color de fondo
+                    },
+                  ),
+                ),
               ),
-            ),
-            SizedBox(width: 10), // Espaciador entre botones
-            ElevatedButton(
-              onPressed: () => setState(() => _tipoGrafico = TipoGrafico.linea),
-              child: Text('Gráfico de Línea'),
-              style: ElevatedButton.styleFrom(
-                primary: _tipoGrafico == TipoGrafico.linea
-                    ? Color(0xFF2F8B62)
-                    : Colors.grey,
+              const SizedBox(width: 10), // Espaciador entre botones
+              ElevatedButton(
+                onPressed: () => setState(() => _tipoGrafico = TipoGrafico.linea),
+                child: Text('Gráfico de Línea'),
+                style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.resolveWith<Color>(
+                    (Set<MaterialState> states) {
+                      return _tipoGrafico == TipoGrafico.linea
+                          ? Colors.white
+                          : Theme.of(context).primaryColor; // Color del texto
+                    },
+                  ),
+                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                    (Set<MaterialState> states) {
+                      return _tipoGrafico == TipoGrafico.linea
+                          ? Theme.of(context).primaryColor
+                          : Colors.grey[300]!; // Color de fondo
+                    },
+                  ),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         // Sección para seleccionar el intervalo de tiempo
         Padding(
           padding: const EdgeInsets.all(3.0),
           child: AnimatedButtonBar(
-            radius: 8.0,
-            padding: const EdgeInsets.all(8.0),
+            // Barra de botones animados para intervalos de tiempo
+            radius: 8.0, // Radio de borde de los botones
+            padding: const EdgeInsets.all(8.0), // Padding
+            backgroundColor: Colors
+                .white, // Color de fondo por defecto para todos los botones
+            foregroundColor: Theme.of(context)
+                .primaryColor, // Color de texto por defecto para todos los botones
+
             children: [
+              
               ButtonBarEntry(
+                // Entrada para el botón de 1 mes
                 onTap: () {
+                  // Acción al hacer tap
                   setState(() {
-                    _intervalo = '1wk'; // Intervalo de 1 semana
-                    _cargarDatos(); // Carga los datos con el nuevo intervalo
+                    // Actualizar estado
+                    _intervalo = '1mo'; // Cambiar intervalo a 1 mes
                   });
+                  _cargarDatos();
                 },
-                child: Text('1 Semana'),
+                child: Text(
+                  '1 mes',
+                  style: TextStyle(
+                    color: _intervalo == '1mo' ? Colors.white : Colors.black,
+                  ),
+                ), // Texto del botón
               ),
               ButtonBarEntry(
+                // Entrada para el botón de 3 meses
                 onTap: () {
+                  // Acción al hacer tap
                   setState(() {
-                    _intervalo = '1mo'; // Intervalo de 1 mes
-                    _cargarDatos(); // Carga los datos con el nuevo intervalo
+                    // Actualizar estado
+                    _intervalo = '3mo'; // Cambiar intervalo a 3 meses
                   });
+                  _cargarDatos();
                 },
-                child: Text('1 Mes'),
+                child: Text(
+                  '3 meses',
+                  style: TextStyle(
+                    color: _intervalo == '3mo' ? Colors.white : Colors.black,
+                  ),
+                ), // Texto del botón
               ),
               ButtonBarEntry(
+                // Entrada para el botón de 1 semana
                 onTap: () {
+                  // Acción al hacer tap
                   setState(() {
-                    _intervalo = '3mo'; // Intervalo de 3 meses
-                    _cargarDatos(); // Carga los datos con el nuevo intervalo
+                    // Actualizar estado
+                    _intervalo = '6mo'; // Cambiar intervalo a 1 semana
                   });
+                  _cargarDatos();
                 },
-                child: Text('3 Meses'),
+                child: Text(
+                  '6 meses',
+                  style: TextStyle(
+                    color: _intervalo == '6mo' ? Colors.white : Colors.black,
+                  ),
+                ),
               ),
               ButtonBarEntry(
+                // Entrada para el botón de 1 año
                 onTap: () {
+                  // Acción al hacer tap
                   setState(() {
-                    _intervalo = '1y'; // Intervalo de 1 año
-                    _cargarDatos(); // Carga los datos con el nuevo intervalo
+                    // Actualizar estado
+                    _intervalo = '1y'; // Cambiar intervalo a 1 año
                   });
+                  _cargarDatos();
                 },
-                child: Text('1 Año'),
+                child: Text(
+                  '1 año',
+                  style: TextStyle(
+                    color: _intervalo == '1y' ? Colors.white : Colors.black,
+                  ),
+                ),
               ),
             ],
           ),
@@ -122,10 +188,14 @@ class _EstadoWidgetGrafico extends State<WidgetGrafico> {
           child: SizedBox(
             height: 300, // Altura del área del gráfico
             child: _datosHistoricos == null || _datosHistoricos.isEmpty
-                ? Center(child: CircularProgressIndicator()) // Muestra un indicador de carga si no hay datos
+                ? Center(
+                    child:
+                        CircularProgressIndicator()) // Muestra un indicador de carga si no hay datos
                 : _tipoGrafico == TipoGrafico.linea
-                    ? construirGrafico(_datosHistoricos) // Construye un gráfico de línea si es seleccionado
-                    : construirGraficoVelas(_datosHistoricos), // Construye un gráfico de velas si es seleccionado
+                    ? construirGrafico(
+                        _datosHistoricos) // Construye un gráfico de línea si es seleccionado
+                    : construirGraficoVelas(
+                        _datosHistoricos), // Construye un gráfico de velas si es seleccionado
           ),
         ),
       ],
@@ -135,49 +205,49 @@ class _EstadoWidgetGrafico extends State<WidgetGrafico> {
 
 // Función para construir un gráfico de línea
 Widget construirGrafico(List<HistoricalData> datos) {
-  // Cálculo de valores mínimos y máximos para el eje Y
-  final double minY =
-      (datos.map((e) => e.low).reduce((a, b) => a < b ? a : b)).floorToDouble();
-  final double maxY =
-      (datos.map((e) => e.high).reduce((a, b) => a > b ? a : b)).ceilToDouble();
+  final double minY = datos.map((e) => e.low).reduce(min).floorToDouble();
+  final double maxY = datos.map((e) => e.high).reduce(max).ceilToDouble();
   final double midY = ((minY + maxY) / 2).roundToDouble();
-  final int midXIndex = (datos.length / 2).floor(); // Índice medio para el eje X
+  final int midXIndex = (datos.length / 2).floor();
 
   return LineChart(
     LineChartData(
       titlesData: FlTitlesData(
         show: true,
-        bottomTitles: SideTitles(
-          showTitles: true,
-          getTitles: (value) {
-            final int index = value.toInt();
-            if (index == 0 || index == midXIndex) {
-              final date = datos[index].date;
-              return DateFormat('yMd').format(date);
-            }
-            if (index == datos.length - 1) {
-              final date = datos[index].date;
-              return DateFormat('Md').format(date);
-            }
-            return '';
-          },
+        bottomTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            reservedSize: 30,
+            getTitlesWidget: (double value, TitleMeta meta) {
+              final index = value.toInt();
+              if (index == 0 ||
+                  index == midXIndex ||
+                  index == datos.length - 1) {
+                return Text(DateFormat('yMd').format(datos[index].date));
+              }
+              return Text('');
+            },
+          ),
         ),
-        leftTitles: SideTitles(
-          showTitles: true,
-          getTitles: (value) {
-            if (value == minY || value == maxY) {
-              return value.toInt().toString();
-            } else if (value == midY) {
-              return "AVG" + value.toInt().toString();
-            }
-            return '';
-          },
+        leftTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            getTitlesWidget: (double value, TitleMeta meta) {
+              if (value == minY || value == maxY) {
+                return Text(value.toInt().toString());
+              } else if (value == midY) {
+                return Text("AVG ${value.toInt()}");
+              }
+              return Text('');
+            },
+          ),
         ),
       ),
       borderData: FlBorderData(
         show: true,
         border: Border.all(color: const Color(0xff37434d), width: 4),
       ),
+      gridData: FlGridData(show: false),
       minX: 0,
       maxX: (datos.length.toDouble() - 1),
       minY: minY,
@@ -190,14 +260,12 @@ Widget construirGrafico(List<HistoricalData> datos) {
             return FlSpot(index.toDouble(), value.close);
           }).toList(),
           isCurved: true,
-          colors: [Colors.green],
+          color: Colors.green,
           barWidth: 4,
           isStrokeCapRound: true,
           belowBarData: BarAreaData(
             show: true,
-            colors: [
-              Color(0xFF2F8B62).withOpacity(0.6),
-            ],
+            color: const Color(0xFF2F8B62).withOpacity(0.6),
           ),
         ),
       ],
@@ -228,20 +296,14 @@ Widget construirGraficoVelas(List<HistoricalData> datos) {
 
   // Define los colores y estilos del gráfico de velas
   ChartColors coloresGrafico = ChartColors()
-        ..bgColor = [
-          Colors.white,
-          Colors.white
-        ] // Fondo blanco
-        ..defaultTextColor =
-            Colors.black // Texto negro sobre fondo blanco
-        ..gridColor =
-            Colors.grey[300]! // Color de la línea de la cuadrícula
-        ..ma5Color = Colors
-            .blueAccent // Colores para las líneas MA
-        ..ma10Color = Colors.orange
-        ..ma30Color = Colors.purple
-        ..upColor = Colors.green // Color para precios en aumento
-        ..dnColor = Colors.red; // Color para precios en descenso
+    ..bgColor = [Colors.white, Colors.white] // Fondo blanco
+    ..defaultTextColor = Colors.black // Texto negro sobre fondo blanco
+    ..gridColor = Colors.grey[300]! // Color de la línea de la cuadrícula
+    ..ma5Color = Colors.blueAccent // Colores para las líneas MA
+    ..ma10Color = Colors.orange
+    ..ma30Color = Colors.purple
+    ..upColor = Colors.green // Color para precios en aumento
+    ..dnColor = Colors.red; // Color para precios en descenso
 
   // Estilo del gráfico de velas
   ChartStyle estiloGrafico = ChartStyle()

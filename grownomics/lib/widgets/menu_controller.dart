@@ -17,6 +17,7 @@ class _MenuScreenState extends State<MenuScreen> {
   late String userEmail = "grownomicero@gmail.com";
   late String nombre = "Grownomicero";
   late String apellido = "";
+  bool _isUserLoggedIn = false;
 
   @override
   void initState() {
@@ -24,24 +25,31 @@ class _MenuScreenState extends State<MenuScreen> {
     _loadUser();
   }
 
- Future<void> _loadUser() async {
-  final prefs = await SharedPreferences.getInstance();
-  final emailObtenido = prefs.getString('userEmail') ?? userEmail;
+  Future<void> _loadUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    // Obtiene el estado de inicio de sesión directamente
+    _isUserLoggedIn = prefs.getBool('isUserLoggedIn') ?? false;
 
-  try {
-    final datos = await obtenerDatosUsuario(emailObtenido);
-    if (datos['nombre'] != null && datos['apellido'] != null) {
-      setState(() {
-        userEmail = emailObtenido;
-        nombre = datos['nombre'];
-        apellido = datos['apellido'];
-      });
+    // Solo intenta obtener los datos del usuario si está logueado
+    if (_isUserLoggedIn) {
+      final emailObtenido = prefs.getString('userEmail');
+      // Verifica si hay un correo guardado para el usuario
+      if (emailObtenido != null) {
+        try {
+          final datos = await obtenerDatosUsuario(emailObtenido);
+          if (datos['nombre'] != null && datos['apellido'] != null) {
+            setState(() {
+              userEmail = emailObtenido;
+              nombre = datos['nombre'];
+              apellido = datos['apellido'];
+            });
+          }
+        } catch (e) {
+          print('Hubo un error al obtener los datos del usuario: $e');
+        }
+      }
     }
-  } catch (e) {
-    print('Hubo un error al obtener los datos del usuario: $e');
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -67,30 +75,40 @@ class _MenuScreenState extends State<MenuScreen> {
                 _buildMenuItem(Icons.home, 'Inicio', 0),
                 _buildMenuItem(Icons.show_chart, 'Cotizaciones', 1),
                 _buildMenuItem(Icons.bar_chart, 'Análisis', 2),
-                _buildMenuItem(Icons.account_balance_wallet, 'Cartera', 3),
+                if (_isUserLoggedIn)
+                  _buildMenuItem(Icons.account_balance_wallet, 'Cartera', 3),
                 _buildMenuItem(Icons.library_books, 'Noticias', 4),
                 _buildMenuItem(Icons.school, 'Aprendizaje', 5),
-                _buildMenuItem(Icons.settings, 'Configuración', 6),
+                if (_isUserLoggedIn)
+                  _buildMenuItem(Icons.settings, 'Configuración', 6),
               ],
             ),
           ),
           Divider(
             thickness: 2,
+            color: Theme.of(context).primaryColor,
           ),
           ListTile(
-            leading: Icon(Icons.exit_to_app, color: Colors.white),
-            title: Text('Salir', style: TextStyle(color: Colors.white)),
+            leading: Icon(_isUserLoggedIn ? Icons.exit_to_app : Icons.login,
+                color: Colors.white),
+            title: Text(_isUserLoggedIn ? 'Salir' : 'Iniciar sesión',
+                style: TextStyle(color: Colors.white)),
             onTap: () async {
-              // Lógica para cerrar sesión
-              final SharedPreferences prefs =
-                  await SharedPreferences.getInstance();
-              await prefs.remove(
-                  'isUserLoggedIn'); // Borrar el estado de inicio de sesión
-              await prefs.remove('userEmail');
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/iniciar_sesion',
-                  (Route<dynamic> route) =>
-                      false); // Redirigir a la pantalla de inicio de sesión
+              if (_isUserLoggedIn) {
+                // Lógica para cerrar sesión
+                final SharedPreferences prefs =
+                    await SharedPreferences.getInstance();
+                await prefs.remove(
+                    'isUserLoggedIn'); // Borrar el estado de inicio de sesión
+                await prefs.remove('userEmail');
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/iniciar_sesion',
+                    (Route<dynamic> route) =>
+                        false); // Redirigir a la pantalla de inicio de sesión
+              } else {
+                // Lógica para navegar a la pantalla de inicio de sesión
+                Navigator.of(context).pushNamed('/iniciar_sesion');
+              }
             },
           ),
         ],

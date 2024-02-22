@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:grownomics/api/portfolioAPI.dart'; // Importa la API para obtener datos de la cartera
 import 'package:grownomics/api/recomendationAPI.dart'; // Importa la API para obtener recomendaciones
-import 'package:grownomics/widgets/tituloWidget.dart'; // Importa un widget personalizado para el título
+import 'package:grownomics/widgets/tituloWidget.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Importa un widget personalizado para el título
 
 class WidgetRecomendacion extends StatefulWidget {
   final String simbolo; // Símbolo de trading
@@ -24,6 +25,8 @@ class _WidgetRecomendacionState extends State<WidgetRecomendacion> {
   List<dynamic> estrategiasPrincipales = []; // Lista de estrategias principales
   late double balance = 0.0; // Saldo de la cartera del usuario
 
+  bool _usuarioLogueado = false;
+
   @override
   void initState() {
     super.initState();
@@ -37,8 +40,17 @@ class _WidgetRecomendacionState extends State<WidgetRecomendacion> {
     }).catchError((error) {
       print("Error al cargar recomendaciones: $error");
     });
+    _verificarUsuarioLogueado();
     cargarIndicadoresEconomicos(); // Carga los indicadores económicos
     cargarDatosCartera(); // Carga los datos de la cartera del usuario
+  }
+
+  // Método para verificar si el usuario está logueado
+  void _verificarUsuarioLogueado() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _usuarioLogueado = prefs.getBool('isUserLoggedIn') ?? false;
+    });
   }
 
   // Método para cargar los datos de la cartera
@@ -94,7 +106,9 @@ class _WidgetRecomendacionState extends State<WidgetRecomendacion> {
                   child: Column(
                     children: [
                       Container(
+                        
                         margin: EdgeInsets.all(5),
+                        
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: TabBar(
@@ -104,13 +118,10 @@ class _WidgetRecomendacionState extends State<WidgetRecomendacion> {
                                 indiceSeleccionado = index; // Actualiza el índice seleccionado
                               });
                             },
-                            indicatorColor: Color(0xFF2F8B62),
-                            labelColor: Colors.white,
+                            indicatorColor: Colors.black,
+                            labelColor: Colors.black,
                             unselectedLabelColor: Colors.black,
-                            indicator: BoxDecoration(
-                              borderRadius: BorderRadius.circular(50),
-                              color: Color(0xFF2F8B62),
-                            ),
+                            
                             tabs: estrategiasPrincipales.map<Tab>(
                               (estrategia) => Tab(
                                 text: estrategia['estrategia'], // Nombre de la estrategia
@@ -127,7 +138,7 @@ class _WidgetRecomendacionState extends State<WidgetRecomendacion> {
                         ),
                       ),
                       Container(
-                        height: MediaQuery.of(context).size.height * 0.4,
+                        height: MediaQuery.of(context).size.height * 0.5,
                         child: TabBarView(
                           children: estrategiasPrincipales.map<Widget>(
                             (estrategia) => construirTarjetaRecomendacion(estrategia), // Construye la tarjeta de recomendación para cada estrategia
@@ -152,7 +163,7 @@ class _WidgetRecomendacionState extends State<WidgetRecomendacion> {
       color: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
-        side: BorderSide(color: Colors.green, width: 2),
+        side: BorderSide(color: Colors.black, width: 2),
       ),
       child: Padding(
         padding: EdgeInsets.all(16),
@@ -182,8 +193,13 @@ class _WidgetRecomendacionState extends State<WidgetRecomendacion> {
               ),
               SizedBox(height: 8),
               if (recomendacion.containsKey('equity_final'))
+                _usuarioLogueado ? 
                 Text(
                   'Balance actual: ${balance.toStringAsFixed(2)}€',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ) :
+                Text(
+                  'Balance actual: 10.000€',
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
               Text(

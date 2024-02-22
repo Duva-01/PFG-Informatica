@@ -109,6 +109,12 @@ class _ListaTransaccionWidgetState extends State<ListaTransaccionWidget> { // Es
           padding: const EdgeInsets.symmetric(horizontal: 16.0), // Padding horizontal
           child: Center( // Centrar el botón
             child: ElevatedButton( // Botón elevado
+            style: ButtonStyle(
+                      foregroundColor: MaterialStateProperty.all<Color>(Colors
+                          .white), // Color del texto según el color primario del tema
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          Theme.of(context).primaryColor),
+                    ),
               onPressed: () { // Acción al hacer tap en el botón
                 Navigator.push( // Navegar a la página de transacciones
                   context,

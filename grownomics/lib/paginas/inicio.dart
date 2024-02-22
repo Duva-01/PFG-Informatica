@@ -40,24 +40,33 @@ class _PantallaInicioState extends State<PantallaInicio> {
 
   // Método para cargar los datos del usuario
   Future<void> _cargarUsuario() async {
-    final preferencias = await SharedPreferences.getInstance(); // Obtener preferencias del usuario
-    final emailObtenido = preferencias.getString('userEmail') ?? correoElectronico; // Obtener correo electrónico del usuario guardado en las preferencias
+  final preferencias = await SharedPreferences.getInstance();
+  final isUserLoggedIn = preferencias.getBool('isUserLoggedIn') ?? false;
 
-    try {
-      final datos = await obtenerDatosUsuario(emailObtenido); // Obtener datos del usuario
-      if (datos['nombre'] != null && datos['apellido'] != null) {
-        // Si se obtienen nombre y apellido
-        setState(() {
-          correoElectronico = emailObtenido; // Actualizar correo electrónico
-          nombre = datos['nombre']; // Actualizar nombre
-          apellido = datos['apellido']; // Actualizar apellido
-        });
+  // Solo intenta obtener los datos del usuario si está logueado
+  if (isUserLoggedIn) {
+    final emailObtenido = preferencias.getString('userEmail');
+
+    if (emailObtenido != null) {
+      try {
+        final datos = await obtenerDatosUsuario(emailObtenido);
+        if (datos != null && datos['nombre'] != null && datos['apellido'] != null) {
+          setState(() {
+            correoElectronico = emailObtenido;
+            nombre = datos['nombre'];
+            apellido = datos['apellido'];
+          });
+        }
+      } catch (e) {
+        print('Hubo un error al obtener los datos del usuario: $e');
       }
-    } catch (e) {
-      // Manejar errores al obtener datos del usuario
-      print('Hubo un error al obtener los datos del usuario: $e');
     }
+  } else {
+    // Aquí podrías establecer valores predeterminados o manejar el estado de no logueado
+    print('El usuario no ha iniciado sesión');
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

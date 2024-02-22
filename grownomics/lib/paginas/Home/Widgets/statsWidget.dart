@@ -49,7 +49,7 @@ class _StatsGridState extends State<StatsGrid> {
                 child: GridView.count( // Rejilla de cuadrícula con recuento fijo de elementos
                   physics: NeverScrollableScrollPhysics(), // Deshabilita el desplazamiento dentro de la rejilla
                   crossAxisCount: 2, // Número de elementos en el eje transversal
-                  childAspectRatio: 2, // Relación de aspecto de los elementos
+                  childAspectRatio: 1.8, // Relación de aspecto de los elementos
                   children: <Widget>[
                     StatCard( // Widget de tarjeta de estadísticas para el registro de operaciones
                       title: 'Registro de Operaciones', // Título de la tarjeta
@@ -129,7 +129,7 @@ class StatCard extends StatelessWidget {
                   amount, // Monto mostrado en la tarjeta
                   style: TextStyle(
                     color: color, // Color del texto
-                    fontSize: 18, // Tamaño de fuente 18
+                    fontSize: 14, // Tamaño de fuente 18
                     fontWeight: FontWeight.bold, // Fuente en negrita
                   ),
                   maxLines: 1, // Número máximo de líneas

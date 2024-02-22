@@ -27,7 +27,6 @@ class DatosPerfilCard extends StatefulWidget {
 }
 
 class _DatosPerfilCardState extends State<DatosPerfilCard> {
-  
   // Método para mostrar el diálogo de operación (depósito o retiro)
   void _mostrarDialogoOperacion(bool esDeposito) {
     showDialog(
@@ -35,13 +34,20 @@ class _DatosPerfilCardState extends State<DatosPerfilCard> {
       builder: (BuildContext context) {
         double cantidad = 0;
         return AlertDialog(
-          title: Text(esDeposito ? 'Depositar en Cartera' : 'Retirar de Cartera'), // Título del diálogo
+          title: Text(esDeposito
+              ? 'Depositar en Cartera'
+              : 'Retirar de Cartera'), // Título del diálogo
           content: TextField(
             onChanged: (value) {
-              cantidad = double.tryParse(value) ?? 0; // Obtener la cantidad ingresada
+              cantidad =
+                  double.tryParse(value) ?? 0; // Obtener la cantidad ingresada
             },
-            keyboardType: TextInputType.numberWithOptions(decimal: true), // Teclado numérico con decimales
-            decoration: InputDecoration(hintText: esDeposito ? "Cantidad a depositar" : "Cantidad a retirar"), // Texto de sugerencia
+            keyboardType: TextInputType.numberWithOptions(
+                decimal: true), // Teclado numérico con decimales
+            decoration: InputDecoration(
+                hintText: esDeposito
+                    ? "Cantidad a depositar"
+                    : "Cantidad a retirar"), // Texto de sugerencia
           ),
           actions: <Widget>[
             TextButton(
@@ -49,7 +55,9 @@ class _DatosPerfilCardState extends State<DatosPerfilCard> {
               onPressed: () => Navigator.of(context).pop(), // Cerrar el diálogo
             ),
             TextButton(
-              child: Text(esDeposito ? 'Depositar' : 'Retirar'), // Botón de acción (depósito o retiro)
+              child: Text(esDeposito
+                  ? 'Depositar'
+                  : 'Retirar'), // Botón de acción (depósito o retiro)
               onPressed: () async {
                 // Realizar la operación de depósito o retiro
                 bool result = esDeposito
@@ -152,21 +160,21 @@ class _DatosPerfilCardState extends State<DatosPerfilCard> {
                       children: [
                         ElevatedButton(
                           onPressed: () => _mostrarDialogoOperacion(true),
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.green, // Color de fondo verde
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
+                          style: ButtonStyle(
+                            foregroundColor: MaterialStateProperty.all<Color>(Colors
+                                .white), // Color del texto según el color primario del tema
+                            backgroundColor:
+                                MaterialStateProperty.all<Color>(Colors.green),
                           ),
                           child: Text("Depositar"), // Texto del botón
                         ),
                         ElevatedButton(
                           onPressed: () => _mostrarDialogoOperacion(false),
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.red, // Color de fondo rojo
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
+                          style: ButtonStyle(
+                            foregroundColor: MaterialStateProperty.all<Color>(Colors
+                                .white), // Color del texto según el color primario del tema
+                            backgroundColor:
+                                MaterialStateProperty.all<Color>(Colors.red),
                           ),
                           child: Text("Retirar"), // Texto del botón
                         ),

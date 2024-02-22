@@ -39,3 +39,42 @@ Future<Map<String, dynamic>> obtenerIndicadoresEconomicos(String simbolo) async 
     throw Exception('Error al cargar los indicadores económicos'); // Lanza una excepción si la solicitud falla
   }
 }
+
+// Función para obtener el análisis técnico de un símbolo específico
+Future<Map<String, dynamic>> obtenerAnalisisTecnico(String simbolo, {String intervalo = '1y'}) async {
+  // Construye la URI para la solicitud GET, incluyendo el intervalo como parámetro de consulta
+  final uri = Uri.parse('$baseUrl/recommendations/analisis_tecnico/$simbolo?intervalo=$intervalo');
+  
+  // Realiza la solicitud HTTP GET
+  final respuesta = await http.get(uri);
+
+  // Verifica el código de estado de la respuesta
+  if (respuesta.statusCode == 200) {
+    // Si la solicitud fue exitosa, decodifica el cuerpo de la respuesta
+    return json.decode(respuesta.body);
+  } else {
+    // Si la solicitud falló, lanza una excepción con el mensaje de error
+    throw Exception('Error al obtener el análisis técnico para el símbolo $simbolo');
+  }
+}
+
+// Función para obtener los códigos de ticker de todas las acciones
+Future<List<String>> obtenerCodigosTicker() async {
+  // Construye la URI para la solicitud GET
+  final uri = Uri.parse('$baseUrl/recommendations/simbolos-acciones');
+
+  // Realiza la solicitud HTTP GET
+  final respuesta = await http.get(uri);
+
+  // Verifica el código de estado de la respuesta
+  if (respuesta.statusCode == 200) {
+    // Si la solicitud fue exitosa, decodifica el cuerpo de la respuesta
+    final Map<String, dynamic> datos = json.decode(respuesta.body);
+    // Convierte la lista dinámica en una lista de strings
+    final List<String> codigosTicker = List<String>.from(datos['codigos_ticker']);
+    return codigosTicker;
+  } else {
+    // Si la solicitud falló, lanza una excepción con el mensaje de error
+    throw Exception('Error al cargar los códigos de ticker de las acciones');
+  }
+}

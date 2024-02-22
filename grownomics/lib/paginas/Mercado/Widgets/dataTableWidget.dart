@@ -16,7 +16,7 @@ class WidgetTablaDatos extends StatefulWidget {
 }
 
 class _EstadoWidgetTablaDatos extends State<WidgetTablaDatos> {
-  String _intervalo = '1wk'; // Intervalo de tiempo inicial
+  String _intervalo = '1mo'; // Intervalo de tiempo inicial
   List<HistoricalData> _datosHistoricos = []; // Lista de datos históricos
 
   @override
@@ -41,44 +41,83 @@ class _EstadoWidgetTablaDatos extends State<WidgetTablaDatos> {
         Padding(
           padding: const EdgeInsets.all(3.0),
           child: AnimatedButtonBar(
-            radius: 8.0,
-            padding: const EdgeInsets.all(8.0),
+            // Barra de botones animados para intervalos de tiempo
+            radius: 8.0, // Radio de borde de los botones
+            padding: const EdgeInsets.all(8.0), // Padding
+            backgroundColor: Colors
+                .white, // Color de fondo por defecto para todos los botones
+            foregroundColor: Theme.of(context)
+                .primaryColor, // Color de texto por defecto para todos los botones
+
             children: [
+              
               ButtonBarEntry(
+                // Entrada para el botón de 1 mes
                 onTap: () {
+                  // Acción al hacer tap
                   setState(() {
-                    _intervalo = '1wk'; // Intervalo de 1 semana
-                    _cargarDatos(); // Carga los datos con el nuevo intervalo
+                    // Actualizar estado
+                    _intervalo = '1mo'; // Cambiar intervalo a 1 mes
                   });
+                  _cargarDatos();
                 },
-                child: Text('1 Semana'),
+                child: Text(
+                  '1 mes',
+                  style: TextStyle(
+                    color: _intervalo == '1mo' ? Colors.white : Colors.black,
+                  ),
+                ), // Texto del botón
               ),
               ButtonBarEntry(
+                // Entrada para el botón de 3 meses
                 onTap: () {
+                  // Acción al hacer tap
                   setState(() {
-                    _intervalo = '1mo'; // Intervalo de 1 mes
-                    _cargarDatos(); // Carga los datos con el nuevo intervalo
+                    // Actualizar estado
+                    _intervalo = '3mo'; // Cambiar intervalo a 3 meses
                   });
+                  _cargarDatos();
                 },
-                child: Text('1 Mes'),
+                child: Text(
+                  '3 meses',
+                  style: TextStyle(
+                    color: _intervalo == '3mo' ? Colors.white : Colors.black,
+                  ),
+                ), // Texto del botón
               ),
               ButtonBarEntry(
+                // Entrada para el botón de 1 semana
                 onTap: () {
+                  // Acción al hacer tap
                   setState(() {
-                    _intervalo = '3mo'; // Intervalo de 3 meses
-                    _cargarDatos(); // Carga los datos con el nuevo intervalo
+                    // Actualizar estado
+                    _intervalo = '6mo'; // Cambiar intervalo a 1 semana
                   });
+                  _cargarDatos();
                 },
-                child: Text('3 Meses'),
+                child: Text(
+                  '6 meses',
+                  style: TextStyle(
+                    color: _intervalo == '6mo' ? Colors.white : Colors.black,
+                  ),
+                ),
               ),
               ButtonBarEntry(
+                // Entrada para el botón de 1 año
                 onTap: () {
+                  // Acción al hacer tap
                   setState(() {
-                    _intervalo = '1y'; // Intervalo de 1 año
-                    _cargarDatos(); // Carga los datos con el nuevo intervalo
+                    // Actualizar estado
+                    _intervalo = '1y'; // Cambiar intervalo a 1 año
                   });
+                  _cargarDatos();
                 },
-                child: Text('1 Año'),
+                child: Text(
+                  '1 año',
+                  style: TextStyle(
+                    color: _intervalo == '1y' ? Colors.white : Colors.black,
+                  ),
+                ), // Texto del botón
               ),
             ],
           ),

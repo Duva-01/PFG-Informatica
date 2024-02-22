@@ -30,7 +30,7 @@ class _PaginaRegistroState extends State<PaginaRegistro> {
             crossAxisAlignment: CrossAxisAlignment
                 .stretch, // Alinear los elementos horizontalmente al estiramiento
             children: <Widget>[
-              SizedBox(height: 40.0), // Espaciado vertical de 40
+              SizedBox(height: 20.0), // Espaciado vertical de 40
               Text(
                 'Crear una cuenta', // Título de la página
                 textAlign: TextAlign.center, // Alinear el texto al centro
@@ -39,7 +39,7 @@ class _PaginaRegistroState extends State<PaginaRegistro> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 60.0), // Espaciado vertical de 60
+              SizedBox(height: 10.0), // Espaciado vertical de 60
               Text(
                 'Introduzca su nombre completo:', // Instrucción para introducir el nombre completo
                 style: TextStyle(
@@ -122,6 +122,12 @@ class _PaginaRegistroState extends State<PaginaRegistro> {
               ),
               SizedBox(height: 40.0), // Espaciado vertical de 40
               ElevatedButton(
+                style: ButtonStyle(
+                      foregroundColor: MaterialStateProperty.all<Color>(Colors
+                          .white), // Color del texto según el color primario del tema
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          Theme.of(context).primaryColor),
+                    ),
                 child: Text('Registrarse'), // Texto del botón de registro
                 onPressed: () async {
                   final nombre =
@@ -164,6 +170,9 @@ class _PaginaRegistroState extends State<PaginaRegistro> {
                 },
               ),
               TextButton(
+                style: ButtonStyle(
+                      foregroundColor: MaterialStateProperty.all<Color>( Theme.of(context).primaryColor), 
+                    ),
                 child: Text(
                     '¿Ya tienes una cuenta? Inicia sesión'), // Texto del botón para iniciar sesión
                 onPressed: () {

@@ -59,13 +59,28 @@ class _PaginaCarteraState extends State<PaginaCartera> {
     // Devolver el widget de la página
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cartera'), // Título de la página
-        leading: IconButton( // Botón de menú en la barra de navegación
-          icon: Icon(Icons.menu),
+        // Barra de aplicaciones en la parte superior de la página
+        title: Text(
+          'Cartera',
+          style: TextStyle(
+            color: Colors.white, // Color del texto blanco
+          ),
+        ), // Título de la aplicación
+        centerTitle: true, // Centra el título en la barra de aplicaciones
+        leading: IconButton(
+          // Botón de menú en el lado izquierdo de la barra de aplicaciones
+          icon: Icon(Icons.menu, color: Colors.white), // Icono de menú
           onPressed: () {
-            controller?.toggle(); // Activar/desactivar el menú lateral
+            // Manejador de eventos cuando se presiona el botón de menú
+            controller
+                ?.toggle(); // Alterna el estado del ZoomDrawer (abre/cierra)
           },
         ),
+        backgroundColor: Theme.of(context)
+            .primaryColor, // Color de fondo de la AppBar según el color primario del tema
+
+        shadowColor: Colors.black,
+        elevation: 4,
       ),
       body: SingleChildScrollView( // Cuerpo de la página, desplazable verticalmente
         child: Column( // Columna que contiene los widgets secundarios

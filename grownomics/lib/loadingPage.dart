@@ -23,10 +23,10 @@ class _PaginaCargaState extends State<PaginaCarga> {
   void inicializar() async {
     SharedPreferences prefs = await SharedPreferences.getInstance(); // Obtener las preferencias compartidas
     bool isUserLoggedIn = prefs.getBool('isUserLoggedIn') ?? false; // Verificar si el usuario ha iniciado sesión anteriormente
-
+    bool isSkipped = prefs.getBool('isSkipped') ?? false; // Verificar si el usuario ha iniciado sesión anteriormente
     // Temporizador para esperar 5 segundos antes de redirigir al usuario
     Timer(Duration(seconds: 5), () {
-      if (isUserLoggedIn) {
+      if (isUserLoggedIn || isSkipped) {
         // Si el usuario está "recordado", redirigir directamente al Inicio
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => PantallaInicio()));
       } else {

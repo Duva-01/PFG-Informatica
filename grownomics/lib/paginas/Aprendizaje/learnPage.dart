@@ -29,47 +29,68 @@ class _PaginaAprendizajeState extends State<PaginaAprendizaje> { // Estado de la
     final controller = ZoomDrawer.of(context); // Obtener el controlador del cajón de navegación
 
     return Scaffold( // Estructura básica de la página
-      appBar: AppBar( // Barra de aplicación
-        title: Text('Aprendizaje de Finanzas'), // Título de la barra
-        leading: IconButton( // Botón de menú lateral
-          icon: Icon(Icons.menu), // Icono del botón
-          onPressed: () { // Acción al presionar el botón
-            controller?.toggle(); // Alternar el cajón de navegación
+      appBar: AppBar(
+        // Barra de aplicaciones en la parte superior de la página
+        title: Text(
+          'Aprendizaje de Finanzas',
+          style: TextStyle(
+            color: Colors.white, // Color del texto blanco
+          ),
+        ), // Título de la aplicación
+        centerTitle: true, // Centra el título en la barra de aplicaciones
+        leading: IconButton(
+          // Botón de menú en el lado izquierdo de la barra de aplicaciones
+          icon: Icon(Icons.menu, color: Colors.white), // Icono de menú
+          onPressed: () {
+            // Manejador de eventos cuando se presiona el botón de menú
+            controller
+                ?.toggle(); // Alterna el estado del ZoomDrawer (abre/cierra)
           },
         ),
+        backgroundColor: Theme.of(context)
+            .primaryColor, // Color de fondo de la AppBar según el color primario del tema
+
+            shadowColor: Colors.black,
+            elevation: 4,
       ),
-      body: Column( // Columna principal
-        crossAxisAlignment: CrossAxisAlignment.stretch, // Alinear elementos al inicio horizontalmente
-        children: [
-          SingleChildScrollView( // Widget para permitir el desplazamiento horizontal
-            scrollDirection: Axis.horizontal, // Dirección de desplazamiento horizontal
-            child: Row( // Fila de elementos
-              children: tematicas.map((tematica) { // Mapear cada temática a un widget de botón
-                return Padding( // Widget para aplicar padding alrededor del botón
-                  padding: EdgeInsets.symmetric(horizontal: 8.0), // Padding horizontal
-                  child: ElevatedButton( // Botón elevado para cada temática
-                    onPressed: () { // Acción al presionar el botón
-                      setState(() { // Actualizar el estado para reflejar la temática seleccionada
-                        tematicaSeleccionada = tematica; // Asignar la temática seleccionada
-                      });
-                    },
-                    style: ButtonStyle( // Estilo del botón
-                      backgroundColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) { // Resolver el color del botón basado en el estado
-                        return tematicaSeleccionada == tematica ? Color(0xFF124E2E) : Color(0xFF2F8B62)!; // Color del botón dependiendo de si está seleccionado o no
-                      }),
-                    ),
-                    child: Text(tematica), // Texto del botón
-                  ),
-                );
-              }).toList(), // Convertir el resultado del mapeo a una lista
+      body: Container(
+        color: Colors.white,
+        child: Column( // Columna principal
+          crossAxisAlignment: CrossAxisAlignment.stretch, // Alinear elementos al inicio horizontalmente
+          children: [
+            SingleChildScrollView( // Widget para permitir el desplazamiento horizontal
+              scrollDirection: Axis.horizontal, // Dirección de desplazamiento horizontal
+              child: Container(
+                margin: EdgeInsets.all(10),
+                child: Row( // Fila de elementos
+                  children: tematicas.map((tematica) { // Mapear cada temática a un widget de botón
+                    return Padding( // Widget para aplicar padding alrededor del botón
+                      padding: EdgeInsets.symmetric(horizontal: 8.0), // Padding horizontal
+                      child: ElevatedButton( // Botón elevado para cada temática
+                        onPressed: () { // Acción al presionar el botón
+                          setState(() { // Actualizar el estado para reflejar la temática seleccionada
+                            tematicaSeleccionada = tematica; // Asignar la temática seleccionada
+                          });
+                        },
+                        style: ButtonStyle( // Estilo del botón
+                          backgroundColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) { // Resolver el color del botón basado en el estado
+                            return tematicaSeleccionada == tematica ? Color(0xFF124E2E) : Color(0xFF2F8B62)!; // Color del botón dependiendo de si está seleccionado o no
+                          }),
+                        ),
+                        child: Text(tematica, style: TextStyle(color: Colors.white)), // Texto del botón
+                      ),
+                    );
+                  }).toList(), // Convertir el resultado del mapeo a una lista
+                ),
+              ),
             ),
-          ),
-          Expanded( // Widget expandido para llenar el espacio restante
-            child: ListView( // Lista de elementos
-              children: tematicaSeleccionada != null ? _buildArticulosList() : [], // Construir la lista de artículos basados en la temática seleccionada
+            Expanded( // Widget expandido para llenar el espacio restante
+              child: ListView( // Lista de elementos
+                children: tematicaSeleccionada != null ? _buildArticulosList() : [], // Construir la lista de artículos basados en la temática seleccionada
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

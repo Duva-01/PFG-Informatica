@@ -10,9 +10,12 @@ class PaginaNoticias extends StatefulWidget {
 }
 
 class _PaginaNoticiasState extends State<PaginaNoticias> {
-  late Future<List<NewsArticle>> futurasNoticias; // Futuro para almacenar la lista de noticias
-  List<NewsArticle> articulosFiltrados = []; // Lista de artículos de noticias filtrados
-  List<String> tematicas = [ // Lista de temas de noticias
+  late Future<List<NewsArticle>>
+      futurasNoticias; // Futuro para almacenar la lista de noticias
+  List<NewsArticle> articulosFiltrados =
+      []; // Lista de artículos de noticias filtrados
+  List<String> tematicas = [
+    // Lista de temas de noticias
     'Finanzas',
     'Economía',
     'Inversiones',
@@ -26,21 +29,38 @@ class _PaginaNoticiasState extends State<PaginaNoticias> {
   @override
   void initState() {
     super.initState();
-    futurasNoticias = obtenerNoticias(tematicaSeleccionada); // Inicialización de la lista de noticias con el tema seleccionado
+    futurasNoticias = obtenerNoticias(
+        tematicaSeleccionada); // Inicialización de la lista de noticias con el tema seleccionado
   }
 
   @override
   Widget build(BuildContext context) {
-    final controlador = ZoomDrawer.of(context); // Controlador para el cajón de navegación
+    final controlador =
+        ZoomDrawer.of(context); // Controlador para el cajón de navegación
     return Scaffold(
       appBar: AppBar(
-        title: Text('Noticias Financieras'), // Título de la página de noticias
+        // Barra de aplicaciones en la parte superior de la página
+        title: Text(
+          'Noticias Financieras',
+          style: TextStyle(
+            color: Colors.white, // Color del texto blanco
+          ),
+        ), // Título de la aplicación
+        centerTitle: true, // Centra el título en la barra de aplicaciones
         leading: IconButton(
-          icon: Icon(Icons.menu),
+          // Botón de menú en el lado izquierdo de la barra de aplicaciones
+          icon: Icon(Icons.menu, color: Colors.white), // Icono de menú
           onPressed: () {
-            controlador?.toggle(); // Botón del menú para abrir el cajón de navegación
+            // Manejador de eventos cuando se presiona el botón de menú
+            controlador
+                ?.toggle(); // Alterna el estado del ZoomDrawer (abre/cierra)
           },
         ),
+        backgroundColor: Theme.of(context)
+            .primaryColor, // Color de fondo de la AppBar según el color primario del tema
+
+        shadowColor: Colors.black,
+        elevation: 4,
       ),
       body: Column(
         children: [
@@ -48,12 +68,15 @@ class _PaginaNoticiasState extends State<PaginaNoticias> {
             padding: const EdgeInsets.all(8.0),
             child: TextField(
               decoration: InputDecoration(
-                labelText: 'Buscar noticias', // Etiqueta para el campo de búsqueda
+                labelText:
+                    'Buscar noticias', // Etiqueta para el campo de búsqueda
                 prefixIcon: Icon(Icons.search), // Icono de búsqueda
-                border: OutlineInputBorder(), // Estilo del borde del campo de búsqueda
+                border:
+                    OutlineInputBorder(), // Estilo del borde del campo de búsqueda
               ),
               onChanged: (value) {
-                filtrarArticulos(value); // Función para filtrar los artículos de noticias según la consulta
+                filtrarArticulos(
+                    value); // Función para filtrar los artículos de noticias según la consulta
               },
             ),
           ),
@@ -67,13 +90,15 @@ class _PaginaNoticiasState extends State<PaginaNoticias> {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: ChoiceChip(
                     label: Text(tematicas[index]), // Texto del tema de noticias
-                    selected:
-                        tematicaSeleccionada == tematicas[index].toLowerCase(), // Verifica si el tema está seleccionado
+                    selected: tematicaSeleccionada ==
+                        tematicas[index]
+                            .toLowerCase(), // Verifica si el tema está seleccionado
                     onSelected: (bool selected) {
                       setState(() {
-                        tematicaSeleccionada = tematicas[index].toLowerCase(); // Actualiza el tema seleccionado
-                        futurasNoticias =
-                            obtenerNoticias(tematicaSeleccionada); // Obtiene las noticias del nuevo tema seleccionado
+                        tematicaSeleccionada = tematicas[index]
+                            .toLowerCase(); // Actualiza el tema seleccionado
+                        futurasNoticias = obtenerNoticias(
+                            tematicaSeleccionada); // Obtiene las noticias del nuevo tema seleccionado
                       });
                     },
                     backgroundColor:
@@ -114,13 +139,20 @@ class _PaginaNoticiasState extends State<PaginaNoticias> {
               future: futurasNoticias,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator()); // Muestra un indicador de carga mientras se obtienen las noticias
+                  return Center(
+                      child:
+                          CircularProgressIndicator()); // Muestra un indicador de carga mientras se obtienen las noticias
                 } else if (snapshot.hasError) {
-                  return Center(child: Text("Error: ${snapshot.error}")); // Muestra un mensaje de error si ocurre un error al obtener las noticias
+                  return Center(
+                      child: Text(
+                          "Error: ${snapshot.error}")); // Muestra un mensaje de error si ocurre un error al obtener las noticias
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text("No hay noticias disponibles")); // Muestra un mensaje si no hay noticias disponibles
+                  return Center(
+                      child: Text(
+                          "No hay noticias disponibles")); // Muestra un mensaje si no hay noticias disponibles
                 } else {
-                  List<NewsArticle> articulos = snapshot.data!; // Lista de noticias obtenidas
+                  List<NewsArticle> articulos =
+                      snapshot.data!; // Lista de noticias obtenidas
                   return ListView.builder(
                     itemCount: articulosFiltrados.isNotEmpty
                         ? articulosFiltrados.length
@@ -128,7 +160,8 @@ class _PaginaNoticiasState extends State<PaginaNoticias> {
                     itemBuilder: (context, index) {
                       NewsArticle articulo = articulosFiltrados.isNotEmpty
                           ? articulosFiltrados[index]
-                          : articulos[index]; // Obtiene el artículo de noticias actual
+                          : articulos[
+                              index]; // Obtiene el artículo de noticias actual
                       return GestureDetector(
                         child: Card(
                           margin: EdgeInsets.all(10),
@@ -142,9 +175,11 @@ class _PaginaNoticiasState extends State<PaginaNoticias> {
                                 width: double.infinity,
                               ), // Imagen de la noticia
                               ListTile(
-                                title: Text(articulo.title), // Título de la noticia
+                                title: Text(
+                                    articulo.title), // Título de la noticia
                                 subtitle: Text(
-                                  articulo.description, // Descripción de la noticia
+                                  articulo
+                                      .description, // Descripción de la noticia
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -158,7 +193,8 @@ class _PaginaNoticiasState extends State<PaginaNoticias> {
                             MaterialPageRoute(
                               builder: (context) => WebViewArticulo(
                                 titulo: articulo.title,
-                                url: articulo.articleUrl, // URL del artículo de noticias
+                                url: articulo
+                                    .articleUrl, // URL del artículo de noticias
                               ),
                             ),
                           ); // Navegación a la vista web del artículo de noticias
@@ -176,7 +212,8 @@ class _PaginaNoticiasState extends State<PaginaNoticias> {
   }
 
   void filtrarArticulos(String consulta) async {
-    List<NewsArticle> articulos = await futurasNoticias; // Lista de noticias obtenidas
+    List<NewsArticle> articulos =
+        await futurasNoticias; // Lista de noticias obtenidas
     setState(() {
       if (consulta.isNotEmpty) {
         articulosFiltrados = articulos
@@ -198,10 +235,31 @@ class WebViewArticulo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controlador = ZoomDrawer.of(context); // Controlador para el cajón de navegación
+    final controlador =
+        ZoomDrawer.of(context); // Controlador para el cajón de navegación
     return Scaffold(
       appBar: AppBar(
-        title: Text(titulo), // Título de la página web del artículo de noticias
+        // Barra de aplicaciones en la parte superior de la página
+        title: Text(
+          titulo,
+          style: TextStyle(
+            color: Colors.white, // Color del texto blanco
+          ),
+        ), // Título de la aplicación
+        centerTitle: true, // Centra el título en la barra de aplicaciones
+        backgroundColor: Theme.of(context)
+            .primaryColor, // Color de fondo de la AppBar según el color primario del tema
+        shadowColor: Colors.black,
+        elevation: 4,
+        leading: IconButton(
+          // Widget de icono para el botón de retroceso
+          icon: Icon(Icons.arrow_back,
+              color: Colors.white), // Icono de flecha hacia atrás
+          onPressed: () {
+            // Manejador de eventos cuando se presiona el botón de retroceso
+            Navigator.of(context).pop(); // Volver atrás en la navegación
+          },
+        ),
       ),
       body: WebViewWidget(
         controller: WebViewController()..loadRequest(Uri.parse(url)),

@@ -17,16 +17,31 @@ class PaginaMercado extends StatefulWidget {
 class _PaginaMercadoState extends State<PaginaMercado> {
   @override
   Widget build(BuildContext context) {
-    final controller = ZoomDrawer.of(context); // Controlador para el cajón de navegación
+    final controlador = ZoomDrawer.of(context); // Controlador para el cajón de navegación
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cotizaciones'), // Título de la página de cotizaciones
+        // Barra de aplicaciones en la parte superior de la página
+        title: Text(
+          'Cotizaciones',
+          style: TextStyle(
+            color: Colors.white, // Color del texto blanco
+          ),
+        ), // Título de la aplicación
+        centerTitle: true, // Centra el título en la barra de aplicaciones
         leading: IconButton(
-          icon: Icon(Icons.menu),
+          // Botón de menú en el lado izquierdo de la barra de aplicaciones
+          icon: Icon(Icons.menu, color: Colors.white), // Icono de menú
           onPressed: () {
-            controller?.toggle(); // Botón del menú para abrir el cajón de navegación
+            // Manejador de eventos cuando se presiona el botón de menú
+            controlador
+                ?.toggle(); // Alterna el estado del ZoomDrawer (abre/cierra)
           },
         ),
+        backgroundColor: Theme.of(context)
+            .primaryColor, // Color de fondo de la AppBar según el color primario del tema
+
+        shadowColor: Colors.black,
+        elevation: 4,
       ),
       body: SingleChildScrollView(
         child: Column(
