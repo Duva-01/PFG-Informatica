@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:grownomics/paginas/Home/Widgets/balanceWidget.dart';
-import 'package:grownomics/paginas/Home/Widgets/statsWidget.dart';
+import 'package:grownomics/paginas/Home/Widgets/favsStockWidget.dart';
+import 'package:grownomics/paginas/Home/Widgets/lastNewsWidget.dart';
+import 'package:grownomics/paginas/Home/Widgets/marketSummaryWidget.dart';
+import 'package:grownomics/paginas/Home/Widgets/notificationPage.dart';
 import 'package:grownomics/paginas/Home/Widgets/transactionWidget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Widget de la página de inicio que muestra el resumen del usuario
 class PaginaInicio extends StatefulWidget {
@@ -16,7 +20,23 @@ class PaginaInicio extends StatefulWidget {
 }
 
 class _PaginaInicioState extends State<PaginaInicio> {
-  // Estado de la página de inicio
+  bool _isUserLoggedIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
+
+  Future<void> _loadUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isLoggedIn = prefs.getBool('isUserLoggedIn') ?? false;
+
+    // Usa setState para actualizar _isUserLoggedIn y reconstruir la UI
+    setState(() {
+      _isUserLoggedIn = isLoggedIn;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,23 +64,53 @@ class _PaginaInicioState extends State<PaginaInicio> {
                 ?.toggle(); // Alterna el estado del ZoomDrawer (abre/cierra)
           },
         ),
+
+        actions: [
+          if (_isUserLoggedIn) ...[
+            IconButton(
+              icon: Icon(Icons.notifications, color: Colors.white),
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) =>
+                      PaginaNotificaciones(correo: widget.userEmail),
+                ));
+              },
+            ),
+          ],
+        ],
+
         backgroundColor: Theme.of(context)
             .primaryColor, // Color de fondo de la AppBar según el color primario del tema
       ),
 
-      body: SingleChildScrollView(
-        // Permite desplazarse hacia arriba y hacia abajo dentro de la página si es necesario
-        child: Container(
-          // Contenedor principal de la página de inicio
-          color:
-              Color.fromARGB(255, 39, 99, 72), // Color de fondo del contenedor
-          child: Column(
-            // Columna que contiene los widgets secundarios
-            children: [
-              StatsGrid(), // Widget para mostrar estadísticas
-              
-              TransaccionesCard(), // Widget para mostrar las transacciones recientes del usuario
-            ],
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        color: Color.fromARGB(255, 39, 99, 72), // Color de fondo del contenedor
+        child: SingleChildScrollView(
+          // Permite desplazarse hacia arriba y hacia abajo dentro de la página si es necesario
+          child: Container(
+            // Contenedor principal de la página de inicio
+
+            child: Column(
+              // Columna que contiene los widgets secundarios
+              children: [
+                UltimasNoticiasWidget(
+                  userEmail: widget.userEmail,
+                ),
+                ResumenMercadoWidget(
+                  userEmail: widget.userEmail,
+                ), // Widget para mostrar estadísticas
+
+                if (_isUserLoggedIn) ...[
+                  BalanceCard(userEmail: widget.userEmail),
+                  AccionesFavoritasWidget(userEmail: widget.userEmail),
+                  Container(
+                    height: 400,
+                    child: TransaccionesCard(userEmail: widget.userEmail),
+                  ),
+                ],
+              ],
+            ),
           ),
         ),
       ),

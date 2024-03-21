@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:grownomics/api/recomendationAPI.dart';
 import 'package:grownomics/paginas/Analisis/analisisAccionPage.dart';
+import 'package:grownomics/paginas/Mercado/Widgets/marketListWidget.dart';
 import 'package:grownomics/widgets/tituloWidget.dart'; // Asegúrate de que esta importación sea correcta según la ubicación de tu API
 
 class PaginaAnalisis extends StatefulWidget {
@@ -19,8 +20,6 @@ class _PaginaAnalisisState extends State<PaginaAnalisis> {
       []; // Agregado: Lista para almacenar todos los símbolos
   List<String> _simbolosFiltrados =
       []; // Agregado: Lista para almacenar símbolos filtrados
-  String _simboloSeleccionado = '';
-  Map<String, dynamic> _resultadoAnalisis = {};
 
   @override
   void initState() {
@@ -50,27 +49,14 @@ class _PaginaAnalisisState extends State<PaginaAnalisis> {
     });
   }
 
-  void _buscarYMostrarAnalisis(String simbolo) async {
-    try {
-      final resultado = await obtenerAnalisisTecnico(simbolo);
-      setState(() {
-        _simboloSeleccionado = simbolo;
-        _resultadoAnalisis = resultado;
-      });
-    } catch (e) {
-      print("Error al obtener el análisis técnico: $e");
-      // Puedes mostrar un diálogo de error aquí
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final controller = ZoomDrawer.of(context);
+    final controlador = ZoomDrawer.of(context); // Controlador para el cajón de navegación
     return Scaffold(
       appBar: AppBar(
         // Barra de aplicaciones en la parte superior de la página
         title: Text(
-          'Analisis Técnico',
+          'Análisis de acciones',
           style: TextStyle(
             color: Colors.white, // Color del texto blanco
           ),
@@ -81,7 +67,7 @@ class _PaginaAnalisisState extends State<PaginaAnalisis> {
           icon: Icon(Icons.menu, color: Colors.white), // Icono de menú
           onPressed: () {
             // Manejador de eventos cuando se presiona el botón de menú
-            controller
+            controlador
                 ?.toggle(); // Alterna el estado del ZoomDrawer (abre/cierra)
           },
         ),
@@ -94,39 +80,11 @@ class _PaginaAnalisisState extends State<PaginaAnalisis> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: TextField(
-                controller: _controller,
-                decoration: InputDecoration(
-                  labelText: 'Buscar símbolo',
-                  suffixIcon: Icon(Icons.search),
-                ),
-                onChanged: (value) {
-                  // Agregado: Filtrar símbolos a medida que el usuario escribe
-                  _filtrarSimbolos(value);
-                },
-              ),
-            ),
-            buildTitulo("Lista de acciones"),
-            ..._simbolosFiltrados
-                .map((simbolo) => ListTile(
-                      title: Text(simbolo),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                AnalisisAccionPage(simboloAccion: simbolo),
-                          ),
-                        );
-                      },
-                    ))
-                .toList(),
-            
+            ListaMercado(correoElectronico: widget.userEmail) // Widget de lista de mercado con el correo electrónico del usuario
           ],
         ),
       ),
     );
   }
 }
+

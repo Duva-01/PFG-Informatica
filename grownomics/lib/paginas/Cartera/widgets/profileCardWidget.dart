@@ -1,23 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:grownomics/api/portfolioAPI.dart'; // Importación de API de cartera
+import 'package:grownomics/modelos/Cartera.dart'; // Importación del modelo de la cartera
 
 class DatosPerfilCard extends StatefulWidget {
   // Atributos para mostrar datos del perfil y de la cartera
-  final double balance;
+  final Cartera
+      cartera; // Usamos el modelo Cartera en lugar de variables individuales
   final double beneficio;
-  final double totalDepositado;
-  final double totalRetirado;
-  final int totalTransacciones;
   final String userEmail;
   final Function onReload; // Función para recargar datos
 
   // Constructor
   DatosPerfilCard({
-    required this.balance,
+    required this.cartera, // Usamos el modelo Cartera en lugar de variables individuales
     required this.beneficio,
-    required this.totalDepositado,
-    required this.totalRetirado,
-    required this.totalTransacciones,
     required this.userEmail,
     required this.onReload,
   });
@@ -135,7 +131,7 @@ class _DatosPerfilCardState extends State<DatosPerfilCard> {
                   // Filas de información de la cartera
                   InfoRow(
                       title: "Balance",
-                      value: "\$${widget.balance.toStringAsFixed(2)}"),
+                      value: "\$${widget.cartera.saldo.toStringAsFixed(2)}"),
                   SizedBox(height: 8),
                   InfoRow(
                       title: "Beneficio",
@@ -143,15 +139,17 @@ class _DatosPerfilCardState extends State<DatosPerfilCard> {
                   SizedBox(height: 8),
                   InfoRow(
                       title: "Total Depositado",
-                      value: "\$${widget.totalDepositado.toStringAsFixed(2)}"),
+                      value:
+                          "\$${widget.cartera.totalDepositado.toStringAsFixed(2)}"),
                   SizedBox(height: 8),
                   InfoRow(
                       title: "Total Retirado",
-                      value: "\$${widget.totalRetirado.toStringAsFixed(2)}"),
+                      value:
+                          "\$${widget.cartera.totalRetirado.toStringAsFixed(2)}"),
                   SizedBox(height: 8),
                   InfoRow(
                       title: "Total Transacciones",
-                      value: "${widget.totalTransacciones}"),
+                      value: "${widget.cartera.totalTransacciones}"),
                   // Botones para realizar operaciones (depósito o retiro)
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),

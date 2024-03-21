@@ -1,6 +1,8 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart'; // Importa el paquete de Flutter para crear interfaces de usuario
 import 'package:grownomics/api/authAPI.dart'; // Importa la API de autenticación
 import 'package:grownomics/api/marketAPI.dart'; // Importa la API del mercado
+import 'package:grownomics/paginas/Analisis/analisisAccionPage.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // Importa el paquete para manejar preferencias compartidas
 import 'package:grownomics/paginas/Mercado/stockPage.dart'; // Importa la página de detalles de acciones del mercado
 
@@ -303,8 +305,9 @@ class _ListaMercadoEstado extends State<ListaMercado> {
               0.7, // Establece la altura del contenedor al 70% del alto de la pantalla
           child: _cargando // Verifica si se están cargando datos
               ? Center(
-                  child:
-                      CircularProgressIndicator()) // Muestra un indicador de carga si se están cargando datos
+                  child: CircularProgressIndicator(
+                      color: Color(
+                          0xFF2F8B62))) // Muestra un indicador de carga si se están cargando datos
               : ListView.builder(
                   // Constructor de lista para construir una lista de widgets de manera eficiente
                   itemCount:
@@ -327,157 +330,158 @@ class _ListaMercadoEstado extends State<ListaMercado> {
                         0; // Verifica si el cambio de la acción es positivo
                     bool esFavorita = idsFavoritas.contains(
                         accion['id']); // Verifica si la acción es favorita
-                    return Container(
-                      // Widget contenedor para cada elemento de la lista
-                      margin: EdgeInsets.only(
-                          top:
-                              10), // Establece un margen en la parte superior del contenedor
-                      child: Column(
-                        // Widget Column para alinear los elementos en una columna vertical
-                        children: [
-                          // Lista de widgets hijos dentro del Column
-                          ListTile(
-                            // Widget ListTile para mostrar cada acción en la lista
-                            onTap:
-                                () {}, // Función que se ejecuta al hacer clic en la acción
-                            leading: Container(
-                              // Widget contenedor para el elemento líder (izquierda) de la lista
-                              width:
-                                  100, // Establece el ancho del contenedor líder
-                              height:
-                                  60, // Establece la altura del contenedor líder
-                              decoration: BoxDecoration(
-                                // Configuración de decoración para el contenedor líder
-                                color: Color(
-                                    0xFF2F8B62), // Color de fondo del contenedor líder
-                                borderRadius: BorderRadius.circular(
-                                    30), // Establece bordes redondeados
-                              ),
-                              child: Center(
-                                // Widget Center para alinear el texto en el centro del contenedor líder
-                                child: Text(
-                                  // Widget Text para mostrar el símbolo de la acción
-                                  '${accion['ticker_symbol'] ?? 'Desconocido'}', // Obtiene el símbolo de la acción o muestra 'Desconocido'
-                                  style: TextStyle(
-                                    // Estilo de texto para el símbolo de la acción
-                                    color: Colors.white, // Color del texto
-                                    fontWeight: FontWeight
-                                        .bold, // Establece el peso del texto como negrita
-                                    fontSize: 16,
-                                  ),
+                    return FadeInUp(
+                      child: Container(
+                        // Widget contenedor para cada elemento de la lista
+                        margin: EdgeInsets.only(
+                            top:
+                                10), // Establece un margen en la parte superior del contenedor
+                        child: Column(
+                          // Widget Column para alinear los elementos en una columna vertical
+                          children: [
+                            // Lista de widgets hijos dentro del Column
+                            ListTile(
+                              // Widget ListTile para mostrar cada acción en la lista
+                              onTap:
+                                  () {}, // Función que se ejecuta al hacer clic en la acción
+                              leading: Container(
+                                // Widget contenedor para el elemento líder (izquierda) de la lista
+                                width:
+                                    100, // Establece el ancho del contenedor líder
+                                height:
+                                    60, // Establece la altura del contenedor líder
+                                decoration: BoxDecoration(
+                                  // Configuración de decoración para el contenedor líder
+                                  color: Color(
+                                      0xFF2F8B62), // Color de fondo del contenedor líder
+                                  borderRadius: BorderRadius.circular(
+                                      30), // Establece bordes redondeados
                                 ),
-                              ),
-                            ),
-                            title: Text(
-                              // Widget Text para mostrar el nombre de la acción
-                              '${accion['name'] ?? 'Desconocido'}', // Obtiene el nombre de la acción o muestra 'Desconocido'
-                              style: TextStyle(
-                                // Estilo de texto para el nombre de la acción
-                                color: Colors.black, // Color del texto
-                                fontWeight: FontWeight
-                                    .bold, // Establece el peso del texto como negrita
-                              ),
-                            ),
-                            subtitle: Column(
-                              // Widget Column para alinear los subtítulos en una columna vertical
-                              crossAxisAlignment: CrossAxisAlignment
-                                  .start, // Alinea los subtítulos a la izquierda
-                              children: [
-                                // Lista de widgets hijos dentro del Column
-                                Text(
-                                  // Widget Text para mostrar el precio actual de la acción
-                                  '${accion['current_price']?.toStringAsFixed(2) + '€' ?? 'Desconocido'}', // Obtiene el precio actual de la acción o muestra 'Desconocido'
-                                  style: TextStyle(
-                                    // Estilo de texto para el precio actual de la acción
-                                    fontWeight: FontWeight
-                                        .bold, // Establece el peso del texto como negrita
-                                  ),
-                                ),
-                                Text(
-                                  // Widget Text para mostrar el cambio de la acción
-                                  'Cambio: ${accion['change']?.toStringAsFixed(2) ?? 'Desconocido'} ' // Obtiene el cambio de la acción o muestra 'Desconocido'
-                                  '(${accion['change_percent']?.toStringAsFixed(2) ?? 'Desconocido'}%)', // Obtiene el cambio porcentual de la acción o muestra 'Desconocido'
-                                  style: TextStyle(
-                                    // Estilo de texto para el cambio de la acción
-                                    color: esPositivo
-                                        ? Colors.green
-                                        : Colors
-                                            .red, // Establece el color del texto según el cambio positivo o negativo
-                                    fontWeight: FontWeight
-                                        .bold, // Establece el peso del texto como negrita
-                                  ),
-                                ),
-                              ],
-                            ),
-                            trailing: Row(
-                              // Widget Row para alinear los elementos secundarios (derecha) de la lista
-                              mainAxisAlignment: MainAxisAlignment
-                                  .spaceBetween, // Alinea los elementos secundarios de manera uniforme en el espacio disponible
-                              mainAxisSize: MainAxisSize
-                                  .min, // Establece el tamaño principal como mínimo
-                              children: [
-                                // Lista de widgets hijos dentro del Row
-                                GestureDetector(
-                                  // Widget GestureDetector para detectar gestos en el ícono de favorito
-                                  onTap: () => alternarFavorita(accion[
-                                      'id']), // Función que se ejecuta al hacer clic en el ícono de favorito
-                                  child: Icon(
-                                    // Widget Icon para mostrar el ícono de favorito
-                                    Icons
-                                        .star, // Ícono de estrella para indicar una acción favorita
-                                    color: esFavorita
-                                        ? Colors.yellow
-                                        : Colors
-                                            .grey, // Establece el color del ícono según la acción sea favorita o no
-                                    size: 30, // Establece el tamaño del ícono
-                                  ),
-                                ),
-                                ElevatedButton(
-                                  // Botón elevado para ver detalles de la acción
-                                  onPressed: () {
-                                    // Función que se ejecuta al presionar el botón
-                                    Navigator.push(
-                                      // Navega a la página de detalles de la acción
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => DetallesAccion(
-                                          // Constructor de la página de detalles de la acción
-                                          correoElectronico: widget
-                                              .correoElectronico, // Pasa el correo electrónico del usuario a la página de detalles
-                                          symbol: accion[
-                                              'ticker_symbol'], // Pasa el símbolo de la acción a la página de detalles
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  style: ButtonStyle(
-                                    foregroundColor:
-                                        MaterialStateProperty.all<Color>(Colors
-                                            .white), // Color del texto según el color primario del tema
-                                    backgroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                            Theme.of(context).primaryColor),
-                                  ),
+                                child: Center(
+                                  // Widget Center para alinear el texto en el centro del contenedor líder
                                   child: Text(
-                                    // Widget Text para mostrar el texto del botón
-                                    'Ver', // Texto del botón para ver detalles de la acción
+                                    // Widget Text para mostrar el símbolo de la acción
+                                    '${accion['ticker_symbol'] ?? 'Desconocido'}', // Obtiene el símbolo de la acción o muestra 'Desconocido'
                                     style: TextStyle(
-                                      // Estilo de texto para el texto del botón
+                                      // Estilo de texto para el símbolo de la acción
                                       color: Colors.white, // Color del texto
+                                      fontWeight: FontWeight
+                                          .bold, // Establece el peso del texto como negrita
+                                      fontSize: 16,
                                     ),
                                   ),
                                 ),
-                              ],
+                              ),
+                              title: Text(
+                                // Widget Text para mostrar el nombre de la acción
+                                '${accion['name'] ?? 'Desconocido'}', // Obtiene el nombre de la acción o muestra 'Desconocido'
+                                style: TextStyle(
+                                  // Estilo de texto para el nombre de la acción
+                                  color: Colors.black, // Color del texto
+                                  fontWeight: FontWeight
+                                      .bold, // Establece el peso del texto como negrita
+                                ),
+                              ),
+                              subtitle: Column(
+                                // Widget Column para alinear los subtítulos en una columna vertical
+                                crossAxisAlignment: CrossAxisAlignment
+                                    .start, // Alinea los subtítulos a la izquierda
+                                children: [
+                                  // Lista de widgets hijos dentro del Column
+                                  Text(
+                                    // Widget Text para mostrar el precio actual de la acción
+                                    '${accion['current_price']?.toStringAsFixed(2) + '€' ?? 'Desconocido'}', // Obtiene el precio actual de la acción o muestra 'Desconocido'
+                                    style: TextStyle(
+                                      // Estilo de texto para el precio actual de la acción
+                                      fontWeight: FontWeight
+                                          .bold, // Establece el peso del texto como negrita
+                                    ),
+                                  ),
+                                  Text(
+                                    // Widget Text para mostrar el cambio de la acción
+                                    'Cambio: ${accion['change']?.toStringAsFixed(2) ?? 'Desconocido'} ' // Obtiene el cambio de la acción o muestra 'Desconocido'
+                                    '(${accion['change_percent']?.toStringAsFixed(2) ?? 'Desconocido'}%)', // Obtiene el cambio porcentual de la acción o muestra 'Desconocido'
+                                    style: TextStyle(
+                                      // Estilo de texto para el cambio de la acción
+                                      color: esPositivo
+                                          ? Colors.green
+                                          : Colors
+                                              .red, // Establece el color del texto según el cambio positivo o negativo
+                                      fontWeight: FontWeight
+                                          .bold, // Establece el peso del texto como negrita
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              trailing: Row(
+                                // Widget Row para alinear los elementos secundarios (derecha) de la lista
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween, // Alinea los elementos secundarios de manera uniforme en el espacio disponible
+                                mainAxisSize: MainAxisSize
+                                    .min, // Establece el tamaño principal como mínimo
+                                children: [
+                                  // Lista de widgets hijos dentro del Row
+                                  GestureDetector(
+                                    // Widget GestureDetector para detectar gestos en el ícono de favorito
+                                    onTap: () => alternarFavorita(accion[
+                                        'id']), // Función que se ejecuta al hacer clic en el ícono de favorito
+                                    child: Icon(
+                                      // Widget Icon para mostrar el ícono de favorito
+                                      Icons
+                                          .star, // Ícono de estrella para indicar una acción favorita
+                                      color: esFavorita
+                                          ? Colors.yellow
+                                          : Colors
+                                              .grey, // Establece el color del ícono según la acción sea favorita o no
+                                      size: 30, // Establece el tamaño del ícono
+                                    ),
+                                  ),
+                                  ElevatedButton(
+                                    // Botón elevado para ver detalles de la acción
+                                    onPressed: () {
+                                      // Función que se ejecuta al presionar el botón
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              AnalisisAccionPage(
+                                            simboloAccion:
+                                                accion['ticker_symbol'],
+                                            correoElectronico:
+                                                widget.correoElectronico,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    style: ButtonStyle(
+                                      foregroundColor: MaterialStateProperty
+                                          .all<Color>(Colors
+                                              .white), // Color del texto según el color primario del tema
+                                      backgroundColor:
+                                          MaterialStateProperty.all<Color>(
+                                              Theme.of(context).primaryColor),
+                                    ),
+                                    child: Text(
+                                      // Widget Text para mostrar el texto del botón
+                                      'Ver', // Texto del botón para ver detalles de la acción
+                                      style: TextStyle(
+                                        // Estilo de texto para el texto del botón
+                                        color: Colors.white, // Color del texto
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          Divider(
-                            // Widget Divider para agregar una línea divisoria entre cada elemento de la lista
-                            thickness:
-                                2, // Establece el grosor de la línea divisoria
-                            color: Colors.green[
-                                800], // Establece el color de la línea divisoria
-                          ),
-                        ],
+                            Divider(
+                              // Widget Divider para agregar una línea divisoria entre cada elemento de la lista
+                              thickness:
+                                  2, // Establece el grosor de la línea divisoria
+                              color: Colors.green[
+                                  800], // Establece el color de la línea divisoria
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },

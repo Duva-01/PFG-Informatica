@@ -1,8 +1,9 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:grownomics/api/newsAPI.dart'; // Importación del archivo de API para obtener noticias
-import 'package:grownomics/modelos/newsArticle.dart'; // Importación del modelo de artículo de noticias
+import 'package:grownomics/modelos/NewsArticle.dart'; // Importación del modelo de artículo de noticias
 
 class PaginaNoticias extends StatefulWidget {
   @override
@@ -119,7 +120,7 @@ class _PaginaNoticiasState extends State<PaginaNoticias> {
             margin: const EdgeInsets.only(top: 10),
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Text(
-              'Mas Populares', // Título de la sección de noticias más populares
+              'Noticias de $tematicaSeleccionada', // Título de la sección de noticias más populares
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -141,7 +142,7 @@ class _PaginaNoticiasState extends State<PaginaNoticias> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
                       child:
-                          CircularProgressIndicator()); // Muestra un indicador de carga mientras se obtienen las noticias
+                          CircularProgressIndicator(color: Color(0xFF2F8B62))); // Muestra un indicador de carga mientras se obtienen las noticias
                 } else if (snapshot.hasError) {
                   return Center(
                       child: Text(
@@ -162,43 +163,45 @@ class _PaginaNoticiasState extends State<PaginaNoticias> {
                           ? articulosFiltrados[index]
                           : articulos[
                               index]; // Obtiene el artículo de noticias actual
-                      return GestureDetector(
-                        child: Card(
-                          margin: EdgeInsets.all(10),
-                          elevation: 5,
-                          child: Column(
-                            children: [
-                              Image.network(
-                                articulo.urlToImage,
-                                fit: BoxFit.cover,
-                                height: 200,
-                                width: double.infinity,
-                              ), // Imagen de la noticia
-                              ListTile(
-                                title: Text(
-                                    articulo.title), // Título de la noticia
-                                subtitle: Text(
-                                  articulo
-                                      .description, // Descripción de la noticia
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
+                      return FadeInUp(
+                        child: GestureDetector(
+                          child: Card(
+                            margin: EdgeInsets.all(10),
+                            elevation: 5,
+                            child: Column(
+                              children: [
+                                Image.network(
+                                  articulo.urlToImage,
+                                  fit: BoxFit.cover,
+                                  height: 200,
+                                  width: double.infinity,
+                                ), // Imagen de la noticia
+                                ListTile(
+                                  title: Text(
+                                      articulo.title), // Título de la noticia
+                                  subtitle: Text(
+                                    articulo
+                                        .description, // Descripción de la noticia
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => WebViewArticulo(
+                                  titulo: articulo.title,
+                                  url: articulo
+                                      .articleUrl, // URL del artículo de noticias
                                 ),
                               ),
-                            ],
-                          ),
+                            ); // Navegación a la vista web del artículo de noticias
+                          },
                         ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => WebViewArticulo(
-                                titulo: articulo.title,
-                                url: articulo
-                                    .articleUrl, // URL del artículo de noticias
-                              ),
-                            ),
-                          ); // Navegación a la vista web del artículo de noticias
-                        },
                       );
                     },
                   );

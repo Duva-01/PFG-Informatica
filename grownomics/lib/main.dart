@@ -4,9 +4,26 @@ import 'package:grownomics/logins/registerPage.dart';
 import 'package:grownomics/logins/welcomePage.dart';
 import 'package:grownomics/paginas/inicio.dart';
 import 'package:grownomics/logins/loginPage.dart';
-import 'package:dcdg/dcdg.dart'; // Esto sirve para crearme los diagramas UML automaticamente
+import 'package:grownomics/socketService.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:dcdg/dcdg.dart'; // Esto sirve para crearme los diagramas UML automaticamente
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final isUserLoggedIn = prefs.getBool('isUserLoggedIn') ?? false;
+  await initializeDateFormatting('es', null);
+  
+  if (isUserLoggedIn) {
+    final correoElectronico = prefs.getString('userEmail') ?? '';
+    // Iniciar conexión WebSocket aquí
+    final socketService =
+        SocketService(); // Asume que tienes una instancia de tu servicio de socket
+    socketService.connectAndListen(
+        correoElectronico); // Modifica tu método para aceptar el correo como parámetro
+  }
+
   runApp(MyApp());
 }
 
@@ -35,14 +52,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: primarySwatch,
         primaryColor: Color(0xFF2F8B62),
-
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
 
       initialRoute: '/', // Ruta inicial de la aplicación
       routes: {
         // Definir rutas y asignar widgets a cada ruta
-        // Ruta inicial que muestra la página de LoadingPage.
+        // Ruta inicial que muestra la página de PaginaCarga.
         '/': (context) => PaginaCarga(),
 
         // Páginas de inicio de sesión y registro
@@ -50,7 +66,7 @@ class MyApp extends StatelessWidget {
         '/iniciar_sesion': (context) => PaginaInicioSesion(),
         '/registrar': (context) => PaginaRegistro(),
 
-        // Ruta '/home' que muestra la página MyHomeScreen.
+        // Ruta '/home' que muestra la página PantallaInicio.
         '/home': (context) => PantallaInicio(),
       },
     );

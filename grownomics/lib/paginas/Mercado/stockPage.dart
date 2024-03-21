@@ -179,7 +179,7 @@ class _DetallesAccionEstado extends State<DetallesAccion> {
                       ],
                     )
                   : WidgetTablaDatos(
-                      symbol: widget
+                      simboloAccion: widget
                           .symbol), // Muestra la tabla de datos para el símbolo de la acción
             ),
     );

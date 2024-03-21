@@ -1,106 +1,128 @@
-import 'package:flutter/material.dart'; // Importar el paquete flutter material
-import 'package:grownomics/api/portfolioAPI.dart'; // Importar API para información de cartera
-import 'package:intl/intl.dart'; // Importar paquete para formato de fechas
+import 'package:flutter/material.dart';
+import 'package:grownomics/api/portfolioAPI.dart';
+import 'package:grownomics/modelos/Transaccion.dart';
+import 'package:grownomics/widgets/tituloWidget.dart';
+import 'package:intl/intl.dart';
 
-class PaginaTransaccion extends StatefulWidget { // Página para mostrar todas las transacciones
-  final String userEmail; // Email del usuario
+class PaginaTransaccion extends StatefulWidget {
+  final String userEmail;
 
-  PaginaTransaccion({required this.userEmail}); // Constructor
+  PaginaTransaccion({required this.userEmail});
 
   @override
-  _PaginaTransaccionState createState() => _PaginaTransaccionState(); // Crear estado de la página
+  _PaginaTransaccionState createState() => _PaginaTransaccionState();
 }
 
-class _PaginaTransaccionState extends State<PaginaTransaccion> { // Estado de la página
-  late Future<List<dynamic>> _transaccionesFuturas; // Futuro para obtener las transacciones
+class _PaginaTransaccionState extends State<PaginaTransaccion> {
+  late Future<List<Transaccion>> _transaccionesFuturas;
 
   @override
-  void initState() { // Inicialización del estado
-    super.initState(); // Llamar al método initState de la clase base
-    _transaccionesFuturas = obtenerTransaccionesUsuario(widget.userEmail); // Obtener transacciones del usuario
+  void initState() {
+    super.initState();
+    _transaccionesFuturas = obtenerTransaccionesUsuario(widget.userEmail)
+        .then((data) => data.map<Transaccion>((json) => Transaccion.fromJson(json)).toList());
   }
 
   @override
-  Widget build(BuildContext context) { // Construir la página
-    return Scaffold( // Estructura básica de la página
+  Widget build(BuildContext context) {
+    return Scaffold(
       appBar: AppBar(
-    // Barra de aplicaciones en la parte superior de la página
-    title: Text(
-      "Todas mis transacciones",
-      style: TextStyle(
-        color: Colors.white, // Color del texto blanco
+        title: Text(
+          "Todas mis transacciones",
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: Theme.of(context).primaryColor,
+        shadowColor: Colors.black,
+        elevation: 4,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
       ),
-    ), // Título de la aplicación
-    centerTitle: true, // Centra el título en la barra de aplicaciones
-    backgroundColor:
-        Theme.of(context).primaryColor, // Color de fondo de la AppBar según el color primario del tema
-    shadowColor: Colors.black,
-    elevation: 4,
-    leading: IconButton(
-      // Widget de icono para el botón de retroceso
-      icon: Icon(Icons.arrow_back, color: Colors.white), // Icono de flecha hacia atrás
-      onPressed: () {
-        // Manejador de eventos cuando se presiona el botón de retroceso
-        Navigator.of(context).pop(); // Volver atrás en la navegación
-      },
-    ),
-  ),
-      body: FutureBuilder<List<dynamic>>( // Constructor futuro para construir basado en datos futuros
-        future: _transaccionesFuturas, // Futuro para obtener transacciones
-        builder: (context, snapshot) { // Constructor de contenido basado en el estado del futuro
-          if (snapshot.hasData) { // Si hay datos disponibles
-            // Ordenar las transacciones por fecha de forma descendente
-            snapshot.data!.sort((a, b) { // Ordenar las transacciones
-              DateTime fechaA = DateTime.parse(a['fecha']); // Convertir fecha de transacción a DateTime
-              DateTime fechaB = DateTime.parse(b['fecha']); // Convertir fecha de transacción a DateTime
-              return fechaB.compareTo(fechaA); // Ordenar descendente
+      body: FutureBuilder<List<Transaccion>>(
+        future: _transaccionesFuturas,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Text("Error: ${snapshot.error}");
+          } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+            List<Transaccion> transaccionesOrdenadas = snapshot.data!;
+            transaccionesOrdenadas.sort((a, b) => b.fecha.compareTo(a.fecha));
+
+            // Agrupar las transacciones por fecha
+            Map<String, List<Transaccion>> groupedTransacciones = {};
+            transaccionesOrdenadas.forEach((transaccion) {
+              final fechaString = DateFormat('dd MMMM yyyy', 'es').format(transaccion.fecha);
+              groupedTransacciones.putIfAbsent(fechaString, () => []).add(transaccion);
             });
 
-            return ListView.builder( // Constructor de lista con elementos generados bajo demanda
-              shrinkWrap: true, // Reducir el tamaño de la lista para que se ajuste al contenido
-              physics: NeverScrollableScrollPhysics(), // Deshabilitar el desplazamiento
-              itemCount: snapshot.data!.length.clamp(0, 5), // Limitar el número de elementos a mostrar a 5
-              itemBuilder: (context, index) { // Constructor de cada elemento de la lista
-                var transaccion = snapshot.data![index]; // Transacción actual
-                double valorTotal = double.parse(transaccion['cantidad'].toString()) * double.parse(transaccion['precio'].toString()); // Calcular el valor total de la transacción
-                return Padding( // Padding alrededor del elemento de la lista
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0), // Padding horizontal
-                  child: Column( // Columna de elementos
-                    children: [
-                      ListTile( // Elemento de lista con título, subtítulo y contenido secundario
-                        title: Text( // Título de la transacción
-                          transaccion['accion'], // Nombre de la acción
-                          style: TextStyle( // Estilo del texto
-                            fontWeight: FontWeight.bold, // Peso de la fuente
-                            fontSize: 16, // Tamaño de la fuente
+            return ListView.builder(
+              itemCount: groupedTransacciones.length,
+              itemBuilder: (context, index) {
+                final fecha = groupedTransacciones.keys.elementAt(index);
+                final transacciones = groupedTransacciones[fecha]!;
+
+                return Column(
+                  children: [
+                    ListTile(
+                      title: buildTitulo("$fecha"),
+                      onTap: () {}, // Si deseas agregar alguna acción al tocar la fecha
+                    ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: transacciones.length,
+                      itemBuilder: (context, index) {
+                        Transaccion transaccion = transacciones[index];
+
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Column(
+                            children: [
+                              ListTile(
+                                title: Text(
+                                  transaccion.accion,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  "${transaccion.tipo} - ${DateFormat('yyyy/MM/dd').format(transaccion.fecha)} - ${transaccion.cantidad} uds x ${transaccion.precio.toStringAsFixed(2)}",
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                                trailing: Text(
+                                  "Total: ${transaccion.valorTotal.toStringAsFixed(2)} €",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                              Divider(
+                                color: Colors.grey[300],
+                                thickness: 1,
+                                height: 0,
+                              ),
+                            ],
                           ),
-                        ),
-                        subtitle: Text( // Subtítulo de la transacción
-                          "${transaccion['tipo']} - ${DateFormat('yyyy/MM/dd').format(DateTime.parse(transaccion['fecha']))} - ${transaccion['cantidad']} uds x ${transaccion['precio'].toStringAsFixed(2)}", // Detalles de la transacción
-                          style: TextStyle(fontSize: 14), // Estilo del texto
-                        ),
-                        trailing: Text( // Contenido secundario al final del elemento
-                          "Total: ${valorTotal.toStringAsFixed(2)} €", // Valor total de la transacción
-                          style: TextStyle( // Estilo del texto
-                            fontWeight: FontWeight.bold, // Peso de la fuente
-                            fontSize: 16, // Tamaño de la fuente
-                          ),
-                        ),
-                      ),
-                      Divider( // Divisor entre elementos de la lista
-                        color: Colors.grey[300], // Color
-                        thickness: 1, // Grosor
-                        height: 0, // Altura
-                      ),
-                    ],
-                  ),
+                        );
+                      },
+                    ),
+                  ],
                 );
               },
             );
-          } else if (snapshot.hasError) { // Si hay un error
-            return Text("Error al cargar transacciones"); // Mostrar mensaje de error
+          } else if (snapshot.hasError) {
+            return Text("Error al cargar transacciones");
           }
-          return CircularProgressIndicator(); // Mostrar indicador de carga
+          return CircularProgressIndicator();
         },
       ),
     );

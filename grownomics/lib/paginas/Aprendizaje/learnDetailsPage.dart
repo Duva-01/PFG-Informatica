@@ -1,71 +1,44 @@
-import 'package:flutter/material.dart'; // Importar el paquete flutter material
+import 'package:flutter/material.dart';
+import 'package:markdown_viewer/markdown_viewer.dart';
 
-class PaginaDetallesAprendizaje extends StatelessWidget { // Página de detalles de aprendizaje
+class PaginaDetallesAprendizaje extends StatelessWidget {
   final String title; // Título del artículo
-  final String description; // Descripción del artículo
+  final String markdownContent; // Contenido del artículo en Markdown
 
-  const PaginaDetallesAprendizaje({ // Constructor
-    Key? key, // Llave opcional para identificar el widget
-    required this.title, // Título requerido del artículo
-    required this.description, // Descripción requerida del artículo
-  }) : super(key: key); // Llamar al constructor de la clase base con la llave
+  const PaginaDetallesAprendizaje({
+    Key? key,
+    required this.title,
+    required this.markdownContent,
+  }) : super(key: key);
+
+  String ajustarMarkdown(String texto) {
+  String textoAjustado = texto.replaceAll(r'\n', '\n');
+  return textoAjustado;
+}
 
   @override
-  Widget build(BuildContext context) { // Construir la página
+  Widget build(BuildContext context) {
     return Scaffold(
-  // Estructura básica de la página
-  appBar: AppBar(
-    // Barra de aplicaciones en la parte superior de la página
-    title: Text(
-      title,
-      style: TextStyle(
-        color: Colors.white, // Color del texto blanco
+      appBar: AppBar(
+        title: Text(title, style: TextStyle(color: Colors.white)),
+        centerTitle: true,
+        backgroundColor: Theme.of(context).primaryColor,
+        shadowColor: Colors.black,
+        elevation: 4,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
-    ), // Título de la aplicación
-    centerTitle: true, // Centra el título en la barra de aplicaciones
-    backgroundColor:
-        Theme.of(context).primaryColor, // Color de fondo de la AppBar según el color primario del tema
-    shadowColor: Colors.black,
-    elevation: 4,
-    leading: IconButton(
-      // Widget de icono para el botón de retroceso
-      icon: Icon(Icons.arrow_back, color: Colors.white), // Icono de flecha hacia atrás
-      onPressed: () {
-        // Manejador de eventos cuando se presiona el botón de retroceso
-        Navigator.of(context).pop(); // Volver atrás en la navegación
-      },
-    ),
-  ),
-  body: Padding(
-    // Widget para aplicar padding alrededor del contenido principal
-    padding: const EdgeInsets.all(16.0), // Padding de 16 en todos los lados
-    child: Column(
-      // Columna de elementos
-      crossAxisAlignment: CrossAxisAlignment.start,
-      // Alinear los elementos al inicio horizontalmente
-      children: [
-        Text(
-          // Widget de texto para mostrar el título del artículo
-          title, // Título del artículo
-          style: TextStyle(
-            // Estilo del texto
-            fontSize: 24, // Tamaño de la fuente
-            fontWeight: FontWeight.bold, // Peso de la fuente
+      body: SingleChildScrollView( 
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: MarkdownViewer(
+            ajustarMarkdown(markdownContent),
+            enableTaskList: true, // Habilita o deshabilita las características según tus necesidades
           ),
         ),
-        SizedBox(height: 16), // Espacio vertical de 16
-        Text(
-          // Widget de texto para mostrar la descripción del artículo
-          description, // Descripción del artículo
-          style: TextStyle(
-            // Estilo del texto
-            fontSize: 18, // Tamaño de la fuente
-          ),
-        ),
-      ],
-    ),
-  ),
-);
+      ),
+    );
   }
-
 }

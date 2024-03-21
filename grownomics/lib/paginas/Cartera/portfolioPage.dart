@@ -1,6 +1,8 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:grownomics/api/portfolioAPI.dart';
+import 'package:grownomics/modelos/Cartera.dart'; // Importa el modelo de la cartera
 import 'package:grownomics/paginas/Cartera/widgets/balanceHistoryWidget.dart';
 import 'package:grownomics/paginas/Cartera/widgets/profileCardWidget.dart';
 import 'package:grownomics/paginas/Cartera/widgets/transactionListWidget.dart';
@@ -17,13 +19,11 @@ class PaginaCartera extends StatefulWidget {
 }
 
 class _PaginaCarteraState extends State<PaginaCartera> {
-  // Variables para almacenar datos de la cartera
-  late double balance = 0.0;
+  // Variable para almacenar datos de la cartera
+  late Cartera cartera;
+  // Variable para almacenar el beneficio
   late double beneficio = 0.0;
-  late int totalTransacciones = 0;
-  late double totalDepositado = 0.0;
-  late double totalRetirado = 0.0;
-  late List<String> transactions = [""];
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -35,18 +35,23 @@ class _PaginaCarteraState extends State<PaginaCartera> {
   // Método para cargar los datos de la cartera
   void cargarDatosCartera() async {
     try {
-      // Obtener datos de la cartera y calcular el beneficio
+      // Obtener datos de la cartera
       final datosCartera = await obtenerCartera(widget.userEmail);
+      // Convertir los datos a un objeto de tipo Cartera
+      final carteraDatos = Cartera.fromJson(datosCartera);
+      // Calcular el beneficio
       final beneficioCalculado = await calcularBeneficio(widget.userEmail);
-      // Actualizar el estado con los datos obtenidos
+      // Actualizar el estado con los datos de la cartera y el beneficio obtenidos
       setState(() {
-        balance = datosCartera['saldo'];
+        cartera = carteraDatos;
         beneficio = beneficioCalculado;
-        totalDepositado = datosCartera['total_depositado'];
-        totalRetirado = datosCartera['total_retirado'];
-        totalTransacciones = datosCartera['total_transacciones'];
+        isLoading = false; // Indica que la carga ha terminado
       });
     } catch (e) {
+      setState(() {
+        isLoading =
+            false; // Asegura que isLoading se actualice incluso si hay un error
+      });
       // Manejar errores al cargar los datos de la cartera
       print("Error al cargar los datos de la cartera: $e");
     }
@@ -82,26 +87,35 @@ class _PaginaCarteraState extends State<PaginaCartera> {
         shadowColor: Colors.black,
         elevation: 4,
       ),
-      body: SingleChildScrollView( // Cuerpo de la página, desplazable verticalmente
-        child: Column( // Columna que contiene los widgets secundarios
-          children: [
-            // Tarjeta de perfil que muestra información del usuario y la cartera
-            DatosPerfilCard(
-              userEmail: widget.userEmail,
-              balance: balance,
-              beneficio: beneficio,
-              totalDepositado: totalDepositado,
-              totalRetirado: totalRetirado,
-              totalTransacciones: totalTransacciones,
-              onReload: cargarDatosCartera, // Función de recarga de datos
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                  color: Color(
+                      0xFF2F8B62))) // Muestra el indicador de carga si isLoading es true
+          : SingleChildScrollView(
+              // Cuerpo de la página, desplazable verticalmente
+              child: Column(
+                // Columna que contiene los widgets secundarios
+                children: [
+                  // Tarjeta de perfil que muestra información del usuario y la cartera
+                  BounceInDown(
+                    child: DatosPerfilCard(
+                      userEmail: widget.userEmail,
+                      cartera: cartera, // Pasar la cartera al widget
+                      beneficio: beneficio, // Pasar el beneficio al widget
+                      onReload:
+                          cargarDatosCartera, // Función de recarga de datos
+                    ),
+                  ),
+                  // Widget de historial de balance
+                  FadeInUp(child: HistorialWidget(userEmail: widget.userEmail)),
+                  // Widget de lista de transacciones
+                  FadeInUp(
+                      child:
+                          ListaTransaccionWidget(userEmail: widget.userEmail)),
+                ],
+              ),
             ),
-            // Widget de historial de balance
-            HistorialWidget(userEmail: widget.userEmail),
-            // Widget de lista de transacciones
-            ListaTransaccionWidget(userEmail: widget.userEmail),
-          ],
-        ),
-      ),
     );
   }
 }

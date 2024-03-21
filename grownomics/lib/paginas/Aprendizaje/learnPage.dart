@@ -1,122 +1,168 @@
-import 'package:flutter/material.dart'; // Importar el paquete flutter material
-import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart'; // Importar paquete para cajón de navegación
-import 'package:grownomics/paginas/Aprendizaje/learnDetailsPage.dart'; // Importar página de detalles de aprendizaje
+import 'package:flutter/material.dart';
+import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
+import 'package:grownomics/api/articlesAPI.dart'; // Importa el API para obtener los artículos
+import 'package:grownomics/modelos/Articulo.dart'; // Importa el modelo de datos del artículo
+import 'package:grownomics/paginas/Aprendizaje/Widgets/tutorialPage.dart'; // Importa la página de tutorial
+import 'package:grownomics/paginas/Aprendizaje/learnDetailsPage.dart'; // Importa la página de detalles del artículo
 
-class PaginaAprendizaje extends StatefulWidget { // Página principal de aprendizaje
+class PaginaAprendizaje extends StatefulWidget {
   @override
-  _PaginaAprendizajeState createState() => _PaginaAprendizajeState(); // Crear estado de la página
+  _PaginaAprendizajeState createState() =>
+      _PaginaAprendizajeState(); // Crea el estado de la página de aprendizaje
 }
 
-class _PaginaAprendizajeState extends State<PaginaAprendizaje> { // Estado de la página
-  final List<String> tematicas = [ // Lista de temáticas disponibles
+class _PaginaAprendizajeState extends State<PaginaAprendizaje> {
+  final List<String> tematicas = [
+    'Manual de Uso',
     'Introducción a las Finanzas',
     'Inversiones',
-    'Economía',
-    'Criptomonedas',
-    'Análisis de Mercado',
-    'Planificación Financiera',
-  ];
-  String? tematicaSeleccionada; // Temática seleccionada
+    'Economía'
+  ]; // Lista de temáticas
+  Map<String, List<Articulo>> articulosPorSeccion =
+      {}; // Mapa de artículos por sección
 
   @override
-  void initState() { // Inicialización del estado
-    super.initState(); // Llamar al método initState de la clase base
-    tematicaSeleccionada = tematicas.first; // Asignar la primera temática por defecto
+  void initState() {
+    super.initState();
+    cargarArticulos(); // Carga los artículos al inicializar la página
   }
 
-  @override
-  Widget build(BuildContext context) { // Construir la página
-    final controller = ZoomDrawer.of(context); // Obtener el controlador del cajón de navegación
+  void cargarArticulos() async {
+    List<Articulo> articulosObtenidos =
+        await obtenerArticulos(); // Obtiene los artículos del API
 
-    return Scaffold( // Estructura básica de la página
-      appBar: AppBar(
-        // Barra de aplicaciones en la parte superior de la página
-        title: Text(
-          'Aprendizaje de Finanzas',
-          style: TextStyle(
-            color: Colors.white, // Color del texto blanco
+    // Agrupa los artículos por sección
+    for (var articulo in articulosObtenidos) {
+      articulosPorSeccion.update(
+          articulo.seccion, (list) => list..add(articulo),
+          ifAbsent: () => [articulo]);
+    }
+
+    setState(() {});
+  }
+
+  String mapearTematicaASeccion(String? tematica) {
+    // Mapea la temática a la sección correspondiente
+    switch (tematica) {
+      case 'Introducción a las Finanzas':
+        return 'IntroFinanzas';
+      case 'Inversiones':
+        return 'Inversion';
+      case 'Economía':
+        return 'Economia';
+      default:
+        return 'IntroFinanzas';
+    }
+  }
+
+  // Construye el widget de la tarjeta de artículo
+  Widget _buildArticleCard(Articulo articulo) {
+    return InkWell(
+      onTap: () {
+        // Navega a la página de detalles del artículo al hacer clic en la tarjeta
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PaginaDetallesAprendizaje(
+              title: articulo.titulo,
+              markdownContent: articulo.contenido,
+            ),
           ),
-        ), // Título de la aplicación
-        centerTitle: true, // Centra el título en la barra de aplicaciones
-        leading: IconButton(
-          // Botón de menú en el lado izquierdo de la barra de aplicaciones
-          icon: Icon(Icons.menu, color: Colors.white), // Icono de menú
-          onPressed: () {
-            // Manejador de eventos cuando se presiona el botón de menú
-            controller
-                ?.toggle(); // Alterna el estado del ZoomDrawer (abre/cierra)
-          },
-        ),
-        backgroundColor: Theme.of(context)
-            .primaryColor, // Color de fondo de la AppBar según el color primario del tema
-
-            shadowColor: Colors.black,
-            elevation: 4,
-      ),
-      body: Container(
-        color: Colors.white,
-        child: Column( // Columna principal
-          crossAxisAlignment: CrossAxisAlignment.stretch, // Alinear elementos al inicio horizontalmente
-          children: [
-            SingleChildScrollView( // Widget para permitir el desplazamiento horizontal
-              scrollDirection: Axis.horizontal, // Dirección de desplazamiento horizontal
-              child: Container(
-                margin: EdgeInsets.all(10),
-                child: Row( // Fila de elementos
-                  children: tematicas.map((tematica) { // Mapear cada temática a un widget de botón
-                    return Padding( // Widget para aplicar padding alrededor del botón
-                      padding: EdgeInsets.symmetric(horizontal: 8.0), // Padding horizontal
-                      child: ElevatedButton( // Botón elevado para cada temática
-                        onPressed: () { // Acción al presionar el botón
-                          setState(() { // Actualizar el estado para reflejar la temática seleccionada
-                            tematicaSeleccionada = tematica; // Asignar la temática seleccionada
-                          });
-                        },
-                        style: ButtonStyle( // Estilo del botón
-                          backgroundColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) { // Resolver el color del botón basado en el estado
-                            return tematicaSeleccionada == tematica ? Color(0xFF124E2E) : Color(0xFF2F8B62)!; // Color del botón dependiendo de si está seleccionado o no
-                          }),
-                        ),
-                        child: Text(tematica, style: TextStyle(color: Colors.white)), // Texto del botón
-                      ),
-                    );
-                  }).toList(), // Convertir el resultado del mapeo a una lista
-                ),
+        );
+      },
+      child: Card(
+        margin: EdgeInsets.all(8),
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.network(articulo.imageUrl,
+                  fit: BoxFit.cover), // Imagen del artículo
+              SizedBox(height: 8),
+              Text(
+                articulo.titulo, // Título del artículo
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-            ),
-            Expanded( // Widget expandido para llenar el espacio restante
-              child: ListView( // Lista de elementos
-                children: tematicaSeleccionada != null ? _buildArticulosList() : [], // Construir la lista de artículos basados en la temática seleccionada
+              SizedBox(height: 8),
+              Text(
+                articulo.resumen, // Resumen del artículo
+                style: TextStyle(fontSize: 14),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  List<Widget> _buildArticulosList() { // Método para construir la lista de artículos
-    
-    return List<Widget>.generate(10, (index) { // Generar una lista de 10 widgets
-      return Card( // Widget de tarjeta para cada artículo
-        child: ListTile( // Widget de elemento de lista para mostrar información del artículo
-          title: Text('Artículo $index sobre $tematicaSeleccionada'), // Título del artículo
-          subtitle: Text( // Subtítulo del artículo
-              'Descripción del artículo $index sobre $tematicaSeleccionada'), // Descripción del artículo
-          onTap: () { // Acción al presionar el elemento de lista (navegar a la página de detalles del artículo)
-            // Navegar a la página de detalle del artículo
-            Navigator.push( // Método para navegar a una nueva ruta
-              context,
-              MaterialPageRoute( // Constructor de ruta para la navegación
-                builder: (context) => PaginaDetallesAprendizaje( // Constructor de la página de detalles del artículo
-                    title: "Artículo $index", // Título del artículo
-                    description:
-                        "Detalles del artículo $index sobre $tematicaSeleccionada"), // Descripción del artículo
-              ),
-            );
-          },
+  @override
+  Widget build(BuildContext context) {
+    final controller =
+        ZoomDrawer.of(context); // Controlador para manejar el ZoomDrawer
+
+    return DefaultTabController(
+      length: tematicas.length, // Número de pestañas en el TabBar
+      child: Scaffold(
+        appBar: AppBar(
+          // Barra de aplicaciones en la parte superior de la página
+          title: Text(
+            'Aprendizaje',
+            style: TextStyle(
+              color: Colors.white, // Color del texto blanco
+            ),
+          ), // Título de la aplicación
+          centerTitle: true, // Centra el título en la barra de aplicaciones
+          leading: IconButton(
+            // Botón de menú en el lado izquierdo de la barra de aplicaciones
+            icon: Icon(Icons.menu, color: Colors.white), // Icono de menú
+            onPressed: () {
+              // Manejador de eventos cuando se presiona el botón de menú
+              controller
+                  ?.toggle(); // Alterna el estado del ZoomDrawer (abre/cierra)
+            },
+          ),
+          shadowColor: Colors.black, // Color de la sombra
+          backgroundColor: Theme.of(context)
+              .primaryColor, // Color de fondo de la AppBar según el color primario del tema
+          bottom: TabBar(
+            // Añade el TabBar al fondo de la AppBar
+            isScrollable: true, // Permite que los tabs sean desplazables
+            tabs: tematicas
+                .map((tematica) => Tab(text: tematica))
+                .toList(), // Genera las pestañas a partir de la lista de temáticas
+            indicatorColor: Colors.white, // Color del indicador
+            labelColor: Colors.white, // Color del texto del tab seleccionado
+            unselectedLabelColor:
+                Colors.green[200], // Color del texto del tab no seleccionado
+          ),
         ),
-      );
-    });
+        body: TabBarView(
+          // Contenido de las pestañas
+
+          children: tematicas.map((tematica) {
+            if (tematica == 'Manual de Uso') {
+              return PaginaTutorial(); // Devuelve la página de tutorial si la temática es "Manual de Uso"
+            } else {
+              List<Articulo>? articulosDeSeccion = articulosPorSeccion[
+                  mapearTematicaASeccion(
+                      tematica)]; // Obtiene los artículos de la sección correspondiente
+              return articulosDeSeccion != null
+                  ? ListView(
+                      // Devuelve una ListView con los artículos si existen
+                      children: articulosDeSeccion
+                          .map((articulo) => _buildArticleCard(articulo))
+                          .toList(),
+                    )
+                  : Center(
+                      child: Text(
+                          'No hay artículos disponibles')); // Muestra un mensaje si no hay artículos disponibles
+            }
+          }).toList(),
+        ),
+      ),
+    );
   }
 }

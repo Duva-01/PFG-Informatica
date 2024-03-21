@@ -13,3 +13,7 @@ flask-restplus
 backtesting
 TA-Lib
 numpy
+statsmodels  
+Flask-Mail
+Flask-APScheduler
+Flask-SocketIO>=3.0.0

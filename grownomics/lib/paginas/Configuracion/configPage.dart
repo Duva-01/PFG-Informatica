@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
+import 'package:grownomics/paginas/Configuracion/widgets/aboutUsPage.dart';
+import 'package:grownomics/paginas/Configuracion/widgets/editProfilePage.dart';
+import 'package:grownomics/paginas/Configuracion/widgets/privacyPolicyPage.dart';
+import 'package:grownomics/paginas/Configuracion/widgets/termsConditionsPage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PaginaConfiguracion extends StatefulWidget {
   // Atributos de la clase
@@ -8,8 +13,11 @@ class PaginaConfiguracion extends StatefulWidget {
   final String apellido;
 
   // Constructor
-  PaginaConfiguracion(
-      {required this.userEmail, required this.nombre, required this.apellido});
+  PaginaConfiguracion({
+    required this.userEmail,
+    required this.nombre,
+    required this.apellido,
+  });
 
   @override
   _PaginaConfiguracionState createState() => _PaginaConfiguracionState();
@@ -21,6 +29,34 @@ class _PaginaConfiguracionState extends State<PaginaConfiguracion> {
 
   // Estado para el modo oscuro
   bool _modoOscuroActivado = false;
+
+  bool _isUserLoggedIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
+
+  Future<void> _loadUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isLoggedIn = prefs.getBool('isUserLoggedIn') ?? false;
+    final isNotificationsEnabled =
+        prefs.getBool('notificationsEnabled') ?? false;
+    // Usa setState para actualizar _isUserLoggedIn y reconstruir la UI
+    setState(() {
+      _isUserLoggedIn = isLoggedIn;
+      _notificacionesActivadas = isNotificationsEnabled;
+    });
+  }
+
+  _updateNotificationsPreference(bool value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('notificationsEnabled', value);
+    setState(() {
+      _notificacionesActivadas = value;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,53 +116,38 @@ class _PaginaConfiguracionState extends State<PaginaConfiguracion> {
                 ),
               ),
             ),
-            ListTile(
-              // Elemento de lista para editar perfil
-              title: Text('Editar Perfil'), // Título
-              trailing: Icon(Icons.arrow_forward_ios), // Icono de flecha
-              onTap: () {
-                // Acción para editar perfil
-              },
-            ),
-            ListTile(
-              // Elemento de lista para cambiar contraseña
-              title: Text('Cambiar contraseña'), // Título
-              trailing: Icon(Icons.arrow_forward_ios), // Icono de flecha
-              onTap: () {
-                // Acción para cambiar contraseña
-              },
-            ),
-            SwitchListTile(
-              title: Text(
-                'Activar notificaciones',
-                style: TextStyle(color: Colors.black), // Color de la etiqueta
+            if (_isUserLoggedIn) ...[
+              ListTile(
+                // Elemento de lista para editar perfil
+                title: Text('Editar Perfil'), // Título
+                trailing: Icon(Icons.arrow_forward_ios), // Icono de flecha
+                onTap: () {
+                  // Acción para política de privacidad
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            PaginaEditarPerfil(userEmail: widget.userEmail)),
+                  );
+                },
               ),
-              value: _notificacionesActivadas,
-              activeColor:
-                  Theme.of(context).primaryColor, // Color cuando está activo
-              inactiveTrackColor:
-                  Colors.grey, // Color de la pista cuando está inactivo
-              onChanged: (bool valor) {
-                setState(() {
-                  _notificacionesActivadas = valor;
-                });
-              },
-            ),
-            SwitchListTile(
-              title: Text(
-                'Modo oscuro',
-                style: TextStyle(color: Colors.black), // Color de la etiqueta
+              SwitchListTile(
+                title: Text(
+                  'Mostrar notificaciones',
+                  style: TextStyle(color: Colors.black), // Color de la etiqueta
+                ),
+                value: _notificacionesActivadas,
+                activeColor:
+                    Theme.of(context).primaryColor, // Color cuando está activo
+                inactiveTrackColor:
+                    Colors.grey, // Color de la pista cuando está inactivo
+                onChanged: (bool valor) {
+                  setState(() {
+                    _updateNotificationsPreference(valor);
+                  });
+                },
               ),
-              value: _modoOscuroActivado,
-              inactiveTrackColor: Colors.grey,
-              activeColor: Theme.of(context)
-                  .primaryColor, // Color principal de la aplicación
-              onChanged: (bool valor) {
-                setState(() {
-                  _modoOscuroActivado = valor;
-                });
-              },
-            ),
+            ],
             Divider(
               color: const Color.fromARGB(255, 221, 216, 216), // Color gris
               thickness: 1.0, // Grosor de 2 píxeles
@@ -145,6 +166,12 @@ class _PaginaConfiguracionState extends State<PaginaConfiguracion> {
               trailing: Icon(Icons.arrow_forward_ios), // Icono de flecha
               onTap: () {
                 // Acción para sobre nosotros
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          PaginaSobreNosotros(userEmail: widget.userEmail)),
+                );
               },
             ),
             ListTile(
@@ -153,6 +180,12 @@ class _PaginaConfiguracionState extends State<PaginaConfiguracion> {
               trailing: Icon(Icons.arrow_forward_ios), // Icono de flecha
               onTap: () {
                 // Acción para política de privacidad
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PaginaPoliticaPrivacidad(
+                          userEmail: widget.userEmail)),
+                );
               },
             ),
             ListTile(
@@ -161,6 +194,12 @@ class _PaginaConfiguracionState extends State<PaginaConfiguracion> {
               trailing: Icon(Icons.arrow_forward_ios), // Icono de flecha
               onTap: () {
                 // Acción para términos y condiciones
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PaginaTerminosCondiciones(
+                          userEmail: widget.userEmail)),
+                );
               },
             ),
           ],

@@ -2,6 +2,7 @@ from .extensions import db  # Importar el objeto db de SQLAlchemy desde el módu
 from flask_login import UserMixin  # Importar la clase UserMixin de flask_login
 from werkzeug.security import generate_password_hash, check_password_hash  # Importar funciones para generar y comprobar contraseñas hash
 from flask_admin.contrib.sqla import ModelView  # Importar ModelView de flask_admin para usarlo en la definición de la vista del modelo
+from datetime import datetime
 
 class Usuario(UserMixin, db.Model):  # Definir la clase Usuario que hereda de UserMixin y db.Model
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)  # Definir columna id como clave primaria
@@ -19,6 +20,8 @@ class Usuario(UserMixin, db.Model):  # Definir la clase Usuario que hereda de Us
     def check_password(self, password):
         return check_password_hash(self.contraseña, password)  # Comprobar si la contraseña coincide con el hash almacenado
 
+#----------------------------------------------------------------------------
+    
 # Definir la clase Accion para representar una acción en la base de datos
 class Accion(db.Model):
     id_accion = db.Column(db.Integer, primary_key=True)  # Definir columna id_accion como clave primaria
@@ -43,6 +46,8 @@ class AccionesFavoritas(db.Model):
         accion_nombre = self.accion.nombre if self.accion else 'Desconocida'
         return f'AccionesFavoritas({self.id_favorito}, Usuario: {usuario_email}, Acción: {accion_nombre})'
 
+#----------------------------------------------------------------------------
+    
 # Definir la vista del modelo AccionesFavoritas para ser utilizada en el panel de administración
 class AccionesFavoritasModelView(ModelView):
     column_list = ('id_favorito', 'usuario', 'accion')  # Definir las columnas a mostrar en la vista
@@ -56,6 +61,8 @@ class AccionesFavoritasModelView(ModelView):
     column_searchable_list = ('usuario.email', 'accion.nombre')  # Columnas que se pueden buscar
     column_filters = ('usuario.email', 'accion.nombre')  # Columnas por las que se pueden filtrar
 
+#----------------------------------------------------------------------------
+    
 # Definir la clase Cartera para representar la cartera de un usuario en la base de datos
 class Cartera(db.Model):
     id_cartera = db.Column(db.Integer, primary_key=True)  # Definir columna id_cartera como clave primaria
@@ -69,6 +76,8 @@ class Cartera(db.Model):
     def __repr__(self):
         return f'Cartera({self.id_cartera}, {self.id_usuario}, {self.saldo}, {self.total_depositado}, {self.total_retirado}, {self.total_transacciones})'
 
+#----------------------------------------------------------------------------
+    
 # Definir la clase Transaccion para representar una transacción en la base de datos
 class Transaccion(db.Model):
     id_transaccion = db.Column(db.Integer, primary_key=True)  # Definir columna id_transaccion como clave primaria
@@ -83,3 +92,53 @@ class Transaccion(db.Model):
 
     def __repr__(self):
         return f'Transaccion({self.id_transaccion}, {self.id_cartera}, {self.id_accion}, {self.tipo}, {self.cantidad}, {self.precio}, {self.fecha})'
+
+#----------------------------------------------------------------------------
+    
+class ArticulosAprendizaje(db.Model):
+    __tablename__ = 'articulosaprendizaje'  # Especifica el nombre de la tabla
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    seccion = db.Column(db.String(255), nullable=False)
+    titulo = db.Column(db.String(255), nullable=False)
+    imageUrl = db.Column(db.Text, nullable=False, name='imageurl')  # Especifica el nombre de la columna en minúsculas
+    resumen = db.Column(db.Text, nullable=False)
+    contenido = db.Column(db.Text, nullable=False)
+
+    def __repr__(self):
+        return f'ArticulosAprendizaje({self.id}, "{self.titulo}")'
+
+    # Método para convertir el objeto a un diccionario
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'seccion': self.seccion,
+            'titulo': self.titulo,
+            'imageUrl': self.imageUrl,
+            'resumen': self.resumen,
+            'contenido': self.contenido,
+        }
+    
+#----------------------------------------------------------------------------
+    
+class ResetClaveToken(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
+    token = db.Column(db.String(100), nullable=False, unique=True)
+    fecha_expiracion = db.Column(db.DateTime, nullable=False)
+
+    def __repr__(self):
+        return f'<ResetClaveToken {self.token}>'
+    
+#-----------------------------------------------------------------------------
+    
+class Notificacion(db.Model):
+    __tablename__ = 'notificaciones'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
+    mensaje = db.Column(db.Text, nullable=False)
+    fecha = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    usuario = db.relationship('Usuario', backref=db.backref('notificaciones', lazy=True))
+
+    def __repr__(self):
+        return f'<Notificacion {self.id} - Usuario: {self.usuario_id} - Fecha: {self.fecha} - Mensaje: {self.mensaje}>'

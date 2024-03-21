@@ -66,7 +66,8 @@ def withdraw_portfolio():
         return jsonify({'error': 'Usuario no encontrado'}), 404
 
 #------------------- Para la simulacion ------------------------#
-    
+
+# Funcion para comprar una accion
 @portfolio_bp.route('/buy_stock', methods=['POST'])
 def buy_stock():
     data = request.get_json()
@@ -77,37 +78,37 @@ def buy_stock():
     cantidad = int(data['cantidad'])
     precio = float(data['precio'])
     
-    usuario = Usuario.query.filter_by(email=user_email).first()
+    usuario = Usuario.query.filter_by(email=user_email).first()  # Buscar al usuario por su correo electrónico
     if not usuario:
         print(f"Usuario no encontrado para el correo electrónico: {user_email}")
-        return jsonify({'error': 'Usuario no encontrado'}), 404
+        return jsonify({'error': 'Usuario no encontrado'}), 404  # Devolver un error si el usuario no existe
 
-    cartera = Cartera.query.filter_by(id_usuario=usuario.id).first()
+    cartera = Cartera.query.filter_by(id_usuario=usuario.id).first()  # Obtener la cartera del usuario
     if not cartera:
         print("Cartera no encontrada para el usuario:", usuario.id)
-        return jsonify({'error': 'Cartera no encontrada'}), 404
+        return jsonify({'error': 'Cartera no encontrada'}), 404  # Devolver un error si la cartera no existe
 
-    total_cost = precio * cantidad
+    total_cost = precio * cantidad  # Calcular el costo total de la compra
     if cartera.saldo < total_cost:
         print("Saldo insuficiente en la cartera del usuario:", usuario.id)
-        return jsonify({'error': 'Saldo insuficiente'}), 400
+        return jsonify({'error': 'Saldo insuficiente'}), 400  # Devolver un error si el saldo es insuficiente
 
-    cartera.saldo -= total_cost
-    cartera.total_transacciones += 1
+    cartera.saldo -= total_cost  # Restar el costo total de la compra al saldo de la cartera
+    cartera.total_transacciones += 1  # Incrementar el contador de transacciones de la cartera
 
-    accion = Accion.query.filter_by(codigoticker=stock_symbol).first()
+    accion = Accion.query.filter_by(codigoticker=stock_symbol).first()  # Buscar la acción por su símbolo
     if not accion:
-        accion = Accion(nombre=stock_symbol, codigoticker=stock_symbol)
+        accion = Accion(nombre=stock_symbol, codigoticker=stock_symbol)  # Crear una nueva acción si no existe
         db.session.add(accion)
     
-    transaccion = Transaccion(id_cartera=cartera.id_cartera, id_accion=accion.id_accion, tipo='compra', cantidad=cantidad, precio=precio)
-    db.session.add(transaccion)
-    db.session.commit()
+    transaccion = Transaccion(id_cartera=cartera.id_cartera, id_accion=accion.id_accion, tipo='compra', cantidad=cantidad, precio=precio)  # Crear una nueva transacción de compra
+    db.session.add(transaccion)  # Agregar la transacción a la sesión de la base de datos
+    db.session.commit()  # Confirmar la transacción en la base de datos
 
     print("Compra realizada con éxito para el usuario:", usuario.id)
-    return jsonify({'success': True, 'message': 'Compra realizada con éxito'}), 200
+    return jsonify({'success': True, 'message': 'Compra realizada con éxito'}), 200  # Devolver una respuesta exitosa
 
-
+# Funcion para vender una accion
 @portfolio_bp.route('/sell_stock', methods=['POST'])
 def sell_stock():
     data = request.get_json()
@@ -116,49 +117,49 @@ def sell_stock():
     cantidad = int(data['cantidad'])
     precio = float(data['precio'])
 
-    usuario = Usuario.query.filter_by(email=user_email).first()
+    usuario = Usuario.query.filter_by(email=user_email).first()  # Buscar al usuario por su correo electrónico
     if not usuario:
-        return jsonify({'error': 'Usuario no encontrado'}), 404
+        return jsonify({'error': 'Usuario no encontrado'}), 404  # Devolver un error si el usuario no existe
 
-    cartera = Cartera.query.filter_by(id_usuario=usuario.id).first()
+    cartera = Cartera.query.filter_by(id_usuario=usuario.id).first()  # Obtener la cartera del usuario
     if not cartera:
-        return jsonify({'error': 'Cartera no encontrada'}), 404
+        return jsonify({'error': 'Cartera no encontrada'}), 404  # Devolver un error si la cartera no existe
 
-    accion = Accion.query.filter_by(codigoticker=stock_symbol).first()
+    accion = Accion.query.filter_by(codigoticker=stock_symbol).first()  # Buscar la acción por su símbolo
     if not accion:
-        return jsonify({'error': 'Acción no encontrada'}), 404
+        return jsonify({'error': 'Acción no encontrada'}), 404  # Devolver un error si la acción no existe
 
-    transacciones_compra = sum([trans.cantidad for trans in cartera.transacciones if trans.accion == accion and trans.tipo == 'compra'])
-    transacciones_venta = sum([trans.cantidad for trans in cartera.transacciones if trans.accion == accion and trans.tipo == 'venta'])
-    acciones_poseidas = transacciones_compra - transacciones_venta
+    transacciones_compra = sum([trans.cantidad for trans in cartera.transacciones if trans.accion == accion and trans.tipo == 'compra'])  # Calcular el total de acciones compradas
+    transacciones_venta = sum([trans.cantidad for trans in cartera.transacciones if trans.accion == accion and trans.tipo == 'venta'])  # Calcular el total de acciones vendidas
+    acciones_poseidas = transacciones_compra - transacciones_venta  # Calcular el total de acciones poseídas
 
     if acciones_poseidas < cantidad:
-        return jsonify({'error': 'Cantidad de acciones insuficiente para vender'}), 400
+        return jsonify({'error': 'Cantidad de acciones insuficiente para vender'}), 400  # Devolver un error si la cantidad de acciones a vender es mayor que las acciones poseídas
 
-    total_venta = precio * cantidad
-    cartera.saldo += total_venta
-    cartera.total_transacciones += 1
+    total_venta = precio * cantidad  # Calcular el total de la venta
+    cartera.saldo += total_venta  # Sumar el total de la venta al saldo de la cartera
+    cartera.total_transacciones += 1  # Incrementar el contador de transacciones de la cartera
 
-    nueva_transaccion = Transaccion(id_cartera=cartera.id_cartera, id_accion=accion.id_accion, tipo='venta', cantidad=cantidad, precio=precio)
-    db.session.add(nueva_transaccion)
-    db.session.commit()
+    nueva_transaccion = Transaccion(id_cartera=cartera.id_cartera, id_accion=accion.id_accion, tipo='venta', cantidad=cantidad, precio=precio)  # Crear una nueva transacción de venta
+    db.session.add(nueva_transaccion)  # Agregar la transacción a la sesión de la base de datos
+    db.session.commit()  # Confirmar la transacción en la base de datos
 
-    return jsonify({'success': True, 'message': 'Venta realizada con éxito'}), 200
+    return jsonify({'success': True, 'message': 'Venta realizada con éxito'}), 200  # Devolver una respuesta exitosa
 
-
+# Funcion para obtener las transacciones de un usuario
 @portfolio_bp.route('/get_user_transactions')
 def get_user_transactions():
     email = request.args.get('email')
-    usuario = Usuario.query.filter_by(email=email).first()
+    usuario = Usuario.query.filter_by(email=email).first()  # Buscar al usuario por su correo electrónico
     if not usuario:
-        return jsonify({'error': 'Usuario no encontrado'}), 404
+        return jsonify({'error': 'Usuario no encontrado'}), 404  # Devolver un error si el usuario no existe
 
-    cartera = Cartera.query.filter_by(id_usuario=usuario.id).first()
+    cartera = Cartera.query.filter_by(id_usuario=usuario.id).first()  # Obtener la cartera del usuario
     if not cartera:
-        return jsonify({'error': 'Cartera no encontrada'}), 404
+        return jsonify({'error': 'Cartera no encontrada'}), 404  # Devolver un error si la cartera no existe
 
-    transacciones = Transaccion.query.filter_by(id_cartera=cartera.id_cartera).all()
-    transacciones_lista = [{
+    transacciones = Transaccion.query.filter_by(id_cartera=cartera.id_cartera).all()  # Obtener todas las transacciones de la cartera
+    transacciones_lista = [{  # Crear una lista de diccionarios con información de las transacciones
         'id_transaccion': trans.id_transaccion,
         'tipo': trans.tipo,
         'cantidad': trans.cantidad,
@@ -167,4 +168,4 @@ def get_user_transactions():
         'accion': trans.accion.nombre
     } for trans in transacciones]
 
-    return jsonify(transacciones_lista), 200
+    return jsonify(transacciones_lista), 200  # Devolver la lista de transacciones

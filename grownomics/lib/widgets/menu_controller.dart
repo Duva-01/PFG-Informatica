@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
-import 'package:grownomics/api/authAPI.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:grownomics/api/authAPI.dart'; // Importa las funciones relacionadas con la autenticación desde una API
+import 'package:shared_preferences/shared_preferences.dart'; // Importa SharedPreferences para manejar datos persistentes
 
 class MenuScreen extends StatefulWidget {
   final ZoomDrawerController controller;
@@ -14,29 +14,29 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
-  late String userEmail = "grownomicero@gmail.com";
-  late String nombre = "Grownomicero";
-  late String apellido = "";
-  bool _isUserLoggedIn = false;
+  late String userEmail =
+      "grownomicero@gmail.com"; // Correo electrónico predeterminado
+  late String nombre = "Grownomicero"; // Nombre predeterminado
+  late String apellido = ""; // Apellido predeterminado
+  bool _isUserLoggedIn = false; // Estado de inicio de sesión predeterminado
 
   @override
   void initState() {
     super.initState();
-    _loadUser();
+    _loadUser(); // Cargar los datos del usuario al inicializar el estado del widget
   }
 
   Future<void> _loadUser() async {
     final prefs = await SharedPreferences.getInstance();
-    // Obtiene el estado de inicio de sesión directamente
-    _isUserLoggedIn = prefs.getBool('isUserLoggedIn') ?? false;
+    _isUserLoggedIn = prefs.getBool('isUserLoggedIn') ??
+        false; // Obtener el estado de inicio de sesión de SharedPreferences
 
-    // Solo intenta obtener los datos del usuario si está logueado
     if (_isUserLoggedIn) {
       final emailObtenido = prefs.getString('userEmail');
-      // Verifica si hay un correo guardado para el usuario
       if (emailObtenido != null) {
         try {
-          final datos = await obtenerDatosUsuario(emailObtenido);
+          final datos = await obtenerDatosUsuario(
+              emailObtenido); // Obtener datos del usuario utilizando el correo electrónico guardado
           if (datos['nombre'] != null && datos['apellido'] != null) {
             setState(() {
               userEmail = emailObtenido;
@@ -57,30 +57,45 @@ class _MenuScreenState extends State<MenuScreen> {
       color: Color.fromARGB(255, 39, 99, 72),
       child: Column(
         children: [
-          UserAccountsDrawerHeader(
-            accountName: Text(
-              nombre + " " + apellido,
-              style: TextStyle(fontSize: 20),
+          Container(
+            width: double.infinity, // Establece el ancho al máximo posible
+            color: Color(0xFF2F8B62), // Color de fondo
+            padding: EdgeInsets.symmetric(
+                vertical: 10,
+                horizontal: 16), // Añade relleno alrededor de los elementos
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment
+                  .start, // Alinea los elementos a la izquierda
+              children: [
+                CircleAvatar(
+                  radius: 60.0, // Ajusta el tamaño del avatar
+                  backgroundImage: AssetImage(
+                      'assets/images/profile.gif'), // Imagen de fondo
+                ),
+                SizedBox(height: 12), // Espacio entre la imagen y el texto
+                Text(
+                  "$nombre $apellido", // Mostrar nombre y apellido
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
+                Text(
+                  userEmail, // Mostrar correo electrónico
+                  style: TextStyle(fontSize: 12, color: Colors.white),
+                ),
+              ],
             ),
-            accountEmail: Text(userEmail),
-            currentAccountPicture: CircleAvatar(
-              backgroundImage: AssetImage('assets/images/admin-profile.jpg'),
-              backgroundColor: Colors.white,
-            ),
-            decoration: BoxDecoration(color: Color(0xFF2F8B62)),
           ),
           Expanded(
             child: ListView(
               children: [
                 _buildMenuItem(Icons.home, 'Inicio', 0),
-                _buildMenuItem(Icons.show_chart, 'Cotizaciones', 1),
-                _buildMenuItem(Icons.bar_chart, 'Análisis', 2),
-                if (_isUserLoggedIn)
-                  _buildMenuItem(Icons.account_balance_wallet, 'Cartera', 3),
+                _buildMenuItem(Icons.bar_chart, 'Análisis', 1),
+                if (_isUserLoggedIn) ...[
+                  _buildMenuItem(Icons.account_balance_wallet, 'Cartera', 2),
+                  _buildMenuItem(Icons.show_chart, 'Mis acciones', 3),
+                ],
                 _buildMenuItem(Icons.library_books, 'Noticias', 4),
                 _buildMenuItem(Icons.school, 'Aprendizaje', 5),
-                if (_isUserLoggedIn)
-                  _buildMenuItem(Icons.settings, 'Configuración', 6),
+                _buildMenuItem(Icons.settings, 'Configuración', 6),
               ],
             ),
           ),
@@ -95,19 +110,19 @@ class _MenuScreenState extends State<MenuScreen> {
                 style: TextStyle(color: Colors.white)),
             onTap: () async {
               if (_isUserLoggedIn) {
-                // Lógica para cerrar sesión
                 final SharedPreferences prefs =
                     await SharedPreferences.getInstance();
                 await prefs.remove(
-                    'isUserLoggedIn'); // Borrar el estado de inicio de sesión
-                await prefs.remove('userEmail');
+                    'isUserLoggedIn'); // Eliminar el estado de inicio de sesión
+                await prefs
+                    .remove('userEmail'); // Eliminar el correo electrónico
                 Navigator.of(context).pushNamedAndRemoveUntil(
                     '/iniciar_sesion',
                     (Route<dynamic> route) =>
                         false); // Redirigir a la pantalla de inicio de sesión
               } else {
-                // Lógica para navegar a la pantalla de inicio de sesión
-                Navigator.of(context).pushNamed('/iniciar_sesion');
+                Navigator.of(context).pushNamed(
+                    '/iniciar_sesion'); // Navegar a la pantalla de inicio de sesión
               }
             },
           ),
