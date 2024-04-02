@@ -15,6 +15,7 @@ void main() async {
   final isUserLoggedIn = prefs.getBool('isUserLoggedIn') ?? false;
   await initializeDateFormatting('es', null);
   
+  // Esto es de prueba para los test
   await prefs.setBool('isSkipped', false);
   await prefs.setBool('isUserLoggedIn', false);
   await prefs.setBool('isUserRemember', false);
