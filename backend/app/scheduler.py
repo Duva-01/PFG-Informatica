@@ -55,7 +55,7 @@ def configura_tareas(app):
         scheduler.init_app(app)
         scheduler.start()
 
-    # Guardar la instancia de app en el scheduler para usarla luego
+    # Guardar la instancia de app en el scheduler para usarla luego en el codigo
     scheduler.app = app
     # Limpia todos los trabajos existentes antes de agregar nuevos
     scheduler.remove_all_jobs()
