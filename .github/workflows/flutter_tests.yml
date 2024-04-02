@@ -1,0 +1,34 @@
+name: Flutter Tests
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'grownomics/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'grownomics/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: subosito/flutter-action@v1
+      with:
+        flutter-version: '2.x'
+
+    - name: Install Dependencies
+      run: |
+        cd grownomics
+        flutter pub get
+
+    - name: Run Flutter Tests
+      run: |
+        cd grownomics
+        flutter test
