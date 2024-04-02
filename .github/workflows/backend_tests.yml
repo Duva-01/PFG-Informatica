@@ -15,26 +15,13 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    services:
-      grownomics-db:
-        image: postgres
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: example
-          POSTGRES_DB: grownomics_db
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     steps:
     - uses: actions/checkout@v2
 
-    - name: Build the Docker image
-      run: docker build -t my-python-app ./backend
+    - name: Set up Docker Compose
+      run: docker-compose -f backend/docker-compose.yml up -d
 
     - name: Run Tests
-      run: docker run -e SQLALCHEMY_DATABASE_URI=postgresql://postgres:example@localhost:5432/grownomics_db my-python-app python -m pytest tests/
+      run: |
+        docker-compose -f backend/docker-compose.yml exec app python -m pytest tests/
