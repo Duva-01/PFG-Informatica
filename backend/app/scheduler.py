@@ -49,7 +49,7 @@ def on_join(data):
 #-----------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------
 
-# Define la configuración de tareas en APScheduler
+# Define la configuración de tareas en APSchedulers
 def configura_tareas(app):
     if not scheduler.running:
         scheduler.init_app(app)
