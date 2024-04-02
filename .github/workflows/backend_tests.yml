@@ -15,7 +15,6 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    
     services:
       grownomics-db:
         image: postgres
@@ -25,7 +24,6 @@ jobs:
           POSTGRES_DB: grownomics_db
         ports:
           - 5432:5432
-        # Opciones adicionales para asegurar que la base de datos esté lista
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -34,21 +32,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.8
-        
-    - name: Install Dependencies
-      run: |
-        cd backend
-        pip install -r requirements.txt
 
-    - name: Set up Database URL
-      run: echo "SQLALCHEMY_DATABASE_URI=postgresql://postgres:example@localhost:5432/grownomics_db" > .env
-    
+    - name: Build the Docker image
+      run: docker build -t my-python-app .
+
     - name: Run Tests
-      run: |
-        cd backend
-        python -m pytest tests/
+      run: docker run -e SQLALCHEMY_DATABASE_URI=postgresql://postgres:example@localhost:5432/grownomics_db my-python-app python -m pytest tests/
