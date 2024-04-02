@@ -65,7 +65,7 @@ def configura_tareas(app):
 
 # Tarea para verificar los precios de las acciones favoritas
 def check_favorite_stocks_prices():
-    with scheduler.app.app_context():  # Asegúrate de ejecutar dentro del contexto de la aplicación
+    with scheduler.app.app_context():  # Asegúrate de ejecutar dentro del contexto de la aplicación el scheduler
         usuarios = Usuario.query.all()
         for usuario in usuarios:
             acciones_favoritas = AccionesFavoritas.query.filter_by(id_usuario=usuario.id).all()
