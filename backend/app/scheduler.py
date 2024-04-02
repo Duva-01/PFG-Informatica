@@ -57,13 +57,13 @@ def configura_tareas(app):
 
     # Guardar la instancia de app en el scheduler para usarla luego en el codigo
     scheduler.app = app
-    # Limpia todos los trabajos existentes antes de agregar nuevos al schedulers
+    # Limpia todos los trabajos existentes antes de agregar nuevos al scheduler
     scheduler.remove_all_jobs()
     # Agrega aquí todas las tareas y su programación respectiva
     scheduler.add_job(id='check_favorite_stocks_prices', func=check_favorite_stocks_prices, trigger='interval', minutes=180)
     #scheduler.add_job(id='test_alert', func=test_alert, trigger='interval', seconds=20)
 
-# Tarea para verificar los precios de acciones favoritas
+# Tarea para verificar los precios de las acciones favoritas
 def check_favorite_stocks_prices():
     with scheduler.app.app_context():  # Asegúrate de ejecutar dentro del contexto de la aplicación
         usuarios = Usuario.query.all()
