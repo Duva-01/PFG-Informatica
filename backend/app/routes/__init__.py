@@ -1,10 +1,10 @@
-from .finance_data import finance_bp  # Importar el blueprint para datos financieros
-from .auth import auth_bp  # Importar el blueprint para autenticación
-from .news import news_bp  # Importar el blueprint para noticias
+from .marketController import finance_bp  # Importar el blueprint para datos financieros
+from .userController import auth_bp  # Importar el blueprint para autenticación
+from .newsController import news_bp  # Importar el blueprint para noticias
 from .home import home_bp  # Importar el blueprint para la página de inicio
-from .portfolio import portfolio_bp  # Importar el blueprint para la cartera
-from .articles import article_bp
-from .strategies.recommendations import recommendations_bp
+from .portfolioController import portfolio_bp  # Importar el blueprint para la cartera
+from .articlesController import article_bp
+from .strategies.recommendationsController import recommendations_bp
 
 def register_blueprints(app):
     # Registrar los blueprints en la aplicación Flask

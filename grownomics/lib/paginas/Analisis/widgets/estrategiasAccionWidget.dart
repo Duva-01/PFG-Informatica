@@ -4,7 +4,7 @@ import 'package:grownomics/paginas/Analisis/widgets/prediccionesPrecioWidget.dar
 import 'package:grownomics/paginas/Analisis/widgets/recomendacionFinalWidget.dart';
 import 'package:grownomics/paginas/Mercado/Widgets/recomendationWidget.dart';
 import 'package:intl/intl.dart'; // Importar el paquete intl para formatear fechas
-import 'package:grownomics/api/recomendationAPI.dart';
+import 'package:grownomics/controladores/recomendationController.dart';
 import 'package:grownomics/widgets/tituloWidget.dart';
 
 
@@ -35,7 +35,7 @@ class _EstrategiasAccionWidgetState extends State<EstrategiasAccionWidget> {
 
   void obtenerRecomendaciones() async {
     try {
-      final resultado = await obtenerAnalisisCompleto(widget.simboloAccion, widget.correoElectronico);
+      final resultado = await RecomendacionesController.obtenerAnalisisCompleto(widget.simboloAccion, widget.correoElectronico);
       setState(() {
         recomendaciones = resultado;
         print(recomendaciones!['predicciones_precio']);

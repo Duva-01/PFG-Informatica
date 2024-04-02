@@ -1,6 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:grownomics/api/portfolioAPI.dart';
+import 'package:grownomics/controladores/portfolioController.dart';
 import 'package:grownomics/modelos/Transaccion.dart';
 import 'package:grownomics/paginas/Cartera/transactionsPage.dart';
 import 'package:intl/intl.dart';
@@ -22,7 +22,7 @@ class _TransaccionesCardState extends State<TransaccionesCard> {
   void initState() {
     // Inicialización del estado
     super.initState(); // Llamar al método initState de la clase base
-    _transaccionesFuturas = obtenerTransaccionesUsuario(widget.userEmail).then(
+    _transaccionesFuturas = CarteraController.obtenerTransaccionesUsuario(widget.userEmail).then(
         (data) => data
             .map<Transaccion>((json) => Transaccion.fromJson(json))
             .toList()); // Obtener transacciones del usuario

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
-import 'package:grownomics/api/authAPI.dart'; // Importa las funciones relacionadas con la autenticación desde una API
+import 'package:grownomics/controladores/userController.dart'; // Importa las funciones relacionadas con la autenticación desde una API
 import 'package:shared_preferences/shared_preferences.dart'; // Importa SharedPreferences para manejar datos persistentes
 
 class MenuScreen extends StatefulWidget {
@@ -35,7 +35,7 @@ class _MenuScreenState extends State<MenuScreen> {
       final emailObtenido = prefs.getString('userEmail');
       if (emailObtenido != null) {
         try {
-          final datos = await obtenerDatosUsuario(
+          final datos = await UsuarioController.obtenerDatosUsuario(
               emailObtenido); // Obtener datos del usuario utilizando el correo electrónico guardado
           if (datos['nombre'] != null && datos['apellido'] != null) {
             setState(() {

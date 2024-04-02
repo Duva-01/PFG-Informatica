@@ -6,8 +6,8 @@ import 'package:flutter/widgets.dart'; // Importa la biblioteca de widgets de Fl
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart'; // Importa la biblioteca para el menú deslizante
 import 'package:grownomics/widgets/tituloWidget.dart'; // Importa el widget del título
 import 'package:intl/intl.dart'; // Importa la biblioteca para formato de fechas
-import 'package:grownomics/api/marketAPI.dart'; // Importa la API del mercado
-import 'package:grownomics/api/portfolioAPI.dart'; // Importa la API de la cartera
+import 'package:grownomics/controladores/marketController.dart'; // Importa la API del mercado
+import 'package:grownomics/controladores/portfolioController.dart'; // Importa la API de la cartera
 import 'package:grownomics/modelos/Accion.dart'; // Importa el modelo de la acción
 
 class PaginaMisAcciones extends StatefulWidget {
@@ -27,8 +27,8 @@ class _PaginaMisAccionesState extends State<PaginaMisAcciones> {
   void initState() {
     super.initState();
     // Obtiene las acciones del usuario y las transacciones asociadas
-    _misAcciones = obtenerMisAcciones(widget.userEmail);
-    _transaccionesFuturas = obtenerTransaccionesUsuario(widget.userEmail);
+    _misAcciones = MercadoController.obtenerMisAcciones(widget.userEmail);
+    _transaccionesFuturas = CarteraController.obtenerTransaccionesUsuario(widget.userEmail);
   }
 
   @override

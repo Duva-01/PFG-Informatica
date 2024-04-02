@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grownomics/api/authAPI.dart';
+import 'package:grownomics/controladores/userController.dart';
 import 'package:grownomics/loadingPage.dart';
 
 class PaginaEditarPerfil extends StatefulWidget {
@@ -28,7 +28,7 @@ class _PaginaEditarPerfilState extends State<PaginaEditarPerfil> {
   }
 
   Future<void> _cargarDatosUsuario() async {
-    datosUsuario = await obtenerDatosUsuario(widget.userEmail);
+    datosUsuario = await UsuarioController.obtenerDatosUsuario(widget.userEmail);
     if (datosUsuario != null) {
       setState(() {
         _usuarioId = datosUsuario['id'];
@@ -42,7 +42,7 @@ class _PaginaEditarPerfilState extends State<PaginaEditarPerfil> {
 
   void _guardarCambios() async {
     // Usar el ID del usuario para la actualización
-    bool exito = await actualizarUsuario(
+    bool exito = await UsuarioController.actualizarUsuario(
       _usuarioId,
       _controladorNombre.text,
       _controladorApellido.text,

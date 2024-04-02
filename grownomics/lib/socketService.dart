@@ -90,7 +90,7 @@ class SocketService {
       const NotificationDetails platformChannelSpecifics =
           NotificationDetails(android: androidPlatformChannelSpecifics);
       await flutterLocalNotificationsPlugin.show(
-        0, // Consider using a unique id for each notification.
+        0, 
         title,
         body,
         platformChannelSpecifics,

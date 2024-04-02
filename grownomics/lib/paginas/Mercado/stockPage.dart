@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:grownomics/api/marketAPI.dart'; // Importa las funciones relacionadas con el mercado
-import 'package:grownomics/api/portfolioAPI.dart'; // Importa las funciones relacionadas con el portafolio
+import 'package:grownomics/controladores/marketController.dart'; // Importa las funciones relacionadas con el mercado
+import 'package:grownomics/controladores/portfolioController.dart'; // Importa las funciones relacionadas con el portafolio
 import 'package:grownomics/paginas/Mercado/Widgets/chartWidget.dart'; // Importa el widget de gráfica
 import 'package:grownomics/paginas/Mercado/Widgets/dataTableWidget.dart'; // Importa el widget de tabla de datos
 import 'package:grownomics/paginas/Mercado/Widgets/infoWidget.dart'; // Importa el widget de información
@@ -51,7 +51,7 @@ class _DetallesAccionEstado extends State<DetallesAccion> {
 
   // Método para cargar los datos históricos desde la API
   void _cargarDatos() async {
-    final datos = await obtenerDatosHistoricos(widget.symbol,
+    final datos = await MercadoController.obtenerDatosHistoricos(widget.symbol,
         _intervalo); // Obtiene los datos históricos para el símbolo y el intervalo especificados
     setState(() {
       _datosHistoricos = datos; // Actualiza los datos históricos en el estado
@@ -225,7 +225,7 @@ class _DetallesAccionEstado extends State<DetallesAccion> {
                 Navigator.of(context).pop(); // Cierra el diálogo primero
                 if (esCompra) {
                   // Realiza la compra de acciones
-                  bool resultado = await comprarAccion(widget.correoElectronico,
+                  bool resultado = await CarteraController.comprarAccion(widget.correoElectronico,
                       widget.symbol, precio, cantidad);
                   if (resultado) {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -238,7 +238,7 @@ class _DetallesAccionEstado extends State<DetallesAccion> {
                   }
                 } else {
                   // Realiza la venta de acciones
-                  bool resultado = await venderAccion(widget.correoElectronico,
+                  bool resultado = await CarteraController.venderAccion(widget.correoElectronico,
                       widget.symbol, precio, cantidad);
                   if (resultado) {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
-import 'package:grownomics/api/authAPI.dart';
+import 'package:grownomics/controladores/userController.dart';
 import 'package:grownomics/paginas/Analisis/analisisPage.dart';
 import 'package:grownomics/paginas/Aprendizaje/learnPage.dart';
 import 'package:grownomics/paginas/Cartera/portfolioPage.dart';
@@ -51,7 +51,7 @@ class _PantallaInicioState extends State<PantallaInicio> {
 
     if (emailObtenido != null) {
       try {
-        final datos = await obtenerDatosUsuario(emailObtenido);
+        final datos = await UsuarioController.obtenerDatosUsuario(emailObtenido);
         if (datos != null && datos['nombre'] != null && datos['apellido'] != null) {
           setState(() {
             correoElectronico = emailObtenido;

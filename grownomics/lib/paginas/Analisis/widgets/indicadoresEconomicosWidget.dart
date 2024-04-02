@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grownomics/api/recomendationAPI.dart';
+import 'package:grownomics/controladores/recomendationController.dart';
 import 'package:grownomics/widgets/tituloWidget.dart'; // Asegúrate de importar el archivo adecuado con la definición de indicadores económicos
 
 class IndicadoresEconomicosWidget extends StatefulWidget {
@@ -23,7 +23,7 @@ class _IndicadoresEconomicosWidgetState extends State<IndicadoresEconomicosWidge
   // Método para cargar los indicadores económicos
   void cargarIndicadoresEconomicos() async {
     try {
-      final indicadores = await obtenerIndicadoresEconomicos(widget.simbolo);
+      final indicadores = await RecomendacionesController.obtenerIndicadoresEconomicos(widget.simbolo);
       setState(() {
         indicadoresEconomicos = indicadores; // Actualiza los indicadores económicos en el estado del widget
       });

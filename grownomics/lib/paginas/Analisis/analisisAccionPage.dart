@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grownomics/api/marketAPI.dart';
+import 'package:grownomics/controladores/marketController.dart';
 import 'package:grownomics/modelos/HistoricalData.dart';
 import 'package:grownomics/paginas/Analisis/widgets/analisisFundamentalWidget.dart';
 import 'package:grownomics/paginas/Analisis/widgets/comprarVenderWidget.dart';
@@ -50,7 +50,7 @@ class _AnalisisAccionPageState extends State<AnalisisAccionPage> {
 
   // Método para cargar los datos históricos desde la API
   void _cargarDatos() async {
-    final datos = await obtenerDatosHistoricos(widget.simboloAccion,
+    final datos = await MercadoController.obtenerDatosHistoricos(widget.simboloAccion,
         "1wk"); // Obtiene los datos históricos para el símbolo y el intervalo especificados
     setState(() {
       _datosHistoricos = datos; // Actualiza los datos históricos en el estado

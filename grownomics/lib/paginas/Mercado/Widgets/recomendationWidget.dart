@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:grownomics/api/portfolioAPI.dart'; // Importa la API para obtener datos de la cartera
-import 'package:grownomics/api/recomendationAPI.dart'; // Importa la API para obtener recomendaciones
+import 'package:grownomics/controladores/portfolioController.dart'; // Importa la API para obtener datos de la cartera
+import 'package:grownomics/controladores/recomendationController.dart'; // Importa la API para obtener recomendaciones
 import 'package:grownomics/modelos/RecomendacionEstrategia.dart';
 import 'package:grownomics/widgets/tituloWidget.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // Importa un widget personalizado para el título
@@ -33,7 +33,7 @@ class _WidgetRecomendacionState extends State<WidgetRecomendacion> {
     super.initState();
     // Carga las recomendaciones cuando se inicializa el estado del widget
     futuroRecomendacion =
-        obtenerRecomendacion(widget.simbolo, widget.correoElectronico)
+        RecomendacionesController.obtenerRecomendacion(widget.simbolo, widget.correoElectronico)
             .then((value) {
       // Ordena las recomendaciones por el equity final
       var recomendaciones = value['recommendations'] as List;
@@ -60,7 +60,7 @@ class _WidgetRecomendacionState extends State<WidgetRecomendacion> {
   void cargarDatosCartera() async {
     try {
       // Obtiene datos de la cartera y calcula el saldo
-      final datosCartera = await obtenerCartera(widget.correoElectronico);
+      final datosCartera = await CarteraController.obtenerCartera(widget.correoElectronico);
 
       setState(() {
         balance =

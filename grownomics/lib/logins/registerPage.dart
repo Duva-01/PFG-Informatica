@@ -1,6 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:grownomics/api/authAPI.dart'; // Importar el API de autenticación
+import 'package:grownomics/controladores/userController.dart'; // Importar el API de autenticación
 import 'dart:math'; // Importar la biblioteca 'dart:math'
 
 import 'package:grownomics/paginas/inicio.dart';
@@ -153,7 +153,7 @@ class _PaginaRegistroState extends State<PaginaRegistro> {
                     final contrasena = _controladorContrasena
                         .text; // Obtener la contraseña ingresada
         
-                    final registroExitoso = await registrarUsuario(
+                    final registroExitoso = await UsuarioController.registrarUsuario(
                         nombre,
                         apellido,
                         correo,

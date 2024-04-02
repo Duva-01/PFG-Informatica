@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:grownomics/api/marketAPI.dart';
-import 'package:grownomics/api/portfolioAPI.dart';
+import 'package:grownomics/controladores/marketController.dart';
+import 'package:grownomics/controladores/portfolioController.dart';
 import 'package:grownomics/modelos/Accion.dart';
 import 'package:grownomics/modelos/HistoricalData.dart';
 
@@ -35,7 +35,8 @@ class _ComprarVenderWidgetState extends State<ComprarVenderWidget> {
   // Método para cargar los datos de la cartera del usuario
   void _cargarDatosCartera() async {
     try {
-      final datosCartera = await obtenerCartera(widget.correoElectronico);
+      final datosCartera =
+          await CarteraController.obtenerCartera(widget.correoElectronico);
       setState(() {
         balance = datosCartera['saldo'];
       });
@@ -48,7 +49,7 @@ class _ComprarVenderWidgetState extends State<ComprarVenderWidget> {
   void _cargarAccionesUsuario() async {
     try {
       final List<Accion> acciones =
-          await obtenerMisAcciones(widget.correoElectronico);
+          await MercadoController.obtenerMisAcciones(widget.correoElectronico);
       Accion? accionSeleccionada;
       for (var accion in acciones) {
         if (accion.codigoticker == widget.simboloAccion) {
@@ -159,7 +160,8 @@ class _ComprarVenderWidgetState extends State<ComprarVenderWidget> {
                       onPressed: cantidad <= 0
                           ? null
                           : () async {
-                              bool resultado = await comprarAccion(
+                              bool resultado =
+                                  await CarteraController.comprarAccion(
                                 widget.correoElectronico,
                                 widget.simboloAccion,
                                 precio,
@@ -205,7 +207,8 @@ class _ComprarVenderWidgetState extends State<ComprarVenderWidget> {
                       onPressed: cantidad <= 0
                           ? null
                           : () async {
-                              bool resultado = await venderAccion(
+                              bool resultado =
+                                  await CarteraController.venderAccion(
                                 widget.correoElectronico,
                                 widget.simboloAccion,
                                 precio,

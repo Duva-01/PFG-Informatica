@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
-import 'package:grownomics/api/articlesAPI.dart'; // Importa el API para obtener los artículos
+import 'package:grownomics/controladores/articlesController.dart'; // Importa el API para obtener los artículos
 import 'package:grownomics/modelos/Articulo.dart'; // Importa el modelo de datos del artículo
 import 'package:grownomics/paginas/Aprendizaje/Widgets/tutorialPage.dart'; // Importa la página de tutorial
 import 'package:grownomics/paginas/Aprendizaje/learnDetailsPage.dart'; // Importa la página de detalles del artículo
@@ -28,8 +28,8 @@ class _PaginaAprendizajeState extends State<PaginaAprendizaje> {
   }
 
   void cargarArticulos() async {
-    List<Articulo> articulosObtenidos =
-        await obtenerArticulos(); // Obtiene los artículos del API
+    List<Articulo> articulosObtenidos = 
+        await ArticuloController.obtenerArticulos(); // Obtiene los artículos del API
 
     // Agrupa los artículos por sección
     for (var articulo in articulosObtenidos) {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:grownomics/api/newsAPI.dart';
+import 'package:grownomics/controladores/newsController.dart';
 import 'package:grownomics/modelos/NewsArticle.dart';
 import 'package:grownomics/paginas/Noticias/newsPage.dart';
 
@@ -25,7 +25,7 @@ class _UltimasNoticiasWidgetState extends State<UltimasNoticiasWidget> {
   @override
   void initState() {
     super.initState();
-    futurasNoticias = obtenerNoticias(
+    futurasNoticias = NoticiasController.obtenerNoticias(
         tematicaSeleccionada); // Inicialización de la lista de noticias con el tema seleccionado
   }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart'; // Importa el paquete para animaciones
-import 'package:grownomics/api/marketAPI.dart'; // Importa el archivo que contiene las funciones para obtener datos del mercado
+import 'package:grownomics/controladores/marketController.dart'; // Importa el archivo que contiene las funciones para obtener datos del mercado
 
 class ResumenMercadoWidget extends StatefulWidget {
   final String userEmail;
@@ -19,7 +19,7 @@ class _ResumenMercadoWidgetState extends State<ResumenMercadoWidget> {
   @override
   void initState() {
     super.initState();
-    resumenMercado = obtenerResumenMercado(); // Llama a la función para obtener el resumen del mercado cuando se inicializa el widget
+    resumenMercado = MercadoController.obtenerResumenMercado(); // Llama a la función para obtener el resumen del mercado cuando se inicializa el widget
   }
 
   @override

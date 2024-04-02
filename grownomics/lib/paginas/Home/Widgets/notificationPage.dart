@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:grownomics/widgets/tituloWidget.dart';
 import 'package:intl/intl.dart'; // Importa el paquete intl para formatear fechas
-import 'package:grownomics/api/authAPI.dart';
+import 'package:grownomics/controladores/userController.dart';
 import 'package:grownomics/modelos/Notificacion.dart';
 
 class PaginaNotificaciones extends StatefulWidget {
@@ -19,7 +19,7 @@ class _PaginaNotificacionesState extends State<PaginaNotificaciones> {
   @override
   void initState() {
     super.initState();
-    futureNotificaciones = obtenerNotificacionesUsuario(widget.correo);
+    futureNotificaciones = UsuarioController.obtenerNotificacionesUsuario(widget.correo);
   }
 
   @override

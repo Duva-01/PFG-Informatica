@@ -1,8 +1,8 @@
 import 'package:animated_button_bar/animated_button_bar.dart'; // Importar paquete para botones animados
 import 'package:flutter/material.dart'; // Importar el paquete flutter material
 import 'package:fl_chart/fl_chart.dart'; // Importar paquete para gráficos
-import 'package:grownomics/api/marketAPI.dart'; // Importar API para información de mercado
-import 'package:grownomics/api/portfolioAPI.dart'; // Importar API para información de cartera
+import 'package:grownomics/controladores/marketController.dart'; // Importar API para información de mercado
+import 'package:grownomics/controladores/portfolioController.dart'; // Importar API para información de cartera
 import 'package:intl/intl.dart'; // Importar paquete para formato de fechas
 
 class HistorialWidget extends StatefulWidget {
@@ -135,7 +135,7 @@ class _HistorialWidgetState extends State<HistorialWidget> {
         SizedBox(height: 20), // Espacio vertical
         FutureBuilder<List<dynamic>>(
           // Constructor futuro para construir basado en datos futuros
-          future: obtenerTransaccionesUsuario(widget
+          future: CarteraController.obtenerTransaccionesUsuario(widget
               .userEmail), // Futuro para obtener transacciones del usuario
           builder: (context, snapshot) {
             // Constructor de contenido basado en el estado del futuro

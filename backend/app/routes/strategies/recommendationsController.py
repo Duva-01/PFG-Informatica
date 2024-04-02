@@ -8,7 +8,7 @@ from app.routes.strategies.strategies import SmaCross, RsiStrategy, BollingerBan
 import talib
 import numpy as np  
 import sys
-from ..finance_data import get_historical_data
+from ..marketController import get_historical_data
 import pandas as pd
 
 from ...models import Usuario, Cartera, Accion, Transaccion
@@ -314,23 +314,34 @@ from statsmodels.tsa.arima.model import ARIMA
 
 
 def generar_predicciones_precio(symbol):
+    # Creo un modelo ARIMA basado en datos históricos de precios utilizando mi símbolo favorito
     data = yf.download(symbol, period="2y")
+    
+    # Extraigo precios de cierre y los convierto a tipo flotante
     precios_cierre = data['Close'].astype(float)
+    
+    # Ajusto la frecuencia de los precios de cierre a días laborables, porque es más realista
     precios_cierre = precios_cierre.asfreq('B')  # 'B' representa días laborables
 
+    # Creo un modelo ARIMA y lo ajusto a mis datos para hacer predicciones de precios
     modelo_arima = ARIMA(precios_cierre, order=(5,1,0))
     modelo_ajustado = modelo_arima.fit()
 
+    # Decido cuántos días quiero predecir hacia el futuro
     n_dias = 30
+    
+    # Hago mis propias predicciones de precios para los próximos 'n_dias' días
     pronostico = modelo_ajustado.forecast(steps=n_dias)
 
+    # Creo fechas futuras para mis predicciones
     fechas_futuras = pd.date_range(start=precios_cierre.index[-1], periods=n_dias + 1)
-    predicciones = pd.Series(pronostico, index=fechas_futuras)
     
-    # Filtrar y excluir valores NaN
+    # Filtro y excluyo los valores NaN de mis predicciones, porque no me gustan los datos incorrectos
+    predicciones = pd.Series(pronostico, index=fechas_futuras)
     predicciones_filtradas = {fecha.strftime("%Y-%m-%dT%H:%M:%S"): valor for fecha, valor in predicciones.items() if not math.isnan(valor)}
 
     return predicciones_filtradas
+
 
 def generar_recomendacion_final(precio_actual, data_recomendaciones, soportes, resistencias, indicadores_economicos, predicciones_precio):
     recomendaciones_estrategias = data_recomendaciones.get('recommendations', [])

@@ -12,9 +12,9 @@ class TestViews(TestCase):
     def setUp(self):
         db.create_all()
 
-    def tearDown(self):
-        db.session.remove()
-        db.drop_all()
+    #def tearDown(self):
+        #db.session.remove()
+        #db.drop_all()
 
     def test_home_page(self):
         response = self.client.get('/')

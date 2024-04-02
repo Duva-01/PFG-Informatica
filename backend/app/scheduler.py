@@ -57,7 +57,8 @@ def configura_tareas(app):
 
     # Guardar la instancia de app en el scheduler para usarla luego
     scheduler.app = app
-
+    # Limpia todos los trabajos existentes antes de agregar nuevos
+    scheduler.remove_all_jobs()
     # Agrega aquí todas las tareas y su programación
     scheduler.add_job(id='check_favorite_stocks_prices', func=check_favorite_stocks_prices, trigger='interval', minutes=180)
     #scheduler.add_job(id='test_alert', func=test_alert, trigger='interval', seconds=20)
@@ -127,7 +128,7 @@ def test_alert():
                       recipients=[email], 
                       body= f"Test de prueba de notificacion.")
         
-        room = email_to_room_mapping(email)  # Implementa esta función según tus necesidades
+        room = email_to_room_mapping(email)  
         socketio.emit('test_alert', {
             'message': f"Test de prueba de notificacion."
         }, room=room)

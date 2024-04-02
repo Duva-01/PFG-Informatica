@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:animated_button_bar/animated_button_bar.dart'; // Paquete para botones animados
 import 'package:fl_chart/fl_chart.dart'; // Paquete para gráficos FL
 import 'package:flutter/material.dart';
-import 'package:grownomics/api/marketAPI.dart'; // Funciones relacionadas con el mercado
+import 'package:grownomics/controladores/marketController.dart'; // Funciones relacionadas con el mercado
 import 'package:intl/intl.dart'; // Paquete para formatear fechas
 import '../../../modelos/HistoricalData.dart'; // Modelo de datos históricos
 import 'package:k_chart/flutter_k_chart.dart'; // Paquete para gráficos KChart
@@ -35,7 +35,7 @@ class _EstadoWidgetGrafico extends State<WidgetGrafico> {
 
   // Función para cargar los datos históricos
   void _cargarDatos() async {
-    final datos = await obtenerDatosHistoricos(
+    final datos = await MercadoController.obtenerDatosHistoricos(
         widget.symbol, _intervalo); // Obtiene los datos históricos del mercado
     setState(() {
       _datosHistoricos =

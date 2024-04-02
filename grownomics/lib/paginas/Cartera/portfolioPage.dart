@@ -1,7 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
-import 'package:grownomics/api/portfolioAPI.dart';
+import 'package:grownomics/controladores/portfolioController.dart';
 import 'package:grownomics/modelos/Cartera.dart'; // Importa el modelo de la cartera
 import 'package:grownomics/paginas/Cartera/widgets/balanceHistoryWidget.dart';
 import 'package:grownomics/paginas/Cartera/widgets/profileCardWidget.dart';
@@ -36,11 +36,11 @@ class _PaginaCarteraState extends State<PaginaCartera> {
   void cargarDatosCartera() async {
     try {
       // Obtener datos de la cartera
-      final datosCartera = await obtenerCartera(widget.userEmail);
+      final datosCartera = await CarteraController.obtenerCartera(widget.userEmail);
       // Convertir los datos a un objeto de tipo Cartera
       final carteraDatos = Cartera.fromJson(datosCartera);
       // Calcular el beneficio
-      final beneficioCalculado = await calcularBeneficio(widget.userEmail);
+      final beneficioCalculado = await CarteraController.calcularBeneficio(widget.userEmail);
       // Actualizar el estado con los datos de la cartera y el beneficio obtenidos
       setState(() {
         cartera = carteraDatos;

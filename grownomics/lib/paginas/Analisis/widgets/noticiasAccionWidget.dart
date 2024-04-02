@@ -1,7 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:grownomics/api/marketAPI.dart';
-import 'package:grownomics/api/newsAPI.dart'; 
+import 'package:grownomics/controladores/marketController.dart';
+import 'package:grownomics/controladores/newsController.dart'; 
 import 'package:grownomics/modelos/NewsArticle.dart';
 import 'package:grownomics/paginas/Noticias/newsPage.dart';
 import 'package:grownomics/widgets/tituloWidget.dart';
@@ -45,7 +45,7 @@ class _NoticiasAccionWidgetState extends State<NoticiasAccionWidget> {
 
   Future<void> _cargarResumenAccion() async {
     try {
-      resumen = await obtenerDatosAccion(widget.simboloAccion);
+      resumen = await MercadoController.obtenerDatosAccion(widget.simboloAccion);
     } catch (e) {
       print("Error al cargar el resumen de la acción: $e");
     }
@@ -55,7 +55,7 @@ class _NoticiasAccionWidgetState extends State<NoticiasAccionWidget> {
     try {
       // Suponiendo que obtenerNoticiasDeAcciones es una función asíncrona que devuelve un Future
       // Se debe asegurar que resumen contenga la clave "nombre" con el valor correcto
-      futurasNoticias = obtenerNoticiasDeAcciones(widget.simboloAccion, "es");
+      futurasNoticias = NoticiasController.obtenerNoticiasDeAcciones(widget.simboloAccion, "es");
     } catch (e) {
       print("Error al cargar noticias de la acción: $e");
       // Si hay un error, futurasNoticias puede devolver una lista vacía para evitar errores de ejecución

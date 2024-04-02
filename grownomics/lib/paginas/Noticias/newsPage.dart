@@ -2,7 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:grownomics/api/newsAPI.dart'; // Importación del archivo de API para obtener noticias
+import 'package:grownomics/controladores/newsController.dart'; // Importación del archivo de API para obtener noticias
 import 'package:grownomics/modelos/NewsArticle.dart'; // Importación del modelo de artículo de noticias
 
 class PaginaNoticias extends StatefulWidget {
@@ -30,7 +30,7 @@ class _PaginaNoticiasState extends State<PaginaNoticias> {
   @override
   void initState() {
     super.initState();
-    futurasNoticias = obtenerNoticias(
+    futurasNoticias = NoticiasController.obtenerNoticias(
         tematicaSeleccionada); // Inicialización de la lista de noticias con el tema seleccionado
   }
 
@@ -98,7 +98,7 @@ class _PaginaNoticiasState extends State<PaginaNoticias> {
                       setState(() {
                         tematicaSeleccionada = tematicas[index]
                             .toLowerCase(); // Actualiza el tema seleccionado
-                        futurasNoticias = obtenerNoticias(
+                        futurasNoticias = NoticiasController.obtenerNoticias(
                             tematicaSeleccionada); // Obtiene las noticias del nuevo tema seleccionado
                       });
                     },

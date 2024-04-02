@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:grownomics/api/portfolioAPI.dart';
+import 'package:grownomics/controladores/portfolioController.dart';
 import 'package:grownomics/modelos/Cartera.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -35,7 +35,7 @@ class _BalanceCardState extends State<BalanceCard> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final emailObtenido = prefs.getString('userEmail') ?? widget.userEmail;
-      final datosCartera = await obtenerCartera(
+      final datosCartera = await CarteraController.obtenerCartera(
           emailObtenido); // Asume que esto devuelve un Map<String, dynamic>
       setState(() {
         cartera = Cartera.fromJson(datosCartera);

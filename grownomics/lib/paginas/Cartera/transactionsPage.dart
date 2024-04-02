@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grownomics/api/portfolioAPI.dart';
+import 'package:grownomics/controladores/portfolioController.dart';
 import 'package:grownomics/modelos/Transaccion.dart';
 import 'package:grownomics/widgets/tituloWidget.dart';
 import 'package:intl/intl.dart';
@@ -19,7 +19,7 @@ class _PaginaTransaccionState extends State<PaginaTransaccion> {
   @override
   void initState() {
     super.initState();
-    _transaccionesFuturas = obtenerTransaccionesUsuario(widget.userEmail)
+    _transaccionesFuturas = CarteraController.obtenerTransaccionesUsuario(widget.userEmail)
         .then((data) => data.map<Transaccion>((json) => Transaccion.fromJson(json)).toList());
   }
 

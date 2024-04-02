@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grownomics/api/recomendationAPI.dart';
+import 'package:grownomics/controladores/recomendationController.dart';
 import 'package:grownomics/widgets/tituloWidget.dart';
 
 class RecomendacionFinalWidget extends StatefulWidget {
@@ -28,7 +28,7 @@ class _RecomendacionFinalWidgetState extends State<RecomendacionFinalWidget> {
 
   void obtenerRecomendaciones() async {
     try {
-      final resultado = await obtenerAnalisisCompleto(
+      final resultado = await RecomendacionesController.obtenerAnalisisCompleto(
           widget.simboloAccion,
           widget
               .correoElectronico); // Obtener recomendaciones según el símbolo de la acción

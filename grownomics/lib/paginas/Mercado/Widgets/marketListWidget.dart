@@ -1,7 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart'; // Importa el paquete de Flutter para crear interfaces de usuario
-import 'package:grownomics/api/authAPI.dart'; // Importa la API de autenticación
-import 'package:grownomics/api/marketAPI.dart'; // Importa la API del mercado
+import 'package:grownomics/controladores/userController.dart'; // Importa la API de autenticación
+import 'package:grownomics/controladores/marketController.dart'; // Importa la API del mercado
 import 'package:grownomics/paginas/Analisis/analisisAccionPage.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // Importa el paquete para manejar preferencias compartidas
 import 'package:grownomics/paginas/Mercado/stockPage.dart'; // Importa la página de detalles de acciones del mercado
@@ -54,7 +54,7 @@ class _ListaMercadoEstado extends State<ListaMercado> {
     isUserLoggedIn = prefs.getBool('isUserLoggedIn') ?? false;
 
     if (isUserLoggedIn) {
-      obtenerDatosUsuario(widget.correoElectronico).then((datos) {
+      UsuarioController.obtenerDatosUsuario(widget.correoElectronico).then((datos) {
         if (mounted) {
           setState(() {
             idUsuario = datos['id'];
@@ -79,11 +79,11 @@ class _ListaMercadoEstado extends State<ListaMercado> {
             nuevasAcciones; // Declara una lista para almacenar las nuevas acciones cargadas
         if (cargarFavoritas) {
           // Verifica si se deben cargar solo las acciones favoritas
-          nuevasAcciones = await obtenerAccionesFavoritas(
+          nuevasAcciones = await MercadoController.obtenerAccionesFavoritas(
               idUsuario); // Obtiene las acciones favoritas del usuario
         } else {
           // Si no se están cargando acciones favoritas
-          nuevasAcciones = await obtenerAcciones(
+          nuevasAcciones = await MercadoController.obtenerAcciones(
               pagina); // Obtiene las acciones del mercado de acuerdo a la página actual
         }
         setState(() {
@@ -140,7 +140,7 @@ class _ListaMercadoEstado extends State<ListaMercado> {
     // Método para cargar las acciones favoritas del usuario
     try {
       // Maneja posibles errores durante la carga de las acciones favoritas
-      var favoritas = await obtenerAccionesFavoritas(
+      var favoritas = await MercadoController.obtenerAccionesFavoritas(
           idUsuario); // Obtiene las acciones favoritas del usuario
       setState(() {
         // Actualiza el estado del widget con las acciones favoritas obtenidas
@@ -166,13 +166,13 @@ class _ListaMercadoEstado extends State<ListaMercado> {
       // Maneja posibles errores durante la alternancia de favorita
       if (idsFavoritas.contains(idAccion)) {
         // Verifica si la acción ya está marcada como favorita
-        await eliminarAccionFavorita(idUsuario,
+        await MercadoController.eliminarAccionFavorita(idUsuario,
             idAccion); // Elimina la acción de la lista de favoritas del usuario
         idsFavoritas.remove(
             idAccion); // Remueve el ID de la acción de las acciones favoritas
       } else {
         // Si la acción no está marcada como favorita
-        await agregarAccionFavorita(idUsuario,
+        await MercadoController.agregarAccionFavorita(idUsuario,
             idAccion); // Agrega la acción a la lista de favoritas del usuario
         idsFavoritas.add(
             idAccion); // Agrega el ID de la acción a las acciones favoritas

@@ -1,7 +1,7 @@
 // Importaciones de paquetes y bibliotecas necesarios
 import 'package:animated_button_bar/animated_button_bar.dart'; // Paquete para botones animados
 import 'package:flutter/material.dart';
-import 'package:grownomics/api/marketAPI.dart'; // Funciones relacionadas con el mercado
+import 'package:grownomics/controladores/marketController.dart'; // Funciones relacionadas con el mercado
 import 'package:grownomics/modelos/HistoricalData.dart'; // Modelo de datos históricos
 import 'package:intl/intl.dart'; // Paquete para formatear fechas
 
@@ -30,7 +30,7 @@ void initState() {
 
   // Función para cargar los datos históricos
   void _cargarDatos() async {
-    final datos = await obtenerDatosHistoricos(widget.simboloAccion, _intervalo); // Obtiene los datos históricos del mercado
+    final datos = await MercadoController.obtenerDatosHistoricos(widget.simboloAccion, _intervalo); // Obtiene los datos históricos del mercado
     setState(() {
       _datosHistoricos = datos; // Actualiza los datos históricos en el estado del widget
     });

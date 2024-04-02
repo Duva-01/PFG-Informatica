@@ -169,3 +169,5 @@ def get_user_transactions():
     } for trans in transacciones]
 
     return jsonify(transacciones_lista), 200  # Devolver la lista de transacciones
+
+

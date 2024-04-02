@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:grownomics/api/authAPI.dart';
-import 'package:grownomics/api/marketAPI.dart';
+import 'package:grownomics/controladores/userController.dart';
+import 'package:grownomics/controladores/marketController.dart';
 import 'package:grownomics/modelos/AccionFavorita.dart';
 import 'package:grownomics/paginas/Analisis/analisisAccionPage.dart';
 
@@ -26,10 +26,10 @@ class _AccionesFavoritasWidgetState extends State<AccionesFavoritasWidget> {
 
   Future<void> _cargarFavoritas() async {
     try {
-      var datos = await obtenerDatosUsuario(widget.userEmail);
+      var datos = await UsuarioController.obtenerDatosUsuario(widget.userEmail);
       int idUsuario = datos['id'];
 
-      var favoritasJson = await obtenerAccionesFavoritas(idUsuario);
+      var favoritasJson = await MercadoController.obtenerAccionesFavoritas(idUsuario);
       if (mounted) {
         setState(() {
           accionesFavoritas = favoritasJson

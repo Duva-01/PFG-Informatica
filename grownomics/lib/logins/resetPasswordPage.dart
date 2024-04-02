@@ -1,6 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:grownomics/api/authAPI.dart';
+import 'package:grownomics/controladores/userController.dart';
 
 class PaginaCambiarClave extends StatefulWidget {
   @override
@@ -21,7 +21,7 @@ class _PaginaCambiarClaveState extends State<PaginaCambiarClave> {
 
   // Método para enviar el código de verificación al correo electrónico
   void _enviarCodigoVerificacion() async {
-    bool enviado = await solicitarResetPassword(_email);
+    bool enviado = await UsuarioController.solicitarResetPassword(_email);
     if (enviado) {
       // Código enviado con éxito, mostrar formulario para ingresar código
       setState(() {
@@ -67,7 +67,7 @@ class _PaginaCambiarClaveState extends State<PaginaCambiarClave> {
     }
 
     bool cambiada =
-        await resetPassword(_email, _codigoVerificacion, _nuevaClave);
+        await UsuarioController.resetPassword(_email, _codigoVerificacion, _nuevaClave);
     if (cambiada) {
       // Contraseña cambiada con éxito, mostrar mensaje y navegar o cerrar
       showDialog(

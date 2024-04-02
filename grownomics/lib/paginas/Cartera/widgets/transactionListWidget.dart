@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart'; // Importar el paquete flutter material
-import 'package:grownomics/api/portfolioAPI.dart'; // Importar API para información de cartera
+import 'package:grownomics/controladores/portfolioController.dart'; // Importar API para información de cartera
 import 'package:grownomics/modelos/Transaccion.dart';
 import 'package:grownomics/paginas/Cartera/transactionsPage.dart'; // Importar página de transacciones
 import 'package:intl/intl.dart'; // Importar paquete para formato de fechas
@@ -24,7 +24,7 @@ class _ListaTransaccionWidgetState extends State<ListaTransaccionWidget> {
   void initState() {
     // Inicialización del estado
     super.initState(); // Llamar al método initState de la clase base
-    _transaccionesFuturas = obtenerTransaccionesUsuario(widget.userEmail).then(
+    _transaccionesFuturas = CarteraController.obtenerTransaccionesUsuario(widget.userEmail).then(
         (data) => data
             .map<Transaccion>((json) => Transaccion.fromJson(json))
             .toList()); // Obtener transacciones del usuario

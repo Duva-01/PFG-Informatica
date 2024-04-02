@@ -1,6 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:grownomics/api/recomendationAPI.dart';
+import 'package:grownomics/controladores/recomendationController.dart';
 import 'package:grownomics/paginas/Analisis/widgets/terminosDescripciones.dart';
 import 'package:grownomics/widgets/tituloWidget.dart';
 
@@ -29,7 +29,7 @@ class _AnalisisFundamentalWidgetState extends State<AnalisisFundamentalWidget> {
 
   void _cargarAnalisisFundamental() async {
     try {
-      final analisis = await obtenerAnalisisFundamental(widget.simboloAccion);
+      final analisis = await RecomendacionesController.obtenerAnalisisFundamental(widget.simboloAccion);
       setState(() {
         _analisisFundamental = analisis;
         

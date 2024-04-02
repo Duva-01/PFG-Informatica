@@ -1,8 +1,8 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:animated_button_bar/animated_button_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:grownomics/api/marketAPI.dart';
-import 'package:grownomics/api/recomendationAPI.dart';
+import 'package:grownomics/controladores/marketController.dart';
+import 'package:grownomics/controladores/recomendationController.dart';
 import 'package:grownomics/modelos/HistoricalData.dart';
 import 'package:grownomics/paginas/Analisis/widgets/graficoBarrasWidget.dart';
 import 'package:grownomics/paginas/Analisis/widgets/indicadoresEconomicosWidget.dart';
@@ -37,7 +37,7 @@ class _AnalisisTecnicoWidgetState extends State<AnalisisTecnicoWidget> {
 
   _obtenerAnalisisTecnico() async {
   try {
-    final resultado = await obtenerAnalisisTecnico(widget.simboloAccion, _intervalo);
+    final resultado = await RecomendacionesController.obtenerAnalisisTecnico(widget.simboloAccion, _intervalo);
     List<double> sma20List = List<double>.from(resultado['sma20'].map((e) => e.toDouble()));
     List<double> sma50List = List<double>.from(resultado['sma50'].map((e) => e.toDouble()));
 
@@ -58,7 +58,7 @@ class _AnalisisTecnicoWidgetState extends State<AnalisisTecnicoWidget> {
 
   // Función para cargar los datos históricos
   void _cargarDatos() async {
-    final datos = await obtenerDatosHistoricos(widget.simboloAccion,
+    final datos = await MercadoController.obtenerDatosHistoricos(widget.simboloAccion,
         _intervalo); // Obtiene los datos históricos del mercado
     setState(() {
       _datosHistoricos =

@@ -1,8 +1,8 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:animated_button_bar/animated_button_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:grownomics/api/marketAPI.dart';
-import 'package:grownomics/api/recomendationAPI.dart';
+import 'package:grownomics/controladores/marketController.dart';
+import 'package:grownomics/controladores/recomendationController.dart';
 import 'package:grownomics/modelos/HistoricalData.dart';
 import 'package:grownomics/paginas/Analisis/widgets/recomendacionFinalWidget.dart';
 import 'package:grownomics/paginas/Mercado/Widgets/chartWidget.dart';
@@ -47,7 +47,7 @@ void _cargarTodo() async {
 
 Future<void> _cargarResumenAccion() async {
   try {
-    resumen = await obtenerDatosAccion(widget.simboloAccion);
+    resumen = await MercadoController.obtenerDatosAccion(widget.simboloAccion);
     // Aquí no necesitas llamar a setState ya que lo harás después de cargar todo
   } catch (e) {
     print("Error al cargar el resumen de la acción: $e");
@@ -57,7 +57,7 @@ Future<void> _cargarResumenAccion() async {
 
 Future<void> _cargarDatos() async {
   try {
-    final datos = await obtenerDatosHistoricos(widget.simboloAccion, _intervalo);
+    final datos = await MercadoController.obtenerDatosHistoricos(widget.simboloAccion, _intervalo);
     _datosHistoricos = datos;
     // Aquí tampoco necesitas llamar a setState
   } catch (e) {
@@ -205,15 +205,14 @@ Widget _construirResumenInicial(Map<String, dynamic> resumen) {
                 ),
                 SizedBox(height: 8),
                 Text(
-                  'Precio actual: \$${double.parse(resumen['current_price'].toString()).toStringAsFixed(2)}',
+                  'Precio actual: ${double.parse(resumen['current_price'].toString()).toStringAsFixed(2)}€',
                   style: TextStyle(fontSize: 16),
                 ),
                 SizedBox(height: 8),
                 Text(
-                  'Cambio: \$${double.parse(resumen['change'].toString()).toStringAsFixed(2)} (${double.parse(resumen['change_percent'].toString()).toStringAsFixed(2)}%)',
+                  'Cambio: ${double.parse(resumen['change'].toString()).toStringAsFixed(2)}€ (${double.parse(resumen['change_percent'].toString()).toStringAsFixed(2)}%)',
                   style: TextStyle(fontSize: 16),
                 ),
-                // Añade más detalles según lo que devuelva tu API
               ],
             ),
           ),

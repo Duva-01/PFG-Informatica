@@ -22,8 +22,8 @@ def register():
         apellido = request.form.get('apellido')
 
         # Verificar si ya existe un usuario con el mismo correo electrónico
-        existing_user = Usuario.query.filter_by(email=email).first()
-        if existing_user:
+        existeUsuario = Usuario.query.filter_by(email=email).first()
+        if existeUsuario:
             return jsonify({'success': False, 'message': 'Ya existe un usuario con este correo electrónico.'}), 409
 
         # Crear un nuevo usuario

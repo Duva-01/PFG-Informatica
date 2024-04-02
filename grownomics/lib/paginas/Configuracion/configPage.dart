@@ -24,12 +24,9 @@ class PaginaConfiguracion extends StatefulWidget {
 }
 
 class _PaginaConfiguracionState extends State<PaginaConfiguracion> {
+  
   // Estado para el estado de las notificaciones
   bool _notificacionesActivadas = false;
-
-  // Estado para el modo oscuro
-  bool _modoOscuroActivado = false;
-
   bool _isUserLoggedIn = false;
 
   @override
@@ -65,6 +62,7 @@ class _PaginaConfiguracionState extends State<PaginaConfiguracion> {
 
     return Scaffold(
       appBar: AppBar(
+        key: Key('AppBarConfiguracion'),
         // Barra de aplicaciones en la parte superior de la página
         title: Text(
           'Configuracion',
@@ -118,6 +116,7 @@ class _PaginaConfiguracionState extends State<PaginaConfiguracion> {
             ),
             if (_isUserLoggedIn) ...[
               ListTile(
+                key: Key('EditarPerfil'),
                 // Elemento de lista para editar perfil
                 title: Text('Editar Perfil'), // Título
                 trailing: Icon(Icons.arrow_forward_ios), // Icono de flecha
@@ -132,6 +131,7 @@ class _PaginaConfiguracionState extends State<PaginaConfiguracion> {
                 },
               ),
               SwitchListTile(
+                key: Key('ToggleNotificaciones'),
                 title: Text(
                   'Mostrar notificaciones',
                   style: TextStyle(color: Colors.black), // Color de la etiqueta
@@ -161,6 +161,7 @@ class _PaginaConfiguracionState extends State<PaginaConfiguracion> {
                       fontWeight: FontWeight.bold)), // Texto adicional
             ),
             ListTile(
+              key: Key('SobreNosotros'),
               // Elemento de lista para mostrar información sobre nosotros
               title: Text('Sobre nosotros'), // Título
               trailing: Icon(Icons.arrow_forward_ios), // Icono de flecha

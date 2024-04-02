@@ -15,6 +15,10 @@ void main() async {
   final isUserLoggedIn = prefs.getBool('isUserLoggedIn') ?? false;
   await initializeDateFormatting('es', null);
   
+  await prefs.setBool('isSkipped', false);
+  await prefs.setBool('isUserLoggedIn', false);
+  await prefs.setBool('isUserRemember', false);
+  
   if (isUserLoggedIn) {
     final correoElectronico = prefs.getString('userEmail') ?? '';
     // Iniciar conexión WebSocket aquí

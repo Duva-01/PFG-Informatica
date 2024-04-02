@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
-import 'package:grownomics/api/recomendationAPI.dart';
+import 'package:grownomics/controladores/recomendationController.dart';
 import 'package:grownomics/paginas/Analisis/analisisAccionPage.dart';
 import 'package:grownomics/paginas/Mercado/Widgets/marketListWidget.dart';
 import 'package:grownomics/widgets/tituloWidget.dart'; // Asegúrate de que esta importación sea correcta según la ubicación de tu API
@@ -29,7 +29,7 @@ class _PaginaAnalisisState extends State<PaginaAnalisis> {
 
   Future<void> _cargarSimbolos() async {
     try {
-      final simbolos = await obtenerCodigosTicker();
+      final simbolos = await RecomendacionesController.obtenerCodigosTicker();
       setState(() {
         _todosLosSimbolos = simbolos;
         _simbolosFiltrados = simbolos;

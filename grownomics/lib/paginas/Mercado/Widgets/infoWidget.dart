@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grownomics/api/marketAPI.dart'; // Importa las funciones relacionadas con el mercado
+import 'package:grownomics/controladores/marketController.dart'; // Importa las funciones relacionadas con el mercado
 import 'package:grownomics/modelos/HistoricalData.dart'; // Importa el modelo de datos históricos
 import 'package:grownomics/widgets/tituloWidget.dart';
 import 'package:intl/intl.dart'; // Importa el paquete para formatear fechas
@@ -26,7 +26,7 @@ class _EstadoWidgetInfo extends State<WidgetInfo> {
 
   // Función para cargar los datos históricos
   void _cargarDatos() async {
-    final datos = await obtenerDatosHistoricos(widget.symbol, _intervalo); // Obtiene los datos históricos del mercado
+    final datos = await MercadoController.obtenerDatosHistoricos(widget.symbol, _intervalo); // Obtiene los datos históricos del mercado
     setState(() {
       _datosHistoricos = datos; // Actualiza los datos históricos en el estado del widget
     });

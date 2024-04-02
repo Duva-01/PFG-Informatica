@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grownomics/api/marketAPI.dart'; // Importación del archivo de API para obtener datos del mercado
+import 'package:grownomics/controladores/marketController.dart'; // Importación del archivo de API para obtener datos del mercado
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart'; // Importación de Flutter Zoom Drawer para el cajón de navegación
 import 'package:grownomics/paginas/Mercado/Widgets/marketListWidget.dart'; // Importación del widget de lista de mercado
 import 'package:shared_preferences/shared_preferences.dart'; // Importación de SharedPreferences para almacenar datos localmente

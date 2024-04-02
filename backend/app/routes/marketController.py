@@ -80,7 +80,7 @@ def get_popular_stocks_data():
         if not data.empty:
             last_row = data.iloc[-1]
             stock_info = {
-                'id': accion.id_accion,  # Asume que tu modelo tiene este campo como ID
+                'id': accion.id_accion, 
                 'name': ticker.info.get('longName', 'Unknown'),
                 'ticker_symbol': ticker_symbol,
                 'current_price': last_row['Close'],
