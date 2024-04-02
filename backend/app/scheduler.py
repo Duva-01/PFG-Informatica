@@ -59,7 +59,7 @@ def configura_tareas(app):
     scheduler.app = app
     # Limpia todos los trabajos existentes antes de agregar nuevos al scheduler
     scheduler.remove_all_jobs()
-    # Agrega aquí todas las tareas y su programación
+    # Agrega aquí todas las tareas y su programación respectiva
     scheduler.add_job(id='check_favorite_stocks_prices', func=check_favorite_stocks_prices, trigger='interval', minutes=180)
     #scheduler.add_job(id='test_alert', func=test_alert, trigger='interval', seconds=20)
 

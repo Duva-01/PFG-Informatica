@@ -34,7 +34,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Build the Docker image
-      run: docker build -t my-python-app .
+      run: docker build -t my-python-app ./backend
 
     - name: Run Tests
       run: docker run -e SQLALCHEMY_DATABASE_URI=postgresql://postgres:example@localhost:5432/grownomics_db my-python-app python -m pytest tests/
