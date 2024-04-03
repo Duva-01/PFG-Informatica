@@ -6,7 +6,7 @@ class TestViews(TestCase):
         # Configuración de la app para testing
         app = create_app()
         app.config['TESTING'] = True
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:example@localhost/grownomics_db'
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:example@grownomics-db/grownomics_db'
         return app
 
     def setUp(self):

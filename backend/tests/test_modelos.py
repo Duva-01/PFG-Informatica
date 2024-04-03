@@ -7,7 +7,7 @@ class TestModelos(TestCase):
     def create_app(self):
         app = create_app()
         app.config['TESTING'] = True
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:example@localhost/grownomics_db'
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:example@grownomics-db/grownomics_db'
 
         return app
 
