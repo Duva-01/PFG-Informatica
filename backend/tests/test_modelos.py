@@ -11,7 +11,7 @@ class TestModelos(TestCase):
 
         return app
 
-    # Configurar la base de datos para cada prueba
+    # Configurar la base de datos para cada una de las pruebas
     def setUp(self):
         db.create_all()
 
