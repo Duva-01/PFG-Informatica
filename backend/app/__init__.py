@@ -25,7 +25,7 @@ def create_app():
     return app
 
 def configure_app(app):
-    #Configura la instancia de la aplicación Flask.
+    #Configura la instancia de la aplicación Flasks.
     app.config['SECRET_KEY'] = 'una_clave_secreta_muy_segura'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:example@grownomics-db/grownomics_db'
     app.config['MAIL_SERVER'] = 'smtp.gmail.com'
