@@ -2,14 +2,14 @@ version: '3.8'
 
 services:
   app:
-    build: ./backend
+    build: .
     ports:
       - "5000:5000"
     environment:
       - FLASK_APP=app
       - FLASK_ENV=development
     volumes:
-      - ./backend:/app
+      - .:/app
     command: flask run --host=0.0.0.0
     depends_on:
       - grownomics-db
@@ -17,12 +17,12 @@ services:
   grownomics-db:
     image: postgres
     environment:
-      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: example
+      POSTGRES_USER: postgres
       POSTGRES_DB: grownomics_db
     volumes:
-      - ./backup.sql:/docker-entrypoint-initdb.d/backup.sql
       - pgdata:/var/lib/postgresql/data
+      - ./backend/backup.sql:/docker-entrypoint-initdb.d/backup.sql
 
 volumes:
   pgdata:

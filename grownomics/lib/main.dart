@@ -16,9 +16,9 @@ void main() async {
   await initializeDateFormatting('es', null);
   
   // Esto es de prueba para los test y para que funcionen los workflows en general
-  await prefs.setBool('isSkipped', false);
-  await prefs.setBool('isUserLoggedIn', false);
-  await prefs.setBool('isUserRemember', false);
+  //await prefs.setBool('isSkipped', false);
+  //await prefs.setBool('isUserLoggedIn', false);
+  //await prefs.setBool('isUserRemember', false);
   
   if (isUserLoggedIn) {
     final correoElectronico = prefs.getString('userEmail') ?? '';

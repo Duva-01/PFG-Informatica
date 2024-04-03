@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:grownomics/controladores/newsController.dart';
-import 'package:grownomics/modelos/NewsArticle.dart';
 import 'package:grownomics/paginas/Noticias/newsPage.dart';
+import 'package:grownomics/modelos/NewsArticle.dart';
 
 // Widget de Tarjeta de Saldo que muestra información sobre el balance y transacciones del usuario
 class UltimasNoticiasWidget extends StatefulWidget {

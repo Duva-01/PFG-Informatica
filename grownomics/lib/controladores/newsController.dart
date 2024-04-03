@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:grownomics/modelos/NewsArticle.dart';
+import 'package:http/http.dart' as http;
 
 class NoticiasController {
   // Función asíncrona para obtener noticias basadas en una temática específica

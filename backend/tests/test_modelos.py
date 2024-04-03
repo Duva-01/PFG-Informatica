@@ -81,7 +81,7 @@ class TestModelos(TestCase):
         db.session.add(transaccion)
         db.session.commit()
 
-        # Comprobar que la transacción ha sido creada con los atributos correctos
+        # Comprobar que la transacción ha sido creada con los atributos correctos con assert
         assert transaccion.id_cartera == cartera.id_cartera
         assert transaccion.id_accion == accion.id_accion
         assert transaccion.tipo == "compra"

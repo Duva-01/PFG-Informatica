@@ -16,6 +16,18 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: example
+          POSTGRES_DB: grownomics_db
+        ports:
+          - 5432:5432
+        options: >-
+          -v /home/runner/work/Proyecto-Informatica/Proyecto-Informatica/backend/backup.sql:/docker-entrypoint-initdb.d/backup.sql
+
     steps:
     - uses: actions/checkout@v2
 
@@ -27,6 +39,8 @@ jobs:
     - name: Set up Docker Compose
       run: docker-compose -f backend/docker-compose.yml up -d
 
+    - name: Wait for DB to be ready
+      run: until docker-compose -f backend/docker-compose.yml exec grownomics-db pg_isready ; do sleep 5 ; done
+
     - name: Run Tests
       run: docker-compose -f backend/docker-compose.yml exec -T app python -m pytest tests/
-    
