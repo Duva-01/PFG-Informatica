@@ -7,7 +7,8 @@ class TestModelos(TestCase):
     def create_app(self):
         app = create_app()
         app.config['TESTING'] = True
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:example@grownomics-db/grownomics_db'
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:example@localhost/grownomics_db'
+
         return app
 
     # Configurar la base de datos para cada prueba
@@ -27,6 +28,9 @@ class TestModelos(TestCase):
         assert usuario.apellido == "Pérez"
         assert usuario.email == "juan@example.com"
 
+        db.session.delete(usuario)
+        db.session.commit()
+
     # Test para verificar la creación de una nueva acción
     def test_nueva_accion(self):
         # Crear una instancia del modelo Accion
@@ -39,9 +43,12 @@ class TestModelos(TestCase):
         assert accion.nombre == "Pepito Inc."
         assert accion.codigoticker == "PEPIT"
 
+        db.session.delete(accion)
+        db.session.commit()
+
     # Test para verificar la creación de una relación de acción favorita
     def test_nueva_accion_favorita(self):
-        usuario = Usuario(nombre="Ana", apellido="García", email="ana@example.com")
+        usuario = Usuario(nombre="Nestor", apellido="García", email="nestor@example.com")
         accion = Accion(nombre="Tesla Inc.", codigoticker="TSLA")
         db.session.add(usuario)
         db.session.add(accion)
@@ -54,6 +61,10 @@ class TestModelos(TestCase):
         # Comprobar que la acción favorita ha sido creada con los atributos correctos
         assert favorita.id_usuario == usuario.id
         assert favorita.id_accion == accion.id_accion
+
+        db.session.delete(usuario)
+        db.session.delete(favorita)
+        db.session.commit()
 
     # Test para verificar la creación de una cartera
     def test_nueva_cartera(self):
@@ -68,6 +79,10 @@ class TestModelos(TestCase):
         # Comprobar que la cartera ha sido creada con los atributos correctos
         assert cartera.id_usuario == usuario.id
         assert cartera.saldo == 10000.0
+
+        db.session.delete(usuario)
+        db.session.delete(cartera)
+        db.session.commit()
 
     # Test para verificar la creación de una transacción
     def test_nueva_transaccion(self):
@@ -88,6 +103,10 @@ class TestModelos(TestCase):
         assert transaccion.cantidad == 5
         assert transaccion.precio == 3000.0
 
+        db.session.delete(cartera)
+        db.session.delete(transaccion)
+        db.session.commit()
+
     # Test para verificar la creación de una notificación
     def test_nueva_notificacion(self):
         usuario = Usuario(nombre="Laura", apellido="Díaz", email="laura@example.com")
@@ -101,3 +120,7 @@ class TestModelos(TestCase):
         # Comprobar que la notificación ha sido creada con los atributos correctos
         assert notificacion.usuario_id == usuario.id
         assert notificacion.mensaje == "Alerta: Cambio significativo en el valor de sus acciones."
+
+        db.session.delete(notificacion)
+        db.session.delete(usuario)
+        db.session.commit()
