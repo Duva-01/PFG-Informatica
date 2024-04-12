@@ -1,3 +1,4 @@
+# Importaciones necesarias
 from flask import jsonify, request, Blueprint, current_app as app
 from datetime import datetime, timedelta
 import yfinance as yf
@@ -9,7 +10,7 @@ import numpy as np
 
 finance_bp = Blueprint('finance', __name__)
 
-
+# Funcion para obtener una seria de tickers de las acciones mas famosas
 def get_global_trending_tickers():
 
     global_tickers = [
@@ -44,41 +45,61 @@ pass
 
 # Actualizar las acciones con los tickers globales populares
 def actualizar_acciones_global_tickers():
+    # Obtenemos los tickers globales populares
     global_tickers = get_global_trending_tickers()
 
+    # Iteramos sobre cada ticker en los tickers globales
     for ticker_symbol in global_tickers:
+        # Creamos un objeto Ticker para el ticker actual
         ticker = yf.Ticker(ticker_symbol)
         try:
+            # Intentamos obtener el nombre de la acción
             nombre = ticker.info.get('longName', None)
+            # Verificamos si se obtuvo el nombre
             if nombre:
+                # Verificamos si la acción no existe ya en la base de datos
                 if not Accion.query.filter_by(codigoticker=ticker_symbol).first():
+                    # Creamos una nueva acción y la añadimos a la base de datos
                     nueva_accion = Accion(nombre=nombre, codigoticker=ticker_symbol)
                     db.session.add(nueva_accion)
+                    # Imprimimos un mensaje indicando que se añadió la nueva acción
                     print(f"Añadiendo nueva acción: {nombre} ({ticker_symbol})")
         except Exception as e:
+            # Imprimimos un mensaje en caso de que no se pueda obtener la información para el ticker actual
             print(f"No se pudo obtener la información para {ticker_symbol}: {e}")
 
+    # Confirmamos los cambios en la base de datos
     db.session.commit()
 
 # Ruta para obtener datos de acciones populares
 @finance_bp.route('/popular_stocks_data')
 def get_popular_stocks_data():
+    # Obtener el número de página y el número de elementos por página de los argumentos de la solicitud
     page = request.args.get('page', default=1, type=int)
     per_page = request.args.get('per_page', default=10, type=int)
     
+    # Calcular el índice de inicio y obtener las acciones correspondientes a la página actual
     start_index = (page - 1) * per_page
     acciones = Accion.query.offset(start_index).limit(per_page).all()
     
+    # Definir las fechas de inicio y fin para obtener los datos de las acciones
     end_date = datetime.now()
     start_date = end_date - timedelta(days=2)
     popular_stocks_data = {}
     
+    # Iterar sobre cada acción obtenida
     for accion in acciones:
+        # Obtener el símbolo del ticker de la acción
         ticker_symbol = accion.codigoticker
+        # Crear un objeto Ticker para el ticker actual
         ticker = yf.Ticker(ticker_symbol)
+        # Obtener los datos históricos de la acción para las fechas especificadas
         data = ticker.history(start=start_date, end=end_date)
+        # Verificar si hay datos disponibles para la acción
         if not data.empty:
+            # Obtener la última fila de datos (el dato más reciente)
             last_row = data.iloc[-1]
+            # Crear un diccionario con la información de la acción
             stock_info = {
                 'id': accion.id_accion, 
                 'name': ticker.info.get('longName', 'Unknown'),
@@ -87,22 +108,33 @@ def get_popular_stocks_data():
                 'change': last_row['Close'] - last_row['Open'],
                 'change_percent': ((last_row['Close'] - last_row['Open']) / last_row['Open']) * 100,
             }
+            # Agregar la información de la acción al diccionario de datos de acciones populares
             popular_stocks_data[accion.id_accion] = stock_info
         else:
+            # Imprimir un mensaje si no hay datos disponibles para el ticker actual
             print(f"No hay datos disponibles para el ticker: {ticker_symbol}")
     
+    # Devolver los datos de las acciones populares en formato JSON
     return jsonify(list(popular_stocks_data.values()))
 
+
+# Definir una ruta para obtener datos de una acción específica mediante su símbolo de ticker
 @finance_bp.route('/stock_data/<string:ticker_symbol>')
 def get_stock_data(ticker_symbol):
+    # Definir las fechas de inicio y fin para obtener los datos históricos de la acción
     end_date = datetime.now()
-    start_date = end_date - timedelta(days=2)  # Cambia este valor según lo que quieras mostrar
+    start_date = end_date - timedelta(days=2)  
     
+    # Crear un objeto Ticker para el símbolo de ticker proporcionado
     ticker = yf.Ticker(ticker_symbol)
+    # Obtener los datos históricos de la acción para las fechas especificadas
     data = ticker.history(start=start_date, end=end_date)
     
+    # Verificar si hay datos disponibles para la acción
     if not data.empty:
+        # Obtener la última fila de datos (el dato más reciente)
         last_row = data.iloc[-1]
+        # Crear un diccionario con la información de la acción
         stock_info = {
             'name': ticker.info.get('longName', 'Unknown'),
             'ticker_symbol': ticker_symbol,
@@ -110,30 +142,45 @@ def get_stock_data(ticker_symbol):
             'change': last_row['Close'] - last_row['Open'],
             'change_percent': ((last_row['Close'] - last_row['Open']) / last_row['Open']) * 100,
         }
+        # Devolver la información de la acción en formato JSON
         return jsonify(stock_info)
     else:
+        # Devolver un mensaje de error si no hay datos disponibles para el ticker proporcionado
         return jsonify({'error': f"No hay datos disponibles para el ticker: {ticker_symbol}"}), 404
 
 
-# Ruta para obtener acciones favoritas de un usuario
+
+# Definir una ruta para obtener las acciones favoritas de un usuario
 @finance_bp.route('/acciones_favs', methods=['GET'])
 def get_acciones_favoritas_usuario():
+    # Obtener el ID de usuario de los argumentos de la solicitud
     id_usuario = request.args.get('id_usuario', type=int)
+    # Verificar si se proporcionó el ID de usuario
     if not id_usuario:
+        # Devolver un mensaje de error si no se proporcionó el ID de usuario
         return jsonify({'error': 'Se requiere el ID de usuario'}), 400
     
+    # Obtener las acciones favoritas del usuario de la base de datos
     acciones_favoritas = AccionesFavoritas.query.filter_by(id_usuario=id_usuario).join(Accion).all()
     
+    # Definir las fechas de inicio y fin para obtener los datos históricos de las acciones
     end_date = datetime.now()
     start_date = end_date - timedelta(days=2)
     favoritas_data = {}
     
+    # Iterar sobre cada acción favorita del usuario
     for favorita in acciones_favoritas:
+        # Obtener el símbolo del ticker de la acción favorita
         ticker_symbol = favorita.accion.codigoticker
+        # Crear un objeto Ticker para el símbolo de ticker de la acción favorita
         ticker = yf.Ticker(ticker_symbol)
+        # Obtener los datos históricos de la acción favorita para las fechas especificadas
         data = ticker.history(start=start_date, end=end_date)
+        # Verificar si hay datos disponibles para la acción favorita
         if not data.empty:
+            # Obtener la última fila de datos (el dato más reciente)
             last_row = data.iloc[-1]
+            # Crear un diccionario con la información de la acción favorita
             stock_info = {
                 'id': favorita.accion.id_accion,
                 'name': ticker.info['longName'],
@@ -142,54 +189,75 @@ def get_acciones_favoritas_usuario():
                 'change': last_row['Close'] - last_row['Open'],
                 'change_percent': ((last_row['Close'] - last_row['Open']) / last_row['Open']) * 100,
             }
+            # Agregar la información de la acción favorita al diccionario de datos de acciones favoritas
             favoritas_data[favorita.accion.id_accion] = stock_info
         else:
+            # Imprimir un mensaje si no hay datos disponibles para la acción favorita
             print(f"No hay datos disponibles para el ticker: {ticker_symbol}")
+            # Agregar un mensaje de error al diccionario de datos de acciones favoritas
             favoritas_data[favorita.accion.id_accion] = {'error': 'No hay datos disponibles'}
     
+    # Devolver los datos de las acciones favoritas en formato JSON
     return jsonify(list(favoritas_data.values()))
 
-# Ruta para obtener datos históricos de una acción
+# Definir una ruta para obtener datos históricos de una acción
 @finance_bp.route('/historical_data')
 def get_historical_data():
+    # Obtener el símbolo del ticker y el intervalo de los argumentos de la solicitud
     ticker_symbol = request.args.get('symbol')
     interval = request.args.get('interval', default='1mo')  # Puede ser 1d, 1wk, 1mo, 3mo, 1y, etc.
 
+    # Verificar si se proporcionó el símbolo del ticker
     if not ticker_symbol:
+        # Devolver un mensaje de error si no se proporcionó el símbolo del ticker
         return jsonify(error='Se requiere el símbolo del ticker'), 400
 
+    # Crear un objeto Ticker para el símbolo de ticker proporcionado
     ticker = yf.Ticker(ticker_symbol)
+    # Obtener los datos históricos de la acción para el periodo especificado
     data = ticker.history(period=interval)
+    # Rellenar los valores NaN con 0 y formatear el índice como '%Y-%m-%d'
     data.fillna(0, inplace=True)
     data.index = data.index.strftime('%Y-%m-%d')
 
+    # Devolver los datos históricos de la acción en formato JSON
     return jsonify(data.to_dict(orient='index'))
+
 
 # Ruta para agregar una acción a favoritos
 @finance_bp.route('/agregar_accion_fav', methods=['POST'])
 def agregar_accion_favorita():
+    # Obtener los datos JSON de la solicitud
     data = request.get_json()
     id_usuario = data.get('id_usuario')
     id_accion = data.get('id_accion')
+    # Verificar si se proporcionaron ambos el ID de usuario y el ID de acción
     if not id_usuario or not id_accion:
+        # Devolver un mensaje de error si falta alguno de los datos necesarios
         return jsonify({'error': 'Faltan datos para agregar a favoritos'}), 400
+    # Crear un nuevo registro de acción favorita en la base de datos
     nueva_favorita = AccionesFavoritas(id_usuario=id_usuario, id_accion=id_accion)
     db.session.add(nueva_favorita)
     db.session.commit()
+    # Devolver un mensaje de éxito
     return jsonify({'mensaje': 'Acción agregada a favoritos con éxito'})
 
 # Ruta para eliminar una acción de favoritos
 @finance_bp.route('/eliminar_accion_fav', methods=['POST'])
 def eliminar_accion_favorita():
+    # Obtener los datos JSON de la solicitud
     data = request.get_json()
     id_usuario = data.get('id_usuario')
     id_accion = data.get('id_accion')
+    # Verificar si se proporcionaron ambos el ID de usuario y el ID de acción
     if not id_usuario or not id_accion:
+        # Devolver un mensaje de error si falta alguno de los datos necesarios
         return jsonify({'error': 'Faltan datos para eliminar de favoritos'}), 400
+    # Eliminar la acción favorita de la base de datos
     AccionesFavoritas.query.filter_by(id_usuario=id_usuario, id_accion=id_accion).delete()
     db.session.commit()
+    # Devolver un mensaje de éxito
     return jsonify({'mensaje': 'Acción eliminada de favoritos con éxito'})
-
 
 #---------------------------------------------------------
 #-------------- Pagina mis acciones ----------------------
@@ -204,17 +272,13 @@ def acciones_usuario():
     usuario = Usuario.query.filter_by(email=email).first()
     if not usuario:
         return jsonify({'error': 'Usuario no encontrado'}), 404
-    
-    # Ahora, en lugar de filtrar Transaccion directamente por id_usuario,
-    # debes obtener la cartera del usuario y luego filtrar las transacciones
-    # basadas en el id_cartera.
 
     # Obtener el id de la cartera del usuario
     cartera_usuario = Cartera.query.filter_by(id_usuario=usuario.id).first()
     if not cartera_usuario:
         return jsonify({'error': 'Cartera no encontrada para el usuario'}), 404
     
-    # Ahora puedes filtrar las transacciones basadas en el id_cartera de la cartera del usuario
+    # Filtrar las transacciones basadas en el id_cartera de la cartera del usuario
     compras = db.session.query(
         Transaccion.id_accion,
         db.func.sum(Transaccion.cantidad).label('total_compras')

@@ -72,7 +72,7 @@ class _PaginaTransaccionState extends State<PaginaTransaccion> {
                   children: [
                     ListTile(
                       title: buildTitulo("$fecha"),
-                      onTap: () {}, // Si deseas agregar alguna acción al tocar la fecha
+                      onTap: () {}, 
                     ),
                     ListView.builder(
                       shrinkWrap: true,

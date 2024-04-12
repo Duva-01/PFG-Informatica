@@ -35,7 +35,7 @@ class PaginaDetallesAprendizaje extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: MarkdownViewer(
             ajustarMarkdown(markdownContent),
-            enableTaskList: true, // Habilita o deshabilita las características según tus necesidades
+            enableTaskList: true, 
           ),
         ),
       ),

@@ -1,3 +1,4 @@
+# Importaciones
 import math
 from flask import Blueprint, jsonify, request, send_file
 import yfinance as yf
@@ -88,7 +89,7 @@ def get_indicators(symbol):
     open_prices = data['Open'].values.astype(np.float64)
     volume = data['Volume'].values.astype(np.float64)
 
-    # Calcula algunos indicadores técnicos adicionales utilizando TA-Lib
+    # Algunos indicadores técnicos adicionales utilizando TA-Lib
     sma = talib.SMA(close_prices, timeperiod=20)
     ema = talib.EMA(close_prices, timeperiod=20)
     rsi = talib.RSI(close_prices, timeperiod=14)
@@ -163,7 +164,7 @@ def resumir_datos(precios_cierre, frecuencia='M'):
     :param frecuencia: 'W' para semanal, 'M' para mensual.
     :return: Serie de pandas con precios resumidos.
     """
-    resumen = precios_cierre.resample(frecuencia).mean()  # Cambia .mean() según sea necesario
+    resumen = precios_cierre.resample(frecuencia).mean()  
     return resumen
 
 
@@ -220,7 +221,7 @@ def filtrar_proximidad(niveles, tolerancia):
 
 @recommendations_bp.route('/analisis_tecnico/<string:simbolo>', methods=['GET'])
 def obtener_analisis_tecnico(simbolo):
-    intervalo = request.args.get('intervalo', '1y')  # Permite especificar el intervalo mediante parámetros URL
+    intervalo = request.args.get('intervalo', '1y')  
 
     ticker = yf.Ticker(simbolo)
     datos = ticker.history(period=intervalo)
@@ -427,9 +428,8 @@ def obtener_recomendacion_completa(simbolo):
 
     try:
         # Integrar indicadores económicos
-        # Asumiendo que get_indicators ya devuelve un formato serializable a JSON
         indicadores_economicos_respuesta = get_indicators(simbolo)
-        indicadores_economicos = indicadores_economicos_respuesta.get_json()  # Suponiendo que es una respuesta Flask
+        indicadores_economicos = indicadores_economicos_respuesta.get_json() 
     except Exception as e:
         print(f"Error al obtener indicadores económicos: {e}")
         indicadores_economicos = "Error al obtener indicadores económicos"
@@ -438,7 +438,7 @@ def obtener_recomendacion_completa(simbolo):
         # Generar predicciones de precios futuros
         predicciones_precio = generar_predicciones_precio(simbolo)
         
-        # Asumiendo que generar_predicciones_precio devuelve un diccionario serializable a JSON
+        # Generar_predicciones_precio devuelve un diccionario serializable a JSON
     except Exception as e:
         print(f"Error al generar predicciones de precios: {e}", file=sys.stderr)
         predicciones_precio = "Error al generar predicciones de precios"
@@ -459,7 +459,7 @@ def obtener_recomendacion_completa(simbolo):
         data_recomendaciones=recomendaciones_estrategias,
         soportes=soportes,
         resistencias=resistencias,
-        indicadores_economicos=indicadores_economicos,  # Asegúrate de que este nombre coincida
+        indicadores_economicos=indicadores_economicos,  
         predicciones_precio=predicciones_precio
     )
 

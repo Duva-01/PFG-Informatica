@@ -36,7 +36,7 @@ class _BalanceCardState extends State<BalanceCard> {
       final prefs = await SharedPreferences.getInstance();
       final emailObtenido = prefs.getString('userEmail') ?? widget.userEmail;
       final datosCartera = await CarteraController.obtenerCartera(
-          emailObtenido); // Asume que esto devuelve un Map<String, dynamic>
+          emailObtenido); 
       setState(() {
         cartera = Cartera.fromJson(datosCartera);
       });

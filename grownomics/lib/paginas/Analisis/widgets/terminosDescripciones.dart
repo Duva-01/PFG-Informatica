@@ -3,7 +3,6 @@ Map<String, String> terminosTraducidosPrincipales = {
   'EPS': 'EPS (Ganancia Por Acción)',
   'ROI': 'ROI (Retorno Sobre la Inversión)',
   'Rendimiento Dividendo (%)': 'Rendimiento de Dividendo (%)',
-  // Agrega más términos según sea necesario
 };
 
 Map<String, String> descripcionesPrincipales = {
@@ -15,7 +14,6 @@ Map<String, String> descripcionesPrincipales = {
       'Mide la rentabilidad de la inversión en relación con el capital invertido.',
   'Rendimiento Dividendo (%)':
       'Porcentaje de ganancia en forma de dividendos respecto al precio de la acción.',
-  // Agrega más descripciones según sea necesario
 };
 
 Map<String, String> terminosTraducidosBalance = {

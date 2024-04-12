@@ -22,11 +22,11 @@ void main() async {
   
   if (isUserLoggedIn) {
     final correoElectronico = prefs.getString('userEmail') ?? '';
-    // Iniciar conexión WebSocket aquí
+    // Iniciar conexión WebSocket
     final socketService =
-        SocketService(); // Asume que tienes una instancia de tu servicio de socket
+        SocketService(); 
     socketService.connectAndListen(
-        correoElectronico); // Modifica tu método para aceptar el correo como parámetro
+        correoElectronico); 
   }
 
   runApp(MyApp());

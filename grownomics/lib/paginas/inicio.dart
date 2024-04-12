@@ -65,7 +65,6 @@ class _PantallaInicioState extends State<PantallaInicio> {
       }
     }
   } else {
-    // Aquí podrías establecer valores predeterminados o manejar el estado de no logueado
     print('El usuario no ha iniciado sesión');
   }
 }

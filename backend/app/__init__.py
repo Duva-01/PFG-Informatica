@@ -1,3 +1,4 @@
+# Importaciones necesarias
 from flask import Flask
 from flask_cors import CORS
 from flask_admin import Admin
@@ -5,7 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_socketio import SocketIO
-from flask_admin.contrib.sqla import ModelView  # Importar la clase ModelView 
+from flask_admin.contrib.sqla import ModelView  
 
 # Importaciones locales
 from .extensions import db, login_manager
@@ -14,6 +15,7 @@ from .routes import register_blueprints
 from .scheduler import configura_tareas, logger
 from .socketIO_config import socketio
 
+# Funcion para crearme la aplicacionde Flask y configurar tanto las extensions, como los sockets... etc
 def create_app():
     app = Flask(__name__)
     configure_app(app)
@@ -24,8 +26,8 @@ def create_app():
 
     return app
 
+# Funcion para configurar la instancia de la aplicación Flasks.
 def configure_app(app):
-    #Configura la instancia de la aplicación Flasks.
     app.config['SECRET_KEY'] = 'una_clave_secreta_muy_segura'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:example@grownomics-db/grownomics_db'
     app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -35,8 +37,8 @@ def configure_app(app):
     app.config['MAIL_PASSWORD'] = 'mqkj rwox ekmn celf'
     app.config['MAIL_DEFAULT_SENDER'] = 'grownomicss@gmail.com'
 
+#Configura y añade vistas al componente Flask-Admin.
 def init_admin(app):
-    #Configura y añade vistas al componente Flask-Admin.
     admin = Admin(app, name='Grownomics', template_mode='bootstrap3')  # Crear una instancia de Admin con el nombre 'Grownomics' y el modo de plantilla 'bootstrap3'
     admin.add_view(ModelView(Usuario, db.session))  # Agregar una vista para el modelo Usuario
     admin.add_view(ModelView(Cartera, db.session, name='Cartera'))  # Agregar una vista para el modelo Cartera con el nombre 'Cartera'
@@ -46,21 +48,21 @@ def init_admin(app):
     admin.add_view(AccionesFavoritasModelView(AccionesFavoritas, db.session, name='Acciones Favoritas'))  # Agregar una vista personalizada para el modelo AccionesFavoritas con el nombre 'Acciones Favoritas'
     admin.add_view(ModelView(ArticulosAprendizaje, db.session, name='Artículos de Aprendizaje'))
     
-
+# Funcion que asocia Flask-SocketIO con la aplicación Flask.
 def init_socketio(app):
-    #Asocia Flask-SocketIO con la aplicación Flask.
     socketio.init_app(app, cors_allowed_origins="*")
 
+# Función que inicializa las extensiones Flask con la aplicación.
 def init_extensions(app):
-    #Inicializa las extensiones Flask con la aplicación.
     db.init_app(app)
     login_manager.init_app(app)
     CORS(app)
     Mail(app)
 
+    # Función para cargar un usuario
     @login_manager.user_loader
     def load_user(user_id):
-        return Usuario.query.get(int(user_id)) # Definir una función para cargar un usuario
+        return Usuario.query.get(int(user_id)) 
 
     register_blueprints(app) # Registrar los blueprints en la aplicación
    
@@ -72,6 +74,7 @@ def init_extensions(app):
 
 app = create_app()
 
+# Ejecutar la aplicación si se ejecuta este script directamente
 if __name__ == '__main__':
-    #app.run(debug=True, host='0.0.0.0', port=5000)  # Ejecutar la aplicación si se ejecuta este script directamente
-    socketio.run(app, debug=True, host='0.0.0.0', port=5000)  # Usar socketio.run en lugar de app.run
+    #app.run(debug=True, host='0.0.0.0', port=5000)  
+    socketio.run(app, debug=True, host='0.0.0.0', port=5000) 

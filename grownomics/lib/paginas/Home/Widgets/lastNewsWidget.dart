@@ -9,7 +9,7 @@ class UltimasNoticiasWidget extends StatefulWidget {
   final String userEmail; // Correo electrónico del usuario
 
   const UltimasNoticiasWidget({
-    required this.userEmail, // Parámetro obligatorio: correo electrónico del usuario
+    required this.userEmail, 
   });
 
   @override
@@ -122,7 +122,6 @@ class _UltimasNoticiasWidgetState extends State<UltimasNoticiasWidget> {
   }
 
   Widget _buildNewsTile(NewsArticle articulo) {
-    // Tu implementación de cómo construir cada elemento de la lista
     return GestureDetector(
       child: Card(
         color: Color.fromARGB(255, 26, 86, 60),

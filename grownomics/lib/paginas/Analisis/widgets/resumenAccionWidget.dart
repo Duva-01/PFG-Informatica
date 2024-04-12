@@ -48,10 +48,8 @@ void _cargarTodo() async {
 Future<void> _cargarResumenAccion() async {
   try {
     resumen = await MercadoController.obtenerDatosAccion(widget.simboloAccion);
-    // Aquí no necesitas llamar a setState ya que lo harás después de cargar todo
   } catch (e) {
     print("Error al cargar el resumen de la acción: $e");
-    // Considera manejar el error de manera adecuada
   }
 }
 
@@ -59,10 +57,8 @@ Future<void> _cargarDatos() async {
   try {
     final datos = await MercadoController.obtenerDatosHistoricos(widget.simboloAccion, _intervalo);
     _datosHistoricos = datos;
-    // Aquí tampoco necesitas llamar a setState
   } catch (e) {
     print("Error al cargar los datos históricos: $e");
-    // Considera manejar el error de manera adecuada
   }
 }
 

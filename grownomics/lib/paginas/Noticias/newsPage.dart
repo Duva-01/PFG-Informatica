@@ -1,9 +1,10 @@
+// Importaciones
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:grownomics/controladores/newsController.dart'; // Importación del archivo de API para obtener noticias
-import 'package:grownomics/modelos/NewsArticle.dart'; // Importación del modelo de artículo de noticias
+import 'package:grownomics/controladores/newsController.dart'; 
+import 'package:grownomics/modelos/NewsArticle.dart'; 
 
 class PaginaNoticias extends StatefulWidget {
   @override

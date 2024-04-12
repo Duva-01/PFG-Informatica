@@ -3,11 +3,12 @@ from .userController import auth_bp  # Importar el blueprint para autenticación
 from .newsController import news_bp  # Importar el blueprint para noticias
 from .home import home_bp  # Importar el blueprint para la página de inicio
 from .portfolioController import portfolio_bp  # Importar el blueprint para la cartera
-from .articlesController import article_bp
-from .strategies.recommendationsController import recommendations_bp
+from .articlesController import article_bp # Importar el blueprint para los articulos
+from .strategies.recommendationsController import recommendations_bp # Importar el blueprint para las recomendaciones
 
+# Registrar los blueprints en la aplicación Flask
 def register_blueprints(app):
-    # Registrar los blueprints en la aplicación Flask
+    
     app.register_blueprint(finance_bp, url_prefix='/finance')  # Registrar el blueprint de datos financieros con prefijo de URL '/finance'
     app.register_blueprint(auth_bp, url_prefix='/auth')  # Registrar el blueprint de autenticación con prefijo de URL '/auth'
     app.register_blueprint(news_bp, url_prefix='/news')  # Registrar el blueprint de noticias con prefijo de URL '/news'

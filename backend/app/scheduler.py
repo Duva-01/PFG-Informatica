@@ -1,10 +1,12 @@
+# Importaciones
 import logging
 import sys
 from flask_apscheduler import APScheduler
 from flask import current_app
 from flask_mail import Message
 import yfinance as yf
-# Asegúrate de importar las extensiones y modelos correctamente
+
+# Importar las extensiones y modelos correctamente
 from .extensions import db
 from .models import Accion, AccionesFavoritas, Usuario, Notificacion
 from .socketIO_config import socketio
@@ -39,17 +41,18 @@ def handle_test_event(message):
     logger.info(f"\n Me llega este mensaje del cliente: {message} \n")
     socketio.emit('test_response', 'Recibo tu mensaje cliente')
 
+# Definir la función para manejar el evento 'join'
 @socketio.on('join')
 def on_join(data):
     email = data['email']
-    room = email_to_room_mapping(email)  # Asegúrate de que esta función devuelva un identificador único de sala basado en el email
+    room = email_to_room_mapping(email)
     join_room(room)
     print(f"{email} se ha unido a la sala {room}.")
 
 #-----------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------
 
-# Define la configuración de tareas en APSchedulers
+# Configuración de tareas en APSchedulers
 def configura_tareas(app):
     if not scheduler.running:
         scheduler.init_app(app)
@@ -59,20 +62,21 @@ def configura_tareas(app):
     scheduler.app = app
     # Limpia todos los trabajos existentes antes de agregar nuevos al scheduler
     scheduler.remove_all_jobs()
-    # Agrega aquí todas las tareas y su programación respectiva
-    scheduler.add_job(id='check_favorite_stocks_prices', func=check_favorite_stocks_prices, trigger='interval', minutes=180)
+    
+    # Tareas y su programación respectiva
+    scheduler.add_job(id='check_favorite_stocks_prices', func=check_favorite_stocks_prices, trigger='interval', minutes=3)
+    # Tarea de prueba
     #scheduler.add_job(id='test_alert', func=test_alert, trigger='interval', seconds=20)
 
 # Tarea para verificar los precios de las acciones favoritas
 def check_favorite_stocks_prices():
-    with scheduler.app.app_context():  # Asegúrate de ejecutar dentro del contexto de la aplicación el scheduler
+    with scheduler.app.app_context():  
         usuarios = Usuario.query.all()
         for usuario in usuarios:
             acciones_favoritas = AccionesFavoritas.query.filter_by(id_usuario=usuario.id).all()
             for favorita in acciones_favoritas:
-                # Utiliza la relación `accion` para obtener la instancia de Accion asociada
                 accion = favorita.accion
-                if accion:  # Comprueba que la relación haya devuelto una instancia válida
+                if accion: 
                     ticker_symbol = accion.codigoticker
                     ticker = yf.Ticker(ticker_symbol)
                     data = ticker.history(period="1d")
@@ -103,21 +107,20 @@ def send_notification(email, ticker_symbol, change_percent):
                       recipients=[email], 
                       body= f"Tu acción favorita {ticker_symbol} ha tenido una variación significativa de {change_percent:.2f}% en las últimas 24 horas.")
         
-        room = email_to_room_mapping(email)  # Implementa esta función según tus necesidades
+        room = email_to_room_mapping(email)
         socketio.emit('stock_alert', {
             'message': f"Tu acción favorita {ticker_symbol} ha tenido una variación significativa de {change_percent:.2f}% en las últimas 24 horas."
         }, room=room)
 
         mail.send(msg)
 
-def email_to_room_mapping(email):
-    # Este es un ejemplo simple que usa el email como identificador de sala.
+# Este es un ejemplo simple que usa el email como identificador de sala.
+def email_to_room_mapping(email):  
     # En una implementación real, se debería considerar un identificador único más seguro.
     return email
 
 # Función de prueba para enviar un email
 def test_alert():
-    # Usar scheduler.app para acceder a la instancia de la aplicación
     with scheduler.app.app_context():
         mail = scheduler.app.extensions['mail']
         email = "david@gmail.com"

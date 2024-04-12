@@ -39,6 +39,9 @@ jobs:
     - name: Set up Docker Compose
       run: docker-compose -f backend/docker-compose.yml up -d
 
+    - name: Mostrar logs de la base de datos
+      run: docker-compose -f backend/docker-compose.yml logs grownomics-db
+
     - name: Wait for DB to be ready
       run: |
         until docker exec $(docker-compose -f backend/docker-compose.yml ps -q grownomics-db) pg_isready ; do sleep 5 ; done

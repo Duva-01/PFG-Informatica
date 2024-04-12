@@ -94,7 +94,8 @@ class Transaccion(db.Model):
         return f'Transaccion({self.id_transaccion}, {self.id_cartera}, {self.id_accion}, {self.tipo}, {self.cantidad}, {self.precio}, {self.fecha})'
 
 #----------------------------------------------------------------------------
-    
+
+# Definir la clase ArticulosAprendizaje para representar un articulo en la base de datos
 class ArticulosAprendizaje(db.Model):
     __tablename__ = 'articulosaprendizaje'  # Especifica el nombre de la tabla
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -119,7 +120,8 @@ class ArticulosAprendizaje(db.Model):
         }
     
 #----------------------------------------------------------------------------
-    
+
+# Definir la clase ResetClaveToken para representar un el token del usuario en la base de datos
 class ResetClaveToken(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
@@ -130,7 +132,8 @@ class ResetClaveToken(db.Model):
         return f'<ResetClaveToken {self.token}>'
     
 #-----------------------------------------------------------------------------
-    
+
+# Definir la clase Notificacion para representar una notificacion del usuario en la base de datos
 class Notificacion(db.Model):
     __tablename__ = 'notificaciones'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

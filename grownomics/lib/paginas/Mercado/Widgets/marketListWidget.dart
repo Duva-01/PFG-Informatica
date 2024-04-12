@@ -20,7 +20,6 @@ class ListaMercado extends StatefulWidget {
 }
 
 class _ListaMercadoEstado extends State<ListaMercado> {
-  // Define una clase privada que extiende State<ListaMercado>
   int pagina = 1; // Variable para el número de página de la lista de acciones
   List<dynamic> acciones = []; // Lista para almacenar las acciones del mercado
   bool _cargando = false; // Variable para controlar si se están cargando datos
