@@ -116,7 +116,7 @@ class _ResumenMercadoWidgetState extends State<ResumenMercadoWidget> {
           style: TextStyle(
               color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        subtitle: Row(
+        subtitle: Wrap(
           children: [
             Text(
               'Precio actual: ',

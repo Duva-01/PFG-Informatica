@@ -5,8 +5,8 @@ import 'package:grownomics/modelos/HistoricalData.dart'; // Importar el modelo d
 
 class MercadoController {
   // URL base para las solicitudes al servidor
-  static const String baseUrl = 'http://10.0.2.2:5000';
-
+  //static const String baseUrl = 'http://10.0.2.2:5000';
+  static const String baseUrl = 'http://143.47.44.251:5000';
   // Función para obtener una lista de acciones populares desde el servidor
   static Future<List<dynamic>> obtenerAcciones(int page, {int perPage = 10}) async {
     final Uri url = Uri.parse('$baseUrl/finance/popular_stocks_data?page=$page&per_page=$perPage');
@@ -82,7 +82,7 @@ class MercadoController {
 
   // Función para obtener datos históricos de una acción desde el servidor
   static Future<List<HistoricalData>> obtenerDatosHistoricos(String symbol, String interval) async {
-    final Uri url = Uri.parse('http://10.0.2.2:5000/finance/historical_data?symbol=$symbol&interval=$interval');
+    final Uri url = Uri.parse('$baseUrl/finance/historical_data?symbol=$symbol&interval=$interval');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {

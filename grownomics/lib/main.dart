@@ -19,15 +19,7 @@ void main() async {
   //await prefs.setBool('isSkipped', false);
   //await prefs.setBool('isUserLoggedIn', false);
   //await prefs.setBool('isUserRemember', false);
-  
-  if (isUserLoggedIn) {
-    final correoElectronico = prefs.getString('userEmail') ?? '';
-    // Iniciar conexión WebSocket
-    final socketService =
-        SocketService(); 
-    socketService.connectAndListen(
-        correoElectronico); 
-  }
+
 
   runApp(MyApp());
 }

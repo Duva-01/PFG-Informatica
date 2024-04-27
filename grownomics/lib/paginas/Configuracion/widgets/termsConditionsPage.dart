@@ -72,26 +72,28 @@ class _PaginaTerminosCondicionesState extends State<PaginaTerminosCondiciones> {
                 ),
               ),
               Padding(
-  padding: const EdgeInsets.all(8.0),
-  child: Align(
-    alignment: Alignment.center,
-    child: Text(
-      _mostrarCastellano ? "Términos y Condiciones" : "Terms and Conditions",
-      textAlign: TextAlign.center, // Centra el texto del título
-      style: TextStyle(
-        fontSize: 26.0,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-  ),
-),
-Divider(),
-SizedBox(height: 12.0),
-Align(
-  alignment: Alignment.center,
-  child: Text(
-    _mostrarCastellano
-        ? '''Bienvenido a nuestra aplicación. Si continúas utilizando esta aplicación, aceptas cumplir y estar sujeto a los siguientes términos y condiciones de uso, que junto con nuestra política de privacidad rigen la relación de Grownomics contigo en relación con esta aplicación. Si no estás de acuerdo con alguna parte de estos términos y condiciones, por favor no uses nuestra aplicación.
+                padding: const EdgeInsets.all(8.0),
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    _mostrarCastellano
+                        ? "Términos y Condiciones"
+                        : "Terms and Conditions",
+                    textAlign: TextAlign.center, // Centra el texto del título
+                    style: TextStyle(
+                      fontSize: 26.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              Divider(),
+              SizedBox(height: 12.0),
+              Align(
+                alignment: Alignment.center,
+                child: Text(
+                  _mostrarCastellano
+                      ? '''Bienvenido a nuestra aplicación. Si continúas utilizando esta aplicación, aceptas cumplir y estar sujeto a los siguientes términos y condiciones de uso, que junto con nuestra política de privacidad rigen la relación de Grownomics contigo en relación con esta aplicación. Si no estás de acuerdo con alguna parte de estos términos y condiciones, por favor no uses nuestra aplicación.
 
 El uso de esta aplicación está sujeto a las siguientes condiciones de uso:
 
@@ -104,12 +106,12 @@ El uso no autorizado de esta aplicación puede dar lugar a una reclamación por 
 
 Todas las marcas comerciales reproducidas en esta aplicación, que no son propiedad del operador, son reconocidas en la aplicación.
 
-El uso de esta aplicación y cualquier disputa que surja de dicho uso está sujeto a las leyes de [tu país].
+El uso de esta aplicación y cualquier disputa que surja de dicho uso está sujeto a las leyes de España.
 
 Reservamos el derecho de cambiar estos términos y condiciones de vez en cuando. Los cambios tendrán efecto inmediatamente después de que se publiquen en esta aplicación.
 
 Si tienes alguna pregunta sobre estos términos y condiciones, contáctanos.'''
-        : '''Welcome to our application. If you continue to use this application, you are agreeing to comply with and be bound by the following terms and conditions of use, which together with our privacy policy govern Grownomics's relationship with you in relation to this application. If you disagree with any part of these terms and conditions, please do not use our application.
+                      : '''Welcome to our application. If you continue to use this application, you are agreeing to comply with and be bound by the following terms and conditions of use, which together with our privacy policy govern Grownomics's relationship with you in relation to this application. If you disagree with any part of these terms and conditions, please do not use our application.
 
 The use of this application is subject to the following terms of use:
 
@@ -122,19 +124,18 @@ Unauthorized use of this application may give rise to a claim for damages and/or
 
 All trademarks reproduced in this application, which are not the property of the operator, are acknowledged on the application.
 
-Your use of this application and any dispute arising out of such use of the application is subject to the laws of [your country].
+Your use of this application and any dispute arising out of such use of the application is subject to the laws of Spain.
 
 We reserve the right to change these terms and conditions from time to time. Changes will take effect immediately upon their posting on this application.
 
 If you have any questions about these terms and conditions, please contact us.
 ''',
-    textAlign: TextAlign.justify, // Justifica el texto
-    style: TextStyle(
-      fontSize: 16.0,
-    ),
-  ),
-),
-
+                  textAlign: TextAlign.justify, // Justifica el texto
+                  style: TextStyle(
+                    fontSize: 16.0,
+                  ),
+                ),
+              ),
             ],
           ),
         ),

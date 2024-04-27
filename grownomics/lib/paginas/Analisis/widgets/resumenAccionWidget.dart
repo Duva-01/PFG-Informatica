@@ -74,7 +74,7 @@ Future<void> _cargarDatos() async {
                 children: [
                   buildTitulo("Resumen de la acción"),
                   _construirResumenInicial(resumen),
-                  buildTitulo("Grafico de precios históricos"),
+                  buildTitulo("Gráfico de precios históricos"),
                   AnimatedButtonBar(
                     // Barra de botones animados para intervalos de tiempo
                     radius: 8.0, // Radio de borde de los botones

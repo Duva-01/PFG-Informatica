@@ -21,7 +21,7 @@ class PaginaInicio extends StatefulWidget {
 
 class _PaginaInicioState extends State<PaginaInicio> {
   bool _isUserLoggedIn = false;
-
+  
   @override
   void initState() {
     super.initState();
@@ -32,7 +32,6 @@ class _PaginaInicioState extends State<PaginaInicio> {
     final prefs = await SharedPreferences.getInstance();
     final isLoggedIn = prefs.getBool('isUserLoggedIn') ?? false;
 
-    // Usa setState para actualizar _isUserLoggedIn y reconstruir la UI
     setState(() {
       _isUserLoggedIn = isLoggedIn;
     });

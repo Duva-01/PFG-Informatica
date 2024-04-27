@@ -25,11 +25,14 @@ class _ComprarVenderWidgetState extends State<ComprarVenderWidget> {
   late int accionesRestantes =
       0; // Acciones restantes de la acción seleccionada
 
+  Map<String, dynamic> resumen = {};
+
   @override
   void initState() {
     super.initState();
     _cargarDatosCartera();
     _cargarAccionesUsuario();
+    _cargarResumenAccion();
   }
 
   // Método para cargar los datos de la cartera del usuario
@@ -42,6 +45,18 @@ class _ComprarVenderWidgetState extends State<ComprarVenderWidget> {
       });
     } catch (e) {
       print("Error al cargar los datos de la cartera: $e");
+    }
+  }
+
+    Future<void> _cargarResumenAccion() async {
+    try {
+      resumen = await MercadoController.obtenerDatosAccion(widget.simboloAccion);
+      setState(() {
+        precio = resumen['current_price'];
+      print("El precio de la accion es " + precio.toString());
+      });
+    } catch (e) {
+      print("Error al cargar el resumen de la acción: $e");
     }
   }
 

@@ -5,12 +5,13 @@ import 'package:http/http.dart' as http; // Importa el paquete 'http' para reali
 
 class ArticuloController {
   // URL base para las solicitudes HTTP
-  static const String _baseUrl = 'http://10.0.2.2:5000';
+  //static const String baseUrl = 'http://10.0.2.2:5000';
+  static const String baseUrl = 'http://143.47.44.251:5000';
 
   // Función asíncrona para obtener todos los artículos
   static Future<List<Articulo>> obtenerArticulos() async {
     // Construye la URL para la solicitud GET
-    final url = Uri.parse('$_baseUrl/articles/get_articles');
+    final url = Uri.parse('$baseUrl/articles/get_articles');
     // Realiza la solicitud GET y espera la respuesta
     final respuesta = await http.get(url);
 
@@ -33,7 +34,7 @@ class ArticuloController {
   // Función asíncrona para obtener un artículo por su ID
   static Future<Articulo> obtenerArticuloPorId(int id) async {
     // Construye la URL para la solicitud GET con el ID proporcionado
-    final url = Uri.parse('$_baseUrl/articles/get_article/$id');
+    final url = Uri.parse('$baseUrl/articles/get_article/$id');
     // Realiza la solicitud GET y espera la respuesta
     final respuesta = await http.get(url);
 

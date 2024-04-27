@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:grownomics/controladores/userController.dart'; // Importa las funciones relacionadas con la autenticación desde una API
 import 'package:shared_preferences/shared_preferences.dart'; // Importa SharedPreferences para manejar datos persistentes
+import 'package:grownomics/socketService.dart';
 
 class MenuScreen extends StatefulWidget {
   final ZoomDrawerController controller;
   final Function(int) onItemTapped;
-
-  MenuScreen({required this.controller, required this.onItemTapped});
+  final SocketService socketService;
+  MenuScreen({required this.controller, required this.onItemTapped, required this.socketService});
 
   @override
   _MenuScreenState createState() => _MenuScreenState();
@@ -18,6 +19,7 @@ class _MenuScreenState extends State<MenuScreen> {
       "grownomicero@gmail.com"; // Correo electrónico predeterminado
   late String nombre = "Grownomicero"; // Nombre predeterminado
   late String apellido = ""; // Apellido predeterminado
+
   bool _isUserLoggedIn = false; // Estado de inicio de sesión predeterminado
 
   @override
@@ -110,6 +112,9 @@ class _MenuScreenState extends State<MenuScreen> {
                 style: TextStyle(color: Colors.white)),
             onTap: () async {
               if (_isUserLoggedIn) {
+
+                widget.socketService.disconnect(); 
+
                 final SharedPreferences prefs =
                     await SharedPreferences.getInstance();
                 await prefs.remove(

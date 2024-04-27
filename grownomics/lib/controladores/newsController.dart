@@ -3,10 +3,14 @@ import 'package:grownomics/modelos/NewsArticle.dart';
 import 'package:http/http.dart' as http;
 
 class NoticiasController {
+
+  //static const String baseUrl = 'http://10.0.2.2:5000'; // URL base para las solicitudes al servidor
+  static const String baseUrl = 'http://143.47.44.251:5000';
+
   // Función asíncrona para obtener noticias basadas en una temática específica
   static Future<List<NewsArticle>> obtenerNoticias(String tematica) async {
     // Construye la URL con la temática proporcionada
-    final Uri url = Uri.parse('http://10.0.2.2:5000/news/financial_news?tematica=$tematica');
+    final Uri url = Uri.parse('$baseUrl/news/financial_news?tematica=$tematica');
     // Llama a la función privada _intentarSolicitud para realizar la solicitud HTTP
     return _intentarSolicitud(url);
   }
@@ -14,7 +18,7 @@ class NoticiasController {
   // Función asíncrona para obtener noticias relacionadas con una acción específica
   static Future<List<NewsArticle>> obtenerNoticiasDeAcciones(String nombreAccion, String idioma) async {
     // Construye la URL con el nombre de la acción y el idioma proporcionados
-    final Uri url = Uri.parse('http://10.0.2.2:5000/news/stock_news?nombreAccion=$nombreAccion&language=$idioma');
+    final Uri url = Uri.parse('$baseUrl/news/stock_news?nombreAccion=$nombreAccion&language=$idioma');
     // Llama a la función privada _intentarSolicitud para realizar la solicitud HTTP
     return _intentarSolicitud(url);
   }

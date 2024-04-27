@@ -10,6 +10,7 @@ import 'package:grownomics/paginas/Home/homePage.dart';
 import 'package:grownomics/paginas/Mercado/marketPage.dart';
 import 'package:grownomics/paginas/MisAcciones/myStockPage.dart';
 import 'package:grownomics/paginas/Noticias/newsPage.dart';
+import 'package:grownomics/socketService.dart';
 import '../widgets/menu_controller.dart'; // Importa el controlador del menú personalizado
 import 'package:shared_preferences/shared_preferences.dart'; // Importa el paquete de SharedPreferences para manejar las preferencias del usuario
 
@@ -26,6 +27,7 @@ class _PantallaInicioState extends State<PantallaInicio> {
   late String correoElectronico = "grownomicero@gmail.com"; // Valor predeterminado del correo electrónico
   late String nombre = "Grownomicero"; // Valor predeterminado del nombre
   late String apellido = ""; // Valor predeterminado del apellido
+  late SocketService _socketService; // Instancia del servicio de socket
 
   // Método llamado cuando se toca un ítem del menú
   void _alItemTocar(int indice) {
@@ -37,6 +39,7 @@ class _PantallaInicioState extends State<PantallaInicio> {
   @override
   void initState() {
     super.initState();
+    _socketService = SocketService(); // Inicializa el servicio de socket
     _cargaInicial = _cargarUsuario(); // Cargar datos del usuario al iniciar
   }
 
@@ -48,8 +51,9 @@ class _PantallaInicioState extends State<PantallaInicio> {
   // Solo intenta obtener los datos del usuario si está logueado
   if (isUserLoggedIn) {
     final emailObtenido = preferencias.getString('userEmail');
-
+    
     if (emailObtenido != null) {
+      _socketService.connectAndListen(emailObtenido);
       try {
         final datos = await UsuarioController.obtenerDatosUsuario(emailObtenido);
         if (datos != null && datos['nombre'] != null && datos['apellido'] != null) {
@@ -94,7 +98,7 @@ class _PantallaInicioState extends State<PantallaInicio> {
             return ZoomDrawer(
               controller: controlador, // Controlador del ZoomDrawer
               mainScreen: paginas[_indiceSeleccionado], // Página principal que se muestra
-              menuScreen: MenuScreen(controller: controlador, onItemTapped: _alItemTocar), // Menú lateral
+              menuScreen: MenuScreen(controller: controlador, onItemTapped: _alItemTocar, socketService: _socketService), // Menú lateral
               borderRadius: 24, // Radio de borde
               showShadow: true, // Mostrar sombra
               angle: 0.0, // Ángulo de rotación

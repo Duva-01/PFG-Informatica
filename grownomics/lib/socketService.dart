@@ -4,12 +4,13 @@ import 'package:socket_io_client/socket_io_client.dart'
 import 'package:shared_preferences/shared_preferences.dart'; // Importa shared_preferences para almacenar datos de forma persistente
 
 // Definición de la URL base del servidor
-const String baseUrl = 'http://10.0.2.2:5000';
+//const String baseUrl = 'http://10.0.2.2:5000';
+const String baseUrl = 'http://143.47.44.251:5000';
 
 // Clase para gestionar la conexión y escuchar eventos del socket
 class SocketService {
   late IO.Socket socket; // Socket para la comunicación
-
+  
   // Plugin para gestionar las notificaciones locales
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -22,6 +23,12 @@ class SocketService {
     final InitializationSettings initializationSettings =
         InitializationSettings(android: initializationSettingsAndroid);
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  }
+
+  // Método para cerrar la conexión del socket
+  void disconnect() {
+    socket.disconnect();
+    print("Desconectado del WebSocket");
   }
 
   // Método para conectar y escuchar eventos del socket
@@ -98,6 +105,8 @@ class SocketService {
       );
     }
   }
+
+  
 
   // Método para enviar un evento de prueba al servidor
   void sendTestEvent() {

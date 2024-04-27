@@ -86,68 +86,73 @@ class _BalanceCardState extends State<BalanceCard> {
               ),
               Row(
                 // Fila que contiene información detallada
-                mainAxisAlignment: MainAxisAlignment
-                    .spaceBetween, // Alineación principal: espacio entre elementos
+                mainAxisAlignment: MainAxisAlignment.spaceBetween, // Alineación principal: espacio entre elementos
                 children: [
-                  Column(
-                    // Columna para el total depositado
-                    children: [
-                      Text(
-                        // Widget de texto para mostrar el total depositado
-                        '${cartera.totalDepositado.toStringAsFixed(2)}€', // Formato de texto: total depositado con 2 decimales
-                        style: TextStyle(
-                            color: Colors.green, // Color de texto verde
-                            fontSize: 17, // Tamaño de fuente 17
-                            fontWeight: FontWeight.bold), // Fuente en negrita
-                      ),
-                      Text(
-                        // Widget de texto para mostrar "Total depositado"
-                        'Total depositado', // Texto estático
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 13), // Estilo de texto
-                      ),
-                    ],
+                  Expanded(
+                    child: Column(
+                      // Columna para el total depositado
+                      children: [
+                        Text(
+                          // Widget de texto para mostrar el total depositado
+                          '${cartera.totalDepositado.toStringAsFixed(2)}€', // Formato de texto: total depositado con 2 decimales
+                          style: TextStyle(
+                              color: Colors.green, // Color de texto verde
+                              fontSize: 17, // Tamaño de fuente 17
+                              fontWeight: FontWeight.bold), // Fuente en negrita
+                        ),
+                        Text(
+                          // Widget de texto para mostrar "Total depositado"
+                          'Total depositado', // Texto estático
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 13), // Estilo de texto
+                        ),
+                      ],
+                    ),
                   ),
-                  Column(
-                    // Columna para el total retirado
-                    children: [
-                      Text(
-                        // Widget de texto para mostrar el total retirado
-                        '${cartera.totalRetirado.toStringAsFixed(2)}€', // Formato de texto: total retirado con 2 decimales
-                        style: TextStyle(
-                            color: Colors.green, // Color de texto verde
-                            fontSize: 17, // Tamaño de fuente 17
-                            fontWeight: FontWeight.bold), // Fuente en negrita
-                      ),
-                      Text(
-                        // Widget de texto para mostrar "Total Retirado"
-                        'Total Retirado', // Texto estático
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 13), // Estilo de texto
-                      ),
-                    ],
+                  Expanded(
+                    child: Column(
+                      // Columna para el total retirado
+                      children: [
+                        Text(
+                          // Widget de texto para mostrar el total retirado
+                          '${cartera.totalRetirado.toStringAsFixed(2)}€', // Formato de texto: total retirado con 2 decimales
+                          style: TextStyle(
+                              color: Colors.green, // Color de texto verde
+                              fontSize: 17, // Tamaño de fuente 17
+                              fontWeight: FontWeight.bold), // Fuente en negrita
+                        ),
+                        Text(
+                          // Widget de texto para mostrar "Total Retirado"
+                          'Total Retirado', // Texto estático
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 13), // Estilo de texto
+                        ),
+                      ],
+                    ),
                   ),
-                  Column(
-                    // Columna para el número de transacciones
-                    children: [
-                      Text(
-                        // Widget de texto para mostrar el número de transacciones
-                        '${cartera.totalTransacciones}', // Número de transacciones convertido a texto
-                        style: TextStyle(
-                            color: Colors.green, // Color de texto verde
-                            fontSize: 17, // Tamaño de fuente 17
-                            fontWeight: FontWeight.bold), // Fuente en negrita
-                      ),
-                      Text(
-                        // Widget de texto para mostrar "Nº Transacciones"
-                        'Nº Transacciones', // Texto estático
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 13), // Estilo de texto
-                      ),
-                    ],
+                  Expanded(
+                    child: Column(
+                      // Columna para el número de transacciones
+                      children: [
+                        Text(
+                          // Widget de texto para mostrar el número de transacciones
+                          '${cartera.totalTransacciones}', // Número de transacciones convertido a texto
+                          style: TextStyle(
+                              color: Colors.green, // Color de texto verde
+                              fontSize: 17, // Tamaño de fuente 17
+                              fontWeight: FontWeight.bold), // Fuente en negrita
+                        ),
+                        Text(
+                          // Widget de texto para mostrar "Nº Transacciones"
+                          'Nº Transacciones', // Texto estático
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 13), // Estilo de texto
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               )

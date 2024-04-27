@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class RecomendacionesController {
-  static const String baseUrl = 'http://10.0.2.2:5000'; // URL base para las solicitudes HTTP
-
+  //static const String baseUrl = 'http://10.0.2.2:5000'; // URL base para las solicitudes HTTP
+  static const String baseUrl = 'http://143.47.44.251:5000';
   // Función para obtener recomendaciones de trading
   static Future<Map<String, dynamic>> obtenerRecomendacion(String simbolo, String correo) async {
     final uri = Uri.parse('$baseUrl/recommendations/$simbolo'); // Construye la URI para la solicitud POST

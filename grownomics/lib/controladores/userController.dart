@@ -4,7 +4,8 @@ import 'package:grownomics/modelos/Notificacion.dart';
 
 class UsuarioController {
   // URL base para las solicitudes HTTP
-  static const String baseUrl = 'http://10.0.2.2:5000';
+  //static const String baseUrl = 'http://10.0.2.2:5000';
+  static const String baseUrl = 'http://143.47.44.251:5000';
 
   // Función para obtener los datos de un usuario dado su correo electrónico
   static Future<Map<String, dynamic>> obtenerDatosUsuario(String correo) async {

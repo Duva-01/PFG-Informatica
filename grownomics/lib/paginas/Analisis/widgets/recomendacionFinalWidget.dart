@@ -144,7 +144,7 @@ class _RecomendacionFinalWidgetState extends State<RecomendacionFinalWidget> {
                                   leading: Icon(Icons.attach_money,
                                       color: Colors.green), // Icono de compra
                                   title: Text(
-                                    'Precio ideal de compra',
+                                    'Precio recomendado de compra',
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -178,7 +178,7 @@ class _RecomendacionFinalWidgetState extends State<RecomendacionFinalWidget> {
                                   leading: Icon(Icons.monetization_on,
                                       color: Colors.red), // Icono de venta
                                   title: Text(
-                                    'Precio ideal de venta',
+                                    'Precio recomendado de venta',
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,

@@ -4,6 +4,7 @@ import 'package:grownomics/paginas/Configuracion/widgets/aboutUsPage.dart';
 import 'package:grownomics/paginas/Configuracion/widgets/editProfilePage.dart';
 import 'package:grownomics/paginas/Configuracion/widgets/privacyPolicyPage.dart';
 import 'package:grownomics/paginas/Configuracion/widgets/termsConditionsPage.dart';
+import 'package:grownomics/paginas/Mercado/Widgets/chartWidget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PaginaConfiguracion extends StatefulWidget {

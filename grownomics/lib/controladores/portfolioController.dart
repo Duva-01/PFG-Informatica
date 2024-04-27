@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class CarteraController {
-  static const String baseUrl = 'http://10.0.2.2:5000'; // URL base para las solicitudes al servidor
-
+  //static const String baseUrl = 'http://10.0.2.2:5000'; // URL base para las solicitudes al servidor
+  static const String baseUrl = 'http://143.47.44.251:5000';
   // Función asincrónica para obtener la cartera del usuario
   static Future<Map<String, dynamic>> obtenerCartera(String userEmail) async {
     final response = await http.get(Uri.parse('$baseUrl/portfolio/get_portfolio?email=$userEmail')); // Realizar una solicitud GET para obtener la cartera del usuario
