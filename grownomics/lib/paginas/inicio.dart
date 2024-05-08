@@ -22,12 +22,57 @@ class PantallaInicio extends StatefulWidget {
 }
 
 class _PantallaInicioState extends State<PantallaInicio> {
-  int _indiceSeleccionado = 0; // índice de la página seleccionada
+  int _indiceSeleccionado = 0;
   late Future<void> _cargaInicial;
-  late String correoElectronico = "grownomicero@gmail.com"; // Valor predeterminado del correo electrónico
-  late String nombre = "Grownomicero"; // Valor predeterminado del nombre
-  late String apellido = ""; // Valor predeterminado del apellido
-  late SocketService _socketService; // Instancia del servicio de socket
+  String correoElectronico = '';
+  String nombre = '';
+  String apellido = '';
+
+  late SocketService _socketService;
+  bool _isConnected = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _socketService = SocketService(); 
+    _cargaInicial = _cargarUsuario();
+  }
+
+  @override
+  void dispose() {
+    _socketService.disconnect();
+    setState(() {
+      _isConnected = false;
+    });
+    super.dispose();
+  }
+
+  Future<void> _cargarUsuario() async {
+    final preferencias = await SharedPreferences.getInstance();
+    final isUserLoggedIn = preferencias.getBool('isUserLoggedIn') ?? false;
+
+    if (isUserLoggedIn) {
+      final emailObtenido = preferencias.getString('userEmail');
+      if (emailObtenido != null) {
+        try {
+          final datos = await UsuarioController.obtenerDatosUsuario(emailObtenido);
+          if (datos != null && datos['nombre'] != null && datos['apellido'] != null) {
+            setState(() {
+              correoElectronico = emailObtenido;
+              nombre = datos['nombre'];
+              apellido = datos['apellido'];
+            });
+            _socketService.connectAndListen(correoElectronico);
+            _isConnected = true;
+          }
+        } catch (e) {
+          print('Hubo un error al obtener los datos del usuario: $e');
+        }
+      }
+    } else {
+      print('El usuario no ha iniciado sesión');
+    }
+  }
 
   // Método llamado cuando se toca un ítem del menú
   void _alItemTocar(int indice) {
@@ -36,44 +81,7 @@ class _PantallaInicioState extends State<PantallaInicio> {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _socketService = SocketService(); // Inicializa el servicio de socket
-    _cargaInicial = _cargarUsuario(); // Cargar datos del usuario al iniciar
-  }
-
-  // Método para cargar los datos del usuario
-  Future<void> _cargarUsuario() async {
-  final preferencias = await SharedPreferences.getInstance();
-  final isUserLoggedIn = preferencias.getBool('isUserLoggedIn') ?? false;
-
-  // Solo intenta obtener los datos del usuario si está logueado
-  if (isUserLoggedIn) {
-    final emailObtenido = preferencias.getString('userEmail');
-    
-    if (emailObtenido != null) {
-      _socketService.connectAndListen(emailObtenido);
-      try {
-        final datos = await UsuarioController.obtenerDatosUsuario(emailObtenido);
-        if (datos != null && datos['nombre'] != null && datos['apellido'] != null) {
-          setState(() {
-            correoElectronico = emailObtenido;
-            nombre = datos['nombre'];
-            apellido = datos['apellido'];
-          });
-          
-        }
-      } catch (e) {
-        print('Hubo un error al obtener los datos del usuario: $e');
-      }
-    }
-  } else {
-    print('El usuario no ha iniciado sesión');
-  }
-}
-
-
+ 
   @override
   Widget build(BuildContext context) {
 

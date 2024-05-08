@@ -6,7 +6,7 @@ class CarteraController {
   static const String baseUrl = 'http://143.47.44.251:5000';
   // Función asincrónica para obtener la cartera del usuario
   static Future<Map<String, dynamic>> obtenerCartera(String userEmail) async {
-    final response = await http.get(Uri.parse('$baseUrl/portfolio/get_portfolio?email=$userEmail')); // Realizar una solicitud GET para obtener la cartera del usuario
+    final response = await http.get(Uri.parse('$baseUrl/portfolio/get_portfolio?email=$userEmail'), headers: {'X-App-Usage': 'true'}); // Realizar una solicitud GET para obtener la cartera del usuario
     if (response.statusCode == 200) { // Si la solicitud fue exitosa
       return json.decode(response.body); // Decodificar la respuesta JSON y devolverla como un mapa dinámico
     } else { // Si la solicitud falló
@@ -18,7 +18,7 @@ class CarteraController {
   static Future<bool> depositarCartera(String userEmail, double cantidad) async {
     final response = await http.post( // Realizar una solicitud POST para depositar fondos en la cartera del usuario
       Uri.parse('$baseUrl/portfolio/deposit_portfolio'), // URL para depositar fondos
-      headers: {'Content-Type': 'application/json'}, // Encabezados de la solicitud
+      headers: {'Content-Type': 'application/json', 'X-App-Usage': 'true'}, // Encabezados de la solicitud
       body: jsonEncode({'email': userEmail, 'cantidad': cantidad}), // Cuerpo de la solicitud codificado en formato JSON
     );
     return response.statusCode == 200; // Devolver true si la solicitud fue exitosa (código de estado 200)
@@ -28,7 +28,7 @@ class CarteraController {
   static Future<bool> retirarCartera(String userEmail, double cantidad) async {
     final response = await http.post( // Realizar una solicitud POST para retirar fondos de la cartera del usuario
       Uri.parse('$baseUrl/portfolio/withdraw_portfolio'), // URL para retirar fondos
-      headers: {'Content-Type': 'application/json'}, // Encabezados de la solicitud
+      headers: {'Content-Type': 'application/json', 'X-App-Usage': 'true'}, // Encabezados de la solicitud
       body: jsonEncode({'email': userEmail, 'cantidad': cantidad}), // Cuerpo de la solicitud codificado en formato JSON
     );
     return response.statusCode == 200; // Devolver true si la solicitud fue exitosa (código de estado 200)
@@ -38,7 +38,7 @@ class CarteraController {
   static Future<bool> comprarAccion(String userEmail, String symbol, double precio, int cantidad) async {
     final response = await http.post( // Realizar una solicitud POST para comprar una acción en la cartera del usuario
       Uri.parse('$baseUrl/portfolio/buy_stock'), // URL para comprar una acción
-      headers: {'Content-Type': 'application/json'}, // Encabezados de la solicitud
+      headers: {'Content-Type': 'application/json', 'X-App-Usage': 'true'}, // Encabezados de la solicitud
       body: jsonEncode({ // Cuerpo de la solicitud codificado en formato JSON
         'email': userEmail,
         'symbol': symbol,
@@ -53,7 +53,7 @@ class CarteraController {
   static Future<bool> venderAccion(String userEmail, String symbol, double precio, int cantidad) async {
     final response = await http.post( // Realizar una solicitud POST para vender una acción de la cartera del usuario
       Uri.parse('$baseUrl/portfolio/sell_stock'), // URL para vender una acción
-      headers: {'Content-Type': 'application/json'}, // Encabezados de la solicitud
+      headers: {'Content-Type': 'application/json', 'X-App-Usage': 'true'}, // Encabezados de la solicitud
       body: jsonEncode({ // Cuerpo de la solicitud codificado en formato JSON
         'email': userEmail,
         'symbol': symbol,
@@ -67,7 +67,7 @@ class CarteraController {
   // Función asincrónica para obtener las transacciones del usuario
   static Future<List<dynamic>> obtenerTransaccionesUsuario(String userEmail) async {
     final Uri url = Uri.parse('$baseUrl/portfolio/get_user_transactions?email=$userEmail'); // Construir la URL para obtener las transacciones del usuario
-    final response = await http.get(url); // Realizar una solicitud GET para obtener las transacciones del usuario
+    final response = await http.get(url, headers: {'X-App-Usage': 'true'}); // Realizar una solicitud GET para obtener las transacciones del usuario
 
     if (response.statusCode == 200) { // Si la solicitud fue exitosa
       List<dynamic> transacciones = json.decode(response.body); // Decodificar la respuesta JSON y almacenar las transacciones en una lista

@@ -5,6 +5,7 @@ import yfinance as yf
 
 from app.models import Accion, AccionesFavoritas, Transaccion, Usuario, Cartera
 from ..extensions import db 
+from ..auth_decorators import login_required_conditional
 
 import numpy as np
 
@@ -73,6 +74,7 @@ def actualizar_acciones_global_tickers():
 
 # Ruta para obtener datos de acciones populares
 @finance_bp.route('/popular_stocks_data')
+@login_required_conditional
 def get_popular_stocks_data():
     # Obtener el número de página y el número de elementos por página de los argumentos de la solicitud
     page = request.args.get('page', default=1, type=int)
@@ -120,6 +122,7 @@ def get_popular_stocks_data():
 
 # Definir una ruta para obtener datos de una acción específica mediante su símbolo de ticker
 @finance_bp.route('/stock_data/<string:ticker_symbol>')
+@login_required_conditional
 def get_stock_data(ticker_symbol):
     # Definir las fechas de inicio y fin para obtener los datos históricos de la acción
     end_date = datetime.now()
@@ -152,6 +155,7 @@ def get_stock_data(ticker_symbol):
 
 # Definir una ruta para obtener las acciones favoritas de un usuario
 @finance_bp.route('/acciones_favs', methods=['GET'])
+@login_required_conditional
 def get_acciones_favoritas_usuario():
     # Obtener el ID de usuario de los argumentos de la solicitud
     id_usuario = request.args.get('id_usuario', type=int)
@@ -202,6 +206,7 @@ def get_acciones_favoritas_usuario():
 
 # Definir una ruta para obtener datos históricos de una acción
 @finance_bp.route('/historical_data')
+@login_required_conditional
 def get_historical_data():
     # Obtener el símbolo del ticker y el intervalo de los argumentos de la solicitud
     ticker_symbol = request.args.get('symbol')
@@ -226,6 +231,7 @@ def get_historical_data():
 
 # Ruta para agregar una acción a favoritos
 @finance_bp.route('/agregar_accion_fav', methods=['POST'])
+@login_required_conditional
 def agregar_accion_favorita():
     # Obtener los datos JSON de la solicitud
     data = request.get_json()
@@ -244,6 +250,7 @@ def agregar_accion_favorita():
 
 # Ruta para eliminar una acción de favoritos
 @finance_bp.route('/eliminar_accion_fav', methods=['POST'])
+@login_required_conditional
 def eliminar_accion_favorita():
     # Obtener los datos JSON de la solicitud
     data = request.get_json()
@@ -263,6 +270,7 @@ def eliminar_accion_favorita():
 #-------------- Pagina mis acciones ----------------------
 
 @finance_bp.route('/acciones_usuario', methods=['GET'])
+@login_required_conditional
 def acciones_usuario():
     email = request.args.get('email')
     if not email:
@@ -333,6 +341,7 @@ def acciones_usuario():
 #-------------- Pagina inicio ----------------------
 
 @finance_bp.route('/resumen_mercado', methods=['GET'])
+@login_required_conditional
 def obtener_resumen_mercado():
     # Índices principales
     indices = ['^DJI', '^GSPC', '^IXIC']

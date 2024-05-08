@@ -9,7 +9,7 @@ class RecomendacionesController {
     final uri = Uri.parse('$baseUrl/recommendations/$simbolo'); // Construye la URI para la solicitud POST
     final respuesta = await http.post( // Realiza la solicitud HTTP POST
       uri,
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json', 'X-App-Usage': 'true'},
       body: json.encode({'email': correo}), // Cuerpo de la solicitud codificado en JSON
     );
 
@@ -23,7 +23,7 @@ class RecomendacionesController {
   // Función para obtener indicadores económicos
   static Future<Map<String, dynamic>> obtenerIndicadoresEconomicos(String simbolo) async {
     final uri = Uri.parse('$baseUrl/recommendations/indicators/$simbolo'); // Construye la URI para la solicitud GET
-    final respuesta = await http.get(uri); // Realiza la solicitud HTTP GET
+    final respuesta = await http.get(uri, headers: {'X-App-Usage': 'true'}); // Realiza la solicitud HTTP GET
 
     if (respuesta.statusCode == 200) { // Verifica el código de estado de la respuesta
       return json.decode(respuesta.body); // Decodifica el cuerpo de la respuesta y devuelve un mapa
@@ -35,7 +35,7 @@ class RecomendacionesController {
   // Función para obtener el análisis técnico de un símbolo específico
   static Future<Map<String, dynamic>> obtenerAnalisisTecnico(String simbolo, String intervalo) async {
     final uri = Uri.parse('$baseUrl/recommendations/analisis_tecnico/$simbolo?intervalo=$intervalo'); // Construye la URI para la solicitud GET, incluyendo el intervalo como parámetro de consulta
-    final respuesta = await http.get(uri); // Realiza la solicitud HTTP GET
+    final respuesta = await http.get(uri, headers: {'X-App-Usage': 'true'}); // Realiza la solicitud HTTP GET
 
     if (respuesta.statusCode == 200) { // Verifica el código de estado de la respuesta
       final resultado = json.decode(respuesta.body); // Si la solicitud fue exitosa, decodifica el cuerpo de la respuesta
@@ -48,7 +48,7 @@ class RecomendacionesController {
   // Función para obtener el análisis fundamental de una acción
   static Future<Map<String, dynamic>> obtenerAnalisisFundamental(String simbolo) async {
     final uri = Uri.parse('$baseUrl/recommendations/analisis_fundamental/$simbolo');
-    final respuesta = await http.get(uri);
+    final respuesta = await http.get(uri, headers: {'X-App-Usage': 'true'});
 
     if (respuesta.statusCode == 200) {
       return json.decode(respuesta.body);
@@ -60,7 +60,7 @@ class RecomendacionesController {
   // Asegúrate de incluir el email como un parámetro de la función
   static Future<Map<String, dynamic>> obtenerAnalisisCompleto(String simbolo, String email) async {
     final uri = Uri.parse('$baseUrl/recommendations/analisis_completo/$simbolo?email=$email'); // Incluye el email como un parámetro de consulta en la URI
-    final respuesta = await http.get(uri);
+    final respuesta = await http.get(uri, headers: {'X-App-Usage': 'true'});
 
     if (respuesta.statusCode == 200) {
       return json.decode(respuesta.body);
@@ -72,7 +72,7 @@ class RecomendacionesController {
   // Función para obtener los códigos de ticker de todas las acciones
   static Future<List<String>> obtenerCodigosTicker() async {
     final uri = Uri.parse('$baseUrl/recommendations/simbolos-acciones'); // Construye la URI para la solicitud GET
-    final respuesta = await http.get(uri); // Realiza la solicitud HTTP GET
+    final respuesta = await http.get(uri, headers: {'X-App-Usage': 'true'}); // Realiza la solicitud HTTP GET
 
     if (respuesta.statusCode == 200) { // Verifica el código de estado de la respuesta
       final Map<String, dynamic> datos = json.decode(respuesta.body); // Si la solicitud fue exitosa, decodifica el cuerpo de la respuesta

@@ -43,29 +43,33 @@ class _PaginaCargaState extends State<PaginaCarga> {
     });
   }
 
-  @override
+   @override
   Widget build(BuildContext context) {
-    // Construir el widget de la página de carga
     return FlipInY(
-      child: Container(
-        child: Container(
-          margin: EdgeInsets.all(20),
-          alignment: Alignment.bottomCenter,
-          child: SizedBox(
-            width: 50,
-            height: 50,
-            child: LoadingIndicator(
-              indicatorType: Indicator.lineScale, // Tipo de indicador de carga
-              colors: const [Color(0xFF2F8B62)], // Colores del indicador de carga
-            ),
-          ),
-        ),
-        decoration: BoxDecoration(
-          color: Colors.white, // Color de fondo blanco
-          image: DecorationImage(
-            
-            image: AssetImage("assets/images/grownomics_logo.png"), // Imagen de fondo del logo de Grownomics
-            fit: BoxFit.fitWidth, // Ajustar la imagen al ancho del contenedor
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Image.asset(
+                    "assets/images/grownomics_logo.png",
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 50,
+                height: 50,
+                child: LoadingIndicator(
+                  indicatorType: Indicator.lineScale,
+                  colors: const [Color(0xFF2F8B62)],
+                ),
+              ),
+            ],
           ),
         ),
       ),

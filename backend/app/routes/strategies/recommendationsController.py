@@ -11,14 +11,17 @@ import numpy as np
 import sys
 from ..marketController import get_historical_data
 import pandas as pd
+import json
 
 from ...models import Usuario, Cartera, Accion, Transaccion
+from ...auth_decorators import login_required_conditional
 
 # Crea un Blueprint llamado 'recommendations' para gestionar las rutas relacionadas con las recomendaciones
 recommendations_bp = Blueprint('recommendations', __name__)
 
 # Ruta para obtener recomendaciones basadas en estrategias de trading
 @recommendations_bp.route('/<string:symbol>', methods=['POST'])
+@login_required_conditional
 def recommendation_route(symbol):
     datos = request.json
     email = datos.get('email')
@@ -79,6 +82,7 @@ def get_recommendation(symbol, email):
 
 # Ruta para obtener indicadores técnicos para un símbolo dado
 @recommendations_bp.route('/indicators/<string:symbol>', methods=['GET'])
+@login_required_conditional
 def get_indicators(symbol):
     data = yf.download(symbol, start="2020-01-01", end=datetime.now().strftime("%Y-%m-%d"))  # Descarga datos de mercado para el símbolo desde el 1 de enero de 2020 hasta la fecha actual
     close_prices = data['Close'].values.astype(np.float64)  # Obtiene los precios de cierre como un array de punto flotante
@@ -140,6 +144,7 @@ def get_indicators(symbol):
 
 # Ruta para realizar un backtest de una estrategia de trading para un símbolo dado
 @recommendations_bp.route('/backtest/<string:symbol>', methods=['GET'])
+@login_required_conditional
 def backtest(symbol):
     start_date = request.args.get('start', "2020-01-01")  # Obtiene la fecha de inicio de la solicitud (por defecto: 1 de enero de 2020)
     end_date = request.args.get('end', datetime.now().strftime("%Y-%m-%d"))  # Obtiene la fecha de finalización de la solicitud (por defecto: fecha actual)
@@ -220,6 +225,7 @@ def filtrar_proximidad(niveles, tolerancia):
 
 
 @recommendations_bp.route('/analisis_tecnico/<string:simbolo>', methods=['GET'])
+@login_required_conditional
 def obtener_analisis_tecnico(simbolo):
     intervalo = request.args.get('intervalo', '1y')  
 
@@ -265,6 +271,7 @@ def limpiar_valores_nan(datos):
     return datos
 
 @recommendations_bp.route('/analisis_fundamental/<string:simbolo>', methods=['GET'])
+@login_required_conditional
 def obtener_analisis_fundamental(simbolo):
     ticker = yf.Ticker(simbolo)
     info = ticker.info
@@ -297,6 +304,7 @@ def obtener_analisis_fundamental(simbolo):
 
 
 @recommendations_bp.route('/simbolos-acciones', methods=['GET'])
+@login_required_conditional
 def obtener_simbolos_acciones():
     try:
         # Consulta todos los códigos de ticker de la tabla de acciones
@@ -343,65 +351,102 @@ def generar_predicciones_precio(symbol):
 
     return predicciones_filtradas
 
-
 def generar_recomendacion_final(precio_actual, data_recomendaciones, soportes, resistencias, indicadores_economicos, predicciones_precio):
-    recomendaciones_estrategias = data_recomendaciones.get('recommendations', [])
-    
     recomendacion_final = "Mantener"
     precio_compra_recomendado = None
     precio_venta_recomendado = None
+    explicaciones = []
     puntos_compra = 0
     puntos_venta = 0
 
     # Evaluar recomendaciones de estrategias
-    for estrategia in recomendaciones_estrategias:
+    for estrategia in data_recomendaciones.get('recommendations', []):
         if estrategia['recomendacion'] == "Recomendación de compra.":
             puntos_compra += 1
         elif estrategia['recomendacion'] == "Recomendación de venta.":
             puntos_venta += 1
 
-    # Evaluar indicadores técnicos
-    rsi = indicadores_economicos.get('RSI')
-    if rsi and rsi < 30:
-        puntos_compra += 1
-    elif rsi and rsi > 70:
-        puntos_venta += 1
 
-    # Evaluar soportes y resistencias para determinar precios recomendados de compra y venta
+    # Evaluar indicadores técnicos
+    rsi = indicadores_economicos['RSI']
+    if rsi is not None:
+        if rsi < 30:
+            puntos_compra += 2  # Aumento de puntos si el indicador es muy fuerte
+            explicaciones.append(f"El RSI está en {rsi}, indicando que el activo está sobrevendido. Esto sugiere un buen momento para comprar.")
+        elif rsi > 70:
+            puntos_venta += 2
+            explicaciones.append(f"El RSI está en {rsi}, indicando que el activo está sobrecomprado. Esto sugiere un buen momento para vender.")
+
+    # Bandas de Bollinger
+    bb_lower = indicadores_economicos['BB_Lower']
+    bb_middle = indicadores_economicos['BB_Middle']
+    bb_upper = indicadores_economicos['BB_Upper']
+    if bb_upper is not None and precio_actual > bb_upper:
+            puntos_venta += 1
+            explicaciones.append("El precio está por encima de la banda superior de Bollinger, lo que puede indicar una condición de sobrecompra.")
+    if bb_lower is not None and precio_actual < bb_lower:
+            puntos_compra += 1
+            explicaciones.append("El precio está por debajo de la banda inferior de Bollinger, lo que puede indicar una condición de sobreventa.")
+
+    # MFI y Percent R
+    mfi = indicadores_economicos['MFI']
+    if mfi is not None:
+        if mfi < 20:
+            puntos_compra += 1
+            explicaciones.append("El MFI es bajo, indicando que el activo podría estar sobrevendido y puede ser un buen momento para comprar.")
+        elif mfi > 80:
+            puntos_venta += 1
+            explicaciones.append("El MFI es alto, indicando que el activo podría estar sobrecomprado y puede ser un buen momento para vender.")
+    
+    percent_r = indicadores_economicos['Percent_R']
+    if percent_r is not None:
+        if percent_r < -80:
+            puntos_compra += 1
+            explicaciones.append("El indicador Williams %R sugiere que el mercado está sobrevendido, potencialmente ofreciendo un buen punto de entrada para comprar.")
+        elif percent_r > -20:
+            puntos_venta += 1
+            explicaciones.append("El indicador Williams %R sugiere que el mercado está sobrecomprado, potencialmente ofreciendo un buen punto para vender.")
+
+    # Evaluar soportes y resistencias
     if soportes:
-        precio_soporte_cercano = min(soportes, default=precio_actual)
-        precio_compra_recomendado = precio_soporte_cercano * 0.98  # Comprar un 2% antes del soporte más cercano
+        precio_soporte_cercano = min(soportes)
+        precio_compra_recomendado = precio_soporte_cercano * 0.98
         puntos_compra += 1
+        explicaciones.append(f"El precio actual está cerca de un soporte en {precio_soporte_cercano:.2f}, recomendando comprar a {precio_compra_recomendado:.2f}, ligeramente por debajo para asegurar margen.")
     if resistencias:
-        precio_resistencia_cercano = max(resistencias, default=precio_actual)
-        precio_venta_recomendado = precio_resistencia_cercano * 1.02  # Vender un 2% después de la resistencia más cercana
+        precio_resistencia_cercano = max(resistencias)
+        precio_venta_recomendado = precio_resistencia_cercano * 1.02
         puntos_venta += 1
+        explicaciones.append(f"El precio actual está cerca de una resistencia en {precio_resistencia_cercano:.2f}, recomendando vender a {precio_venta_recomendado:.2f}, ligeramente por encima para capturar ganancias potenciales.")
 
     # Evaluar predicciones de precio
     precios_futuros = list(predicciones_precio.values())
     if precios_futuros:
         promedio_precio_futuro = sum(precios_futuros) / len(precios_futuros)
+        tendencia = "comprar" if promedio_precio_futuro > precio_actual else "vender"
+        explicaciones.append(f"Las predicciones futuras de precios muestran una tendencia a {tendencia}, basado en un precio promedio futuro de {promedio_precio_futuro:.2f} comparado con el actual de {precio_actual:.2f}.")
         if promedio_precio_futuro > precio_actual:
             puntos_compra += 1  # Tendencia a aumentar
         else:
             puntos_venta += 1  # Tendencia a disminuir
 
-    # Decidir recomendación basada en puntos acumulados
+    # Decidir recomendación final basada en puntos
     if puntos_compra > puntos_venta:
-        recomendacion_final = f"Comprar - Basado en {puntos_compra} puntos de compra frente a {puntos_venta} puntos de venta."
+        recomendacion_final = "Comprar"
     elif puntos_venta > puntos_compra:
-        recomendacion_final = f"Vender - Basado en {puntos_venta} puntos de venta frente a {puntos_compra} puntos de compra."
+        recomendacion_final = "Vender"
 
     return {
         "recomendacion": recomendacion_final,
         "precio_compra_recomendado": precio_compra_recomendado,
-        "precio_venta_recomendado": precio_venta_recomendado
+        "precio_venta_recomendado": precio_venta_recomendado,
+        "explicaciones": explicaciones  # Lista de razones detalladas
     }
 
 
 
-
 @recommendations_bp.route('/analisis_completo/<string:simbolo>', methods=['GET'])
+@login_required_conditional
 def obtener_recomendacion_completa(simbolo):
     
     email = request.args.get('email', 'default@email.com')  # Obtiene el email desde los parámetros de consulta, con un valor predeterminado
@@ -430,10 +475,10 @@ def obtener_recomendacion_completa(simbolo):
         # Integrar indicadores económicos
         indicadores_economicos_respuesta = get_indicators(simbolo)
         indicadores_economicos = indicadores_economicos_respuesta.get_json() 
+
     except Exception as e:
         print(f"Error al obtener indicadores económicos: {e}")
         indicadores_economicos = "Error al obtener indicadores económicos"
-
     try:
         # Generar predicciones de precios futuros
         predicciones_precio = generar_predicciones_precio(simbolo)
@@ -459,7 +504,7 @@ def obtener_recomendacion_completa(simbolo):
         data_recomendaciones=recomendaciones_estrategias,
         soportes=soportes,
         resistencias=resistencias,
-        indicadores_economicos=indicadores_economicos,  
+        indicadores_economicos=indicadores_economicos['indicators'],  
         predicciones_precio=predicciones_precio
     )
 

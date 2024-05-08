@@ -39,8 +39,7 @@ class _PaginaBienvenidaState extends State<PaginaBienvenida> {
                     image: DecorationImage(
                       image: AssetImage(
                           "assets/images/grownomics_logo.png"), // Imagen de fondo del logo de Grownomics
-                      fit: BoxFit
-                          .fitWidth, // Ajustar la imagen al ancho del contenedor
+                      fit: BoxFit.contain, // Ajustar la imagen al ancho del contenedor
                     ),
                   ),
                 ),

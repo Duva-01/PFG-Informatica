@@ -1,31 +1,130 @@
-<!DOCTYPE html>  <!-- Declaración del tipo de documento HTML -->
-<html lang="es">  <!-- Especificar el idioma del documento -->
-
+<!DOCTYPE html>
+<html lang="es">
 <head>
-    <meta charset="UTF-8">  <!-- Especificar la codificación de caracteres UTF-8 -->
-    <title>Inicio - Grownomics</title>  <!-- Título de la página -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">  <!-- Enlace a la hoja de estilos CSS -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Grownomics, la plataforma innovadora que transforma tu experiencia financiera.">
+    <title>Inicio - Grownomics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='js/interactions.js') }}" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet">
 </head>
-
 <body>
-    <header>
-        <nav>
-            <ul>
-                <li><a href="{{ url_for('home.home') }}">Inicio</a></li>  <!-- Enlace a la página de inicio -->
-                <li><a href="{{ url_for('admin.index') }}">Administrar</a></li>  <!-- Enlace a la página de administración -->
-            </ul>
-        </nav>
-        
-        <h1>Bienvenido a Grownomics</h1>  <!-- Título principal de la página -->
+    <header class="navbar navbar-expand-lg navbar-light slide-up" style="background-color: #004d40;">
+        <img src="{{ url_for('static', filename='images/grownomics_logo.png') }}" alt="Logo" style="width: 150px; height: auto;">
+        <div class="center-container">
+            <div class="navbar-brand" href="#home" style="color: #ffffff; font-size: 40px;">Grownomics</div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#home" style="color: #ffffff;">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about" style="color: #ffffff;">Acerca de</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#services" style="color: #ffffff;">Servicios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact" style="color: #ffffff;">Contacto</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('web_auth.login') }}" style="color: #ffffff;">Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </header>
     
-    <main>
-        <p>Esta es la página de inicio de Grownomics. Aquí puedes gestionar tu cartera, ver noticias financieras, aprender sobre inversiones y mucho más.</p>  <!-- Texto principal de la página -->
+
+    <main class="container mt-4">
+        <section id="home"  class="slide-up">
+            <h2>Bienvenido a Grownomics</h2>
+            <p class="lead">La plataforma innovadora que transforma tu experiencia financiera. En Grownomics, nos dedicamos a empoderarte para tomar decisiones de inversión informadas y eficaces, proporcionándote acceso a datos financieros en tiempo real y análisis exhaustivos. Explora nuevas oportunidades de inversión, gestiona tu cartera con herramientas avanzadas, y aprende a navegar el mercado financiero con confianza. Nuestra misión es simplificar el complejo mundo de las inversiones, haciéndolo accesible, comprensible y operativo para inversores de todos los niveles.</p>
+        </section>
+        
+        <section id="about" class="mt-4 slide-up" >
+            <h2>Acerca de Grownomics</h2>
+            <p class="lead">Grownomics nació en 2024, fruto de la colaboración entre expertos en tecnología y finanzas con un objetivo común: democratizar el acceso al asesoramiento financiero. Fundada por un grupo de profesionales apasionados por la tecnología y la educación financiera, nuestra plataforma integra funcionalidades inteligentes con una interfaz amigable para facilitar la gestión de inversiones. Con un fuerte enfoque en la seguridad, la precisión y la educación, Grownomics se dedica a ofrecer una experiencia personalizada que ayuda a nuestros usuarios a alcanzar sus metas financieras con mayor claridad y menos riesgos.</p>
+            <p class="lead">Con una sólida base en la investigación y desarrollo, continuamos innovando y adaptándonos a las necesidades cambiantes del mercado para ofrecer las mejores soluciones posibles. Nuestro equipo de expertos trabaja incansablemente para asegurar que la información proporcionada sea actualizada, relevante y fácil de entender.</p>
+        </section>
+        
+        <section id="services" class="mt-4 slide-up">
+            <h2>Nuestros Servicios</h2>
+            <div class="card-deck">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Gestión de Cartera</h5>
+                        <p class="card-text">Accede a herramientas para crear y gestionar una cartera de inversiones diversificada.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Simulación de Inversiones</h5>
+                        <p class="card-text">Prueba diferentes estrategias de inversión en un entorno seguro con nuestra plataforma de simulación avanzada.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Análisis en Tiempo Real</h5>
+                        <p class="card-text">Mantente informado con datos en tiempo real y análisis profundos de la mano de nuestros expertos.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Educación Financiera</h5>
+                        <p class="card-text"> Mejora tus conocimientos con nuestros recursos educativos. Desde seminarios web hasta tutoriales y blogs, te proporcionamos la información que necesitas para entender mejor el mundo financiero.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Alertas Personalizadas</h5>
+                        <p class="card-text">Configura alertas personalizadas para recibir notificaciones sobre cambios importantes en el mercado o movimientos en tus inversiones. Reactiva rápidamente a las condiciones del mercado con información actualizada.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        
+        <section id="contact" class="mt-4 slide-up">
+            <h2>Contacto</h2>
+            <div style="margin-bottom: 10px;"></div>
+            <div class="card mb-3" style="max-width: 540px;">
+                <div class="row no-gutters">
+                  <div class="col-md-4">
+                    <img src="{{ url_for('static', filename='images/perfil.jpg') }}" alt="Foto Contacto" class="card-img">
+                  </div>
+                  <div class="col-md-8">
+                    <div class="card-body">
+                      <h5 class="card-title">David Martínez Díaz</h5>
+                      <p class="card-text">Estudiante del doble grado en Ingeniería Informática y Administración y Dirección de Empresas. Especializado en la rama de la Ingeniería de Software</p>
+                      <p class="card-text"><small class="text-muted"><p>Correo: <a href="mailto:martdiaz01.d@gmail.com">martdiaz01.d@gmail.com</a></p></small></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        </section>         
     </main>
     
-    <footer>
-        <p>&copy; 2024 Grownomics. Todos los derechos reservados.</p>  <!-- Pie de página con derechos de autor -->
+    <footer class="footer py-3" style="background-color: #004d40;">
+        <div class="container text-center" style="background-color: #004d40;">
+            <p>&copy; 2024 Grownomics. Todos los derechos reservados.</p>
+            <div>
+                <a href="https://github.com/Duva-01" class="social-icon"><i class="fa fa-github-square"></i></a>
+                <a href="https://twitter.com/d_martinezdiaz" class="social-icon"><i class="fa fa-twitter-square"></i></a>
+                <a href="https://www.linkedin.com/in/david-mart%C3%ADnez-d%C3%ADaz-6988a326a/" class="social-icon"><i class="fa fa-linkedin-square"></i></a>
+            </div>
+        </div>
     </footer>
+    
+    
 </body>
-
 </html>

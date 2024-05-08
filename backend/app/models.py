@@ -1,8 +1,11 @@
 from .extensions import db  # Importar el objeto db de SQLAlchemy desde el módulo extensions
-from flask_login import UserMixin  # Importar la clase UserMixin de flask_login
+from flask_login import UserMixin, login_required, current_user  # Importar la clase UserMixin de flask_login
 from werkzeug.security import generate_password_hash, check_password_hash  # Importar funciones para generar y comprobar contraseñas hash
 from flask_admin.contrib.sqla import ModelView  # Importar ModelView de flask_admin para usarlo en la definición de la vista del modelo
 from datetime import datetime
+from .auth_decorators import login_required_conditional
+from flask_admin import AdminIndexView, expose
+from flask import redirect, url_for, request
 
 class Usuario(UserMixin, db.Model):  # Definir la clase Usuario que hereda de UserMixin y db.Model
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)  # Definir columna id como clave primaria
@@ -47,19 +50,7 @@ class AccionesFavoritas(db.Model):
         return f'AccionesFavoritas({self.id_favorito}, Usuario: {usuario_email}, Acción: {accion_nombre})'
 
 #----------------------------------------------------------------------------
-    
-# Definir la vista del modelo AccionesFavoritas para ser utilizada en el panel de administración
-class AccionesFavoritasModelView(ModelView):
-    column_list = ('id_favorito', 'usuario', 'accion')  # Definir las columnas a mostrar en la vista
-    column_labels = {  # Etiquetas personalizadas para las columnas
-        'id_favorito': 'ID Favorito',
-        'usuario': 'Usuario',
-        'accion': 'Acción'
-    }
-    column_display_pk = True  # Mostrar la clave primaria en la vista
-    column_sortable_list = ('id_favorito', 'usuario.nombre', 'accion.nombre')  # Columnas que se pueden ordenar
-    column_searchable_list = ('usuario.email', 'accion.nombre')  # Columnas que se pueden buscar
-    column_filters = ('usuario.email', 'accion.nombre')  # Columnas por las que se pueden filtrar
+
 
 #----------------------------------------------------------------------------
     
@@ -145,3 +136,42 @@ class Notificacion(db.Model):
 
     def __repr__(self):
         return f'<Notificacion {self.id} - Usuario: {self.usuario_id} - Fecha: {self.fecha} - Mensaje: {self.mensaje}>'
+
+
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+
+class MyModelView(ModelView):
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+    def inaccessible_callback(self, name, **kwargs):
+        # Redirigir a la página de inicio de sesión si el usuario no está autenticado
+        return redirect(url_for('web_auth.login', next=request.url))
+
+class MyAdminIndexView(AdminIndexView):
+    @expose('/')
+    def index(self):
+        if not current_user.is_authenticated:
+            return redirect(url_for('web_auth.login'))
+        return self.render('admin/index.html')
+    
+class AccionesFavoritasModelView(ModelView):
+    column_list = ('id_favorito', 'usuario', 'accion')  
+    column_labels = {
+        'id_favorito': 'ID Favorito',
+        'usuario': 'Usuario',
+        'accion': 'Acción'
+    }
+    column_display_pk = True  
+    column_sortable_list = ('id_favorito', 'usuario.nombre', 'accion.nombre')  
+    column_searchable_list = ('usuario.email', 'accion.nombre')  
+    column_filters = ('usuario.email', 'accion.nombre')
+
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+    def inaccessible_callback(self, name, **kwargs):
+        # Redirigir a la página de inicio de sesión si el usuario no está autenticado
+        return redirect(url_for('web_auth.login', next=request.url))
+    

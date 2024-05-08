@@ -29,7 +29,12 @@ scheduler = APScheduler()
 
 @socketio.on('connect')
 def connect():
-    print("\n Cliente conectado al socket \n")
+    try:
+        print("\nCliente conectado al socket\n")
+    except Exception as e:
+        logger.error(f"Error al conectar: {e}")
+        raise e
+
 
 @socketio.on('disconnect')
 def disconnect():
@@ -100,19 +105,19 @@ def send_notification(email, ticker_symbol, change_percent):
             db.session.add(nueva_notificacion)
             db.session.commit()
 
-        mail = scheduler.app.extensions['mail']
+        # mail = scheduler.app.extensions['mail']
 
-        msg = Message("Alerta de Acción Favorita", 
-                      sender=scheduler.app.config['MAIL_DEFAULT_SENDER'],
-                      recipients=[email], 
-                      body= f"Tu acción favorita {ticker_symbol} ha tenido una variación significativa de {change_percent:.2f}% en las últimas 24 horas.")
+        # msg = Message("Alerta de Acción Favorita", 
+        #               sender=scheduler.app.config['MAIL_DEFAULT_SENDER'],
+        #               recipients=[email], 
+        #               body= f"Tu acción favorita {ticker_symbol} ha tenido una variación significativa de {change_percent:.2f}% en las últimas 24 horas.")
         
         room = email_to_room_mapping(email)
         socketio.emit('stock_alert', {
             'message': f"Tu acción favorita {ticker_symbol} ha tenido una variación significativa de {change_percent:.2f}% en las últimas 24 horas."
         }, room=room)
 
-        mail.send(msg)
+        # mail.send(msg)
 
 # Este es un ejemplo simple que usa el email como identificador de sala.
 def email_to_room_mapping(email):  

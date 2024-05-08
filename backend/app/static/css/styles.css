@@ -1,43 +1,191 @@
-
-body {
-    font-family: Arial, sans-serif;
+body, html {
+    height: 100%;
     margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
+    font-family: 'Crimson Text', Arial, sans-serif; /* Agregar la fuente Goudy Old Style como primera opción */
+    color: #333;
 }
 
 header {
-    background-color: #2F8B62;
+    background-color: #2F8B62; /* Dark green from the logo */
     color: white;
-    padding: 20px;
-    text-align: center;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+}
+
+.center-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.navbar-brand {
+    font-size: 24px; /* Tamaño del título */
+}
+
+.navbar-nav {
+    justify-content: center;
+}
+
+@media (max-width: 992px) {
+    .center-container {
+        width: auto;
+    }
+}
+
+
+img[alt="Logo"] {
+    width: 100px; /* Nuevo tamaño del logo */
+    height: auto;
+}
+
+.menu-button {
+    display: none; /* Hidden by default, will be displayed on small screens */
+    background-color: transparent;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 20px;
 }
 
 nav ul {
     list-style-type: none;
     padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
 }
 
-nav ul li {
-    display: inline;
-    margin-right: 10px;
-}
-
-nav ul li a {
+/* Estilo base para enlaces de navegación con mayor especificidad */
+.navbar-nav .nav-link {
+    float: none;
+    display: block;
     color: white;
+    text-align: center;
+    padding: 10px 15px;
+    margin: 5px;
     text-decoration: none;
+    font-size: 17px;
+    background-color: #2F8B62; /* Color de fondo inicial */
+    transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out, transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 5px; /* Bordes redondeados */
 }
 
-main {
-    padding: 20px;
+/* Efecto hover para enlaces de navegación con mayor especificidad */
+.navbar-nav .nav-link:hover, .navbar-nav .nav-link:focus {
+    background-color: #4CAF50; /* Cambio de color de fondo al pasar el cursor */
+    color: #000; /* Cambio de color del texto */
+    transform: translateY(-5px); /* Efecto de elevación */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3); /* Sombra para dar sensación de profundidad */
+}
+
+section {
+    padding: 20px 20px;
+    height: auto;
+    margin-top: 20px; /* Adjusted to account for the smaller navbar height */
+}
+
+#contact {
+    margin-bottom: 20px;
 }
 
 footer {
-    background-color: #333;
+    background-color: #004d40 !important;  /* Ajusta al color deseado */
     color: white;
     text-align: center;
-    padding: 10px;
-    position: fixed;
-    bottom: 0;
+    padding: 20px 0;
     width: 100%;
+}
+
+footer p {
+    margin-bottom: 10px; /* Espacio entre el texto y los iconos */
+}
+
+.social-icon {
+    color: white; /* Color de los iconos */
+    margin: 0 10px; /* Espaciado entre iconos */
+    font-size: 24px; /* Tamaño de los iconos */
+}
+
+.social-icon:hover {
+    color: black; /* Color al hacer hover (ajusta a tu preferencia) */
+}
+
+
+input[type="text"], input[type="email"], textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 6px;
+    margin-bottom: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+@media screen and (max-width: 600px) {
+    .menu-button {
+        display: block;
+    }
+    nav ul {
+        display: none;
+    }
+    nav ul.active {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+}
+
+.card {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+
+
+/* Animación general de fade-in */
+.fade-in {
+    animation: fadeInAnimation ease 1s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
+
+@keyframes fadeInAnimation {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* Animación de deslizar desde abajo */
+.slide-up {
+    transform: translateY(20px);
+    animation: slideUpAnimation ease-out 2s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes slideUpAnimation {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
 }

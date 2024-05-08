@@ -32,6 +32,7 @@ class NoticiasController {
         // Realiza una solicitud GET a la URL especificada con un encabezado de conexión y un tiempo de espera
         final response = await http.get(url, headers: {
           'Connection': 'keep-alive',
+          'X-App-Usage': 'true'
         }).timeout(Duration(seconds: 60));
         
         // Verifica si la respuesta tiene un código de estado exitoso (200)

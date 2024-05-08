@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Grownomics, la plataforma innovadora que transforma tu experiencia financiera.">
+    <title>Login - Grownomics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='js/interactions.js') }}" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="navbar navbar-expand-lg navbar-light slide-up" style="background-color: #004d40;">
+        <img src="{{ url_for('static', filename='images/grownomics_logo.png') }}" alt="Logo" style="width: 150px; height: auto;">
+        <div class="center-container">
+            <div class="navbar-brand" href="#home" style="color: #ffffff; font-size: 40px;">Grownomics</div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/#home" style="color: #ffffff;">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#about" style="color: #ffffff;">Acerca de</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#services" style="color: #ffffff;">Servicios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#contact" style="color: #ffffff;">Contacto</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('web_auth.login') }}" style="color: #ffffff;">Iniciar sesión</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    
+    <main class="container mt-4 slide-up">
+        <h2 class="mb-3">Login</h2>
+        <form action="{{ url_for('web_auth.login') }}" method="post">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" name="password" required class="form-control">
+            </div>
+            <button type="submit" class="btn btn-primary" style="background-color: #4CAF50; color: white; border: 2px solid #004d40;">Iniciar sesión</button>
+        </form>
+    </main>
+
+    <div style="margin-bottom: 350px;"></div>
+
+    <footer class="footer py-3 slide-up" style="background-color: #004d40;">
+        <div class="container text-center" style="background-color: #004d40;">
+            <p>&copy; 2024 Grownomics. Todos los derechos reservados.</p>
+            <div>
+                <a href="https://github.com/Duva-01" class="social-icon"><i class="fa fa-github-square"></i></a>
+                <a href="https://twitter.com/d_martinezdiaz" class="social-icon"><i class="fa fa-twitter-square"></i></a>
+                <a href="https://www.linkedin.com/in/david-mart%C3%ADnez-d%C3%ADaz-6988a326a/" class="social-icon"><i class="fa fa-linkedin-square"></i></a>
+            </div>
+        </div>
+    </footer>
+
+
+</body>
+</html>

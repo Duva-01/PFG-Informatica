@@ -8,7 +8,10 @@ class MenuScreen extends StatefulWidget {
   final ZoomDrawerController controller;
   final Function(int) onItemTapped;
   final SocketService socketService;
-  MenuScreen({required this.controller, required this.onItemTapped, required this.socketService});
+  MenuScreen(
+      {required this.controller,
+      required this.onItemTapped,
+      required this.socketService});
 
   @override
   _MenuScreenState createState() => _MenuScreenState();
@@ -112,8 +115,7 @@ class _MenuScreenState extends State<MenuScreen> {
                 style: TextStyle(color: Colors.white)),
             onTap: () async {
               if (_isUserLoggedIn) {
-
-                widget.socketService.disconnect(); 
+                widget.socketService.disconnect();
 
                 final SharedPreferences prefs =
                     await SharedPreferences.getInstance();

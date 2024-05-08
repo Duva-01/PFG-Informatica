@@ -15,6 +15,9 @@ from .routes import register_blueprints
 from .scheduler import configura_tareas, logger
 from .socketIO_config import socketio
 
+from .models import MyModelView, MyAdminIndexView
+from datetime import timedelta
+    
 # Funcion para crearme la aplicacionde Flask y configurar tanto las extensions, como los sockets... etc
 def create_app():
     app = Flask(__name__)
@@ -36,17 +39,19 @@ def configure_app(app):
     app.config['MAIL_USERNAME'] = 'grownomicss@gmail.com'
     app.config['MAIL_PASSWORD'] = 'mqkj rwox ekmn celf'
     app.config['MAIL_DEFAULT_SENDER'] = 'grownomicss@gmail.com'
+    app.config['SESSION_PERMANENT'] = False  # Hace que la sesión no sea permanente
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=5)  # Tiempo de vida de la sesión
 
 #Configura y añade vistas al componente Flask-Admin.
 def init_admin(app):
-    admin = Admin(app, name='Grownomics', template_mode='bootstrap3')  # Crear una instancia de Admin con el nombre 'Grownomics' y el modo de plantilla 'bootstrap3'
-    admin.add_view(ModelView(Usuario, db.session))  # Agregar una vista para el modelo Usuario
-    admin.add_view(ModelView(Cartera, db.session, name='Cartera'))  # Agregar una vista para el modelo Cartera con el nombre 'Cartera'
-    admin.add_view(ModelView(Transaccion, db.session, name='Transaccion'))  # Agregar una vista para el modelo Transaccion con el nombre 'Transaccion'
-    admin.add_view(ModelView(Notificacion, db.session, name='Notificaciones'))
-    admin.add_view(ModelView(Accion, db.session, name='Accion'))  # Agregar una vista para el modelo Accion con el nombre 'Accion'
+    admin = Admin(app, name='Grownomics', template_mode='bootstrap3', index_view=MyAdminIndexView())  # Crear una instancia de Admin con el nombre 'Grownomics' y el modo de plantilla 'bootstrap3'
+    admin.add_view(MyModelView(Usuario, db.session))  # Agregar una vista para el modelo Usuario
+    admin.add_view(MyModelView(Cartera, db.session, name='Cartera'))  # Agregar una vista para el modelo Cartera con el nombre 'Cartera'
+    admin.add_view(MyModelView(Transaccion, db.session, name='Transaccion'))  # Agregar una vista para el modelo Transaccion con el nombre 'Transaccion'
+    admin.add_view(MyModelView(Notificacion, db.session, name='Notificaciones'))
+    admin.add_view(MyModelView(Accion, db.session, name='Accion'))  # Agregar una vista para el modelo Accion con el nombre 'Accion'
     admin.add_view(AccionesFavoritasModelView(AccionesFavoritas, db.session, name='Acciones Favoritas'))  # Agregar una vista personalizada para el modelo AccionesFavoritas con el nombre 'Acciones Favoritas'
-    admin.add_view(ModelView(ArticulosAprendizaje, db.session, name='Artículos de Aprendizaje'))
+    admin.add_view(MyModelView(ArticulosAprendizaje, db.session, name='Artículos de Aprendizaje'))
     
 # Funcion que asocia Flask-SocketIO con la aplicación Flask.
 def init_socketio(app):
@@ -56,6 +61,9 @@ def init_socketio(app):
 def init_extensions(app):
     db.init_app(app)
     login_manager.init_app(app)
+    login_manager.login_view = 'web_auth.login'  
+    login_manager.login_message = "Please log in to access this page."
+    login_manager.login_message_category = "info"
     CORS(app)
     Mail(app)
 

@@ -10,16 +10,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:dcdg/dcdg.dart'; // Esto sirve para crearme los diagramas UML automaticamente
 
 void main() async {
+  // Nos aseguramos de que los widgets estan correctamente inicializados antes de ejecutar cualquier accion
   WidgetsFlutterBinding.ensureInitialized();
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  final isUserLoggedIn = prefs.getBool('isUserLoggedIn') ?? false;
   await initializeDateFormatting('es', null);
-  
-  // Esto es de prueba para los test y para que funcionen los workflows en general
-  //await prefs.setBool('isSkipped', false);
-  //await prefs.setBool('isUserLoggedIn', false);
-  //await prefs.setBool('isUserRemember', false);
-
 
   runApp(MyApp());
 }

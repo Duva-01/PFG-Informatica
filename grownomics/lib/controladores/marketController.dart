@@ -10,7 +10,7 @@ class MercadoController {
   // Función para obtener una lista de acciones populares desde el servidor
   static Future<List<dynamic>> obtenerAcciones(int page, {int perPage = 10}) async {
     final Uri url = Uri.parse('$baseUrl/finance/popular_stocks_data?page=$page&per_page=$perPage');
-    final respuesta = await http.get(url);
+    final respuesta = await http.get(url,  headers: {'X-App-Usage': 'true'});
 
     if (respuesta.statusCode == 200) {
       List<dynamic> acciones = json.decode(respuesta.body);
@@ -23,7 +23,7 @@ class MercadoController {
   // Función para obtener los datos de una sola acción
   static Future<Map<String, dynamic>> obtenerDatosAccion(String tickerSymbol) async {
     final Uri url = Uri.parse('$baseUrl/finance/stock_data/$tickerSymbol');
-    final respuesta = await http.get(url);
+    final respuesta = await http.get(url,  headers: {'X-App-Usage': 'true'});
 
     if (respuesta.statusCode == 200) {
       Map<String, dynamic> datosAccion = json.decode(respuesta.body);
@@ -36,7 +36,7 @@ class MercadoController {
   // Función para obtener las acciones favoritas de un usuario desde el servidor
   static Future<List<dynamic>> obtenerAccionesFavoritas(int id_usuario) async {
     final Uri url = Uri.parse('$baseUrl/finance/acciones_favs?id_usuario=$id_usuario');
-    final respuesta = await http.get(url);
+    final respuesta = await http.get(url,  headers: {'X-App-Usage': 'true'});
 
     if (respuesta.statusCode == 200) {
       List<dynamic> accionesFavoritas = json.decode(respuesta.body);
@@ -50,8 +50,8 @@ class MercadoController {
   static Future<bool> agregarAccionFavorita(int idUsuario, int idAccion) async {
     final Uri url = Uri.parse('$baseUrl/finance/agregar_accion_fav');
     final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json; charset=UTF-8'},
+      url, 
+      headers: {'Content-Type': 'application/json; charset=UTF-8', 'X-App-Usage': 'true'},
       body: jsonEncode({'id_usuario': idUsuario, 'id_accion': idAccion}),
     );
 
@@ -68,7 +68,7 @@ class MercadoController {
     final Uri url = Uri.parse('$baseUrl/finance/eliminar_accion_fav');
     final response = await http.post(
       url,
-      headers: {'Content-Type': 'application/json; charset=UTF-8'},
+      headers: {'Content-Type': 'application/json; charset=UTF-8', 'X-App-Usage': 'true'},
       body: jsonEncode({'id_usuario': idUsuario, 'id_accion': idAccion}),
     );
 
@@ -83,7 +83,7 @@ class MercadoController {
   // Función para obtener datos históricos de una acción desde el servidor
   static Future<List<HistoricalData>> obtenerDatosHistoricos(String symbol, String interval) async {
     final Uri url = Uri.parse('$baseUrl/finance/historical_data?symbol=$symbol&interval=$interval');
-    final response = await http.get(url);
+    final response = await http.get(url, headers: {'X-App-Usage': 'true'});
 
     if (response.statusCode == 200) {
       Map<String, dynamic> jsonData = json.decode(response.body);
@@ -108,7 +108,7 @@ class MercadoController {
   // Función para obtener las acciones del usuario
   static Future<List<Accion>> obtenerMisAcciones(String email) async {
     final uri = Uri.parse('$baseUrl/finance/acciones_usuario?email=$email');
-    final respuesta = await http.get(uri);
+    final respuesta = await http.get(uri, headers: {'X-App-Usage': 'true'});
 
     if (respuesta.statusCode == 200) {
       List<dynamic> listaAcciones = json.decode(respuesta.body);
@@ -123,7 +123,7 @@ class MercadoController {
   // Función para obtener resumen de mercado
   static Future<Map<String, dynamic>> obtenerResumenMercado() async {
     final uri = Uri.parse('$baseUrl/finance/resumen_mercado');
-    final respuesta = await http.get(uri);
+    final respuesta = await http.get(uri, headers: {'X-App-Usage': 'true'});
 
     if (respuesta.statusCode == 200) {
       return json.decode(respuesta.body);

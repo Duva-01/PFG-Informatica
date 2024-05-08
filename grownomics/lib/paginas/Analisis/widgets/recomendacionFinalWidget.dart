@@ -34,6 +34,7 @@ class _RecomendacionFinalWidgetState extends State<RecomendacionFinalWidget> {
               .correoElectronico); // Obtener recomendaciones según el símbolo de la acción
       setState(() {
         recomendaciones = resultado;
+        print(recomendaciones!['recomendacion_final']);
         _isLoading = false;
       });
     } catch (e) {
@@ -92,29 +93,35 @@ class _RecomendacionFinalWidgetState extends State<RecomendacionFinalWidget> {
                         Divider(color: Colors.green[300]),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Card(
-                            elevation: 4,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Recomendación',
-                                    style: TextStyle(
-                                        fontSize: 18,
+                          child: Center(
+                            child: Card(
+                              elevation: 4,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'Recomendación',
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color:
+                                              Theme.of(context).primaryColor),
+                                    ),
+                                    SizedBox(height: 10),
+                                    Text(
+                                      '${recomendaciones!['recomendacion_final']['recomendacion']}',
+                                      style: TextStyle(
+                                        fontSize: 20,
                                         fontWeight: FontWeight.bold,
-                                        color: Theme.of(context).primaryColor),
-                                  ),
-                                  SizedBox(height: 10),
-                                  Text(
-                                    '${recomendaciones!['recomendacion_final']['recomendacion']}',
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -144,7 +151,7 @@ class _RecomendacionFinalWidgetState extends State<RecomendacionFinalWidget> {
                                   leading: Icon(Icons.attach_money,
                                       color: Colors.green), // Icono de compra
                                   title: Text(
-                                    'Precio recomendado de compra',
+                                    'Precio ideal recomendado de compra',
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -178,7 +185,7 @@ class _RecomendacionFinalWidgetState extends State<RecomendacionFinalWidget> {
                                   leading: Icon(Icons.monetization_on,
                                       color: Colors.red), // Icono de venta
                                   title: Text(
-                                    'Precio recomendado de venta',
+                                    'Precio ideal recomendado de venta',
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -191,6 +198,46 @@ class _RecomendacionFinalWidgetState extends State<RecomendacionFinalWidget> {
                                   ),
                                 ),
                               ),
+                              SizedBox(height: 20),
+                              ExpansionTile(
+  leading: Icon(Icons.info), // Icono de información para el título del ExpansionTile
+  title: Text.rich(
+    TextSpan(
+      text: 'Explicación de la recomendación',
+      style: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+  ),
+  children: [
+    Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: ListView.separated(
+        physics: ClampingScrollPhysics(),
+        shrinkWrap: true, // Permite que la ListView ocupe solo el espacio necesario
+        itemCount: recomendaciones!['recomendacion_final']['explicaciones'].length,
+        itemBuilder: (context, index) {
+          final explicacion = recomendaciones!['recomendacion_final']['explicaciones'][index];
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.grey[200], // Fondo grisáceo para cada ListTile
+              border: Border.all(color: Colors.black), // Borde negro
+              borderRadius: BorderRadius.circular(4), // Bordes ligeramente redondeados
+            ),
+            child: ListTile(
+              leading: Icon(Icons.info_outline), // Icono de información para cada ListTile
+              title: Text(explicacion),
+            ),
+          );
+        },
+        separatorBuilder: (context, index) => Divider(color: Colors.black), // Separador negro entre cada ListTile
+      ),
+    ),
+  ],
+),
+
+
                             ],
                           ),
                         ),

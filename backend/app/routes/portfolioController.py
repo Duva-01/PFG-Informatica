@@ -1,12 +1,14 @@
 from flask import Blueprint, jsonify, request, flash, redirect, url_for
 from ..models import Usuario, Cartera, Accion, Transaccion
 from ..extensions import db
+from ..auth_decorators import login_required_conditional
 
 # Crear un Blueprint para las rutas del portafolio
 portfolio_bp = Blueprint('portfolio', __name__)
 
 # Ruta para obtener el portafolio de un usuario
 @portfolio_bp.route('/get_portfolio')
+@login_required_conditional
 def get_portfolio():
     email = request.args.get('email')  # Obtener el correo electrónico del usuario de la solicitud
     usuario = Usuario.query.filter_by(email=email).first()  # Buscar el usuario en la base de datos
@@ -27,6 +29,7 @@ def get_portfolio():
 
 # Ruta para depositar fondos en la cartera de un usuario
 @portfolio_bp.route('/deposit_portfolio', methods=['POST'])
+@login_required_conditional
 def deposit_portfolio():
     data = request.json  # Obtener los datos JSON de la solicitud
     email = data['email']  # Obtener el correo electrónico del usuario
@@ -46,6 +49,7 @@ def deposit_portfolio():
 
 # Ruta para retirar fondos de la cartera de un usuario
 @portfolio_bp.route('/withdraw_portfolio', methods=['POST'])
+@login_required_conditional
 def withdraw_portfolio():
     data = request.json  # Obtener los datos JSON de la solicitud
     email = data['email']  # Obtener el correo electrónico del usuario
@@ -69,6 +73,7 @@ def withdraw_portfolio():
 
 # Funcion para comprar una accion
 @portfolio_bp.route('/buy_stock', methods=['POST'])
+@login_required_conditional
 def buy_stock():
     data = request.get_json()
     print("Datos recibidos en la solicitud POST:", data)  # Imprimir los datos recibidos en la solicitud
@@ -110,6 +115,7 @@ def buy_stock():
 
 # Funcion para vender una accion
 @portfolio_bp.route('/sell_stock', methods=['POST'])
+@login_required_conditional
 def sell_stock():
     data = request.get_json()
     user_email = data['email']
@@ -148,6 +154,7 @@ def sell_stock():
 
 # Funcion para obtener las transacciones de un usuario
 @portfolio_bp.route('/get_user_transactions')
+@login_required_conditional
 def get_user_transactions():
     email = request.args.get('email')
     usuario = Usuario.query.filter_by(email=email).first()  # Buscar al usuario por su correo electrónico

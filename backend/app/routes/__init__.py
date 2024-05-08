@@ -5,6 +5,7 @@ from .home import home_bp  # Importar el blueprint para la página de inicio
 from .portfolioController import portfolio_bp  # Importar el blueprint para la cartera
 from .articlesController import article_bp # Importar el blueprint para los articulos
 from .strategies.recommendationsController import recommendations_bp # Importar el blueprint para las recomendaciones
+from .webAuthController import web_auth
 
 # Registrar los blueprints en la aplicación Flask
 def register_blueprints(app):
@@ -16,4 +17,4 @@ def register_blueprints(app):
     app.register_blueprint(recommendations_bp, url_prefix='/recommendations')  # Registrar el blueprint de la cartera con prefijo de URL '/recomendations' 
     app.register_blueprint(article_bp, url_prefix='/articles')  # Registrar el blueprint de la cartera con prefijo de URL '/recomendations'   
     app.register_blueprint(home_bp)  # Registrar el blueprint de la página de inicio sin prefijo de URL
-
+    app.register_blueprint(web_auth)

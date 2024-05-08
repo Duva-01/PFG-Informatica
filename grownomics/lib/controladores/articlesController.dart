@@ -13,7 +13,7 @@ class ArticuloController {
     // Construye la URL para la solicitud GET
     final url = Uri.parse('$baseUrl/articles/get_articles');
     // Realiza la solicitud GET y espera la respuesta
-    final respuesta = await http.get(url);
+    final respuesta = await http.get(url, headers: {'X-App-Usage': 'true'},);
 
     // Verifica si la solicitud fue exitosa (código de estado 200)
     if (respuesta.statusCode == 200) {
@@ -36,7 +36,7 @@ class ArticuloController {
     // Construye la URL para la solicitud GET con el ID proporcionado
     final url = Uri.parse('$baseUrl/articles/get_article/$id');
     // Realiza la solicitud GET y espera la respuesta
-    final respuesta = await http.get(url);
+    final respuesta = await http.get(url, headers: {'X-App-Usage': 'true'});
 
     // Verifica si la solicitud fue exitosa (código de estado 200)
     if (respuesta.statusCode == 200) {

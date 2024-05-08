@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
+from ..auth_decorators import login_required_conditional
 
 # Crear un Blueprint para las rutas de noticias
 news_bp = Blueprint('news', __name__)
@@ -28,6 +29,7 @@ def get_api_session(retries=3, backoff_factor=0.3, status_forcelist=(500, 502, 5
 
 # Ruta para obtener noticias financieras
 @news_bp.route('/financial_news')
+@login_required_conditional
 def get_financial_news():
     api_key = 'a7fb25368aa74e8986c641a4f559e5c9'
     # Extraer el tema de las noticias financieras de los parámetros de la solicitud, o usar 'finanzas' como valor predeterminado
@@ -53,6 +55,7 @@ def get_financial_news():
 
 # Ruta para obtener noticias sobre acciones específicas
 @news_bp.route('/stock_news', methods=['GET'])
+@login_required_conditional
 def get_stock_news():
     api_key = 'a7fb25368aa74e8986c641a4f559e5c9'
     # Obtiene el nombre de la empresa de los parámetros de la solicitud, o usa 'Apple' como valor predeterminado

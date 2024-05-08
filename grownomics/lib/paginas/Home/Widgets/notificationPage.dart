@@ -53,10 +53,18 @@ class _PaginaNotificacionesState extends State<PaginaNotificaciones> {
               groupedNotificaciones.putIfAbsent(fechaFormateada, () => []).add(notificacion); // Agrupar las notificaciones por fecha formateada
             });
 
+            // Ordenar las claves del mapa groupedNotificaciones de forma descendente
+            List<String> sortedKeys = groupedNotificaciones.keys.toList();
+            sortedKeys.sort((a, b) {
+              final fechaA = DateFormat('dd MMMM yyyy', 'es').parse(a);
+              final fechaB = DateFormat('dd MMMM yyyy', 'es').parse(b);
+              return fechaB.compareTo(fechaA);
+            });
+
             return ListView.builder(
-              itemCount: groupedNotificaciones.length,
+              itemCount: sortedKeys.length,
               itemBuilder: (context, index) {
-                final fecha = groupedNotificaciones.keys.elementAt(index); // Obtener la fecha del grupo
+                final fecha = sortedKeys[index]; // Obtener la fecha del grupo
                 final notificaciones = groupedNotificaciones[fecha]!; // Obtener las notificaciones del grupo
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

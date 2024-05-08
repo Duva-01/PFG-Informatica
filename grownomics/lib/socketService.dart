@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:socket_io_client/socket_io_client.dart'
     as IO; // Importa socket_io_client para la comunicación por socket
@@ -9,8 +11,14 @@ const String baseUrl = 'http://143.47.44.251:5000';
 
 // Clase para gestionar la conexión y escuchar eventos del socket
 class SocketService {
-  late IO.Socket socket; // Socket para la comunicación
-  
+  IO.Socket socket = IO.io(
+    baseUrl,
+    IO.OptionBuilder()
+        .setTransports(['websocket'])
+        .disableAutoConnect()
+        .build(),
+  );
+
   // Plugin para gestionar las notificaciones locales
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -31,45 +39,45 @@ class SocketService {
     print("Desconectado del WebSocket");
   }
 
+  bool isConnected() {
+    return socket.connected;
+  }
+
   // Método para conectar y escuchar eventos del socket
   void connectAndListen(String userEmail) async {
+
+    print("Intento conectarme");
     await initNotifications(); // Inicializa las notificaciones locales
 
-    // Conexión al servidor por WebSocket
-    socket = IO.io(
-      baseUrl,
-      IO.OptionBuilder()
-          .setTransports(
-              ['websocket']) // Configura el transporte como WebSocket
-          .disableAutoConnect() // Deshabilita la conexión automática
-          .build(),
-    );
+    // Inicializa el socket si aún no se ha hecho
 
-    socket.connect(); // Conecta al servidor
+    if (!socket.connected) {
+      socket.connect();
 
-    // Evento al establecer conexión con el servidor
-    socket.onConnect((_) {
-      print('Conectado a WebSocket: me uno a la sala $userEmail');
-      socket.emit('join',
-          {'email': userEmail}); // Se une a una sala con el email del usuario
-    });
+      // Evento al establecer conexión con el servidor
+      socket.onConnect((_) {
+        print('Conectado a WebSocket: me uno a la sala $userEmail');
+        socket.emit('join',
+            {'email': userEmail}); // Se une a una sala con el email del usuario
+      });
 
-    // Evento de alerta de stock
-    socket.on('stock_alert', (data) async {
-      if (data is Map<String, dynamic>) {
-        final title = 'Alerta de Acción';
-        final body = data['message']; // Mensaje de la alerta
-        await _showNotification(
-            title, body ?? 'Detalle no disponible'); // Muestra la notificación
-      }
-    });
+      // Evento de alerta de stock
+      socket.on('stock_alert', (data) async {
+        if (data is Map<String, dynamic>) {
+          final title = 'Alerta de Acción';
+          final body = data['message']; // Mensaje de la alerta
+          await _showNotification(title,
+              body ?? 'Detalle no disponible'); // Muestra la notificación
+        }
+      });
 
-    // Evento de respuesta de prueba
-    socket.on('test_response', (data) async {
-      final title = 'Respuesta de Test';
-      final body = data.toString(); // Cuerpo de la respuesta
-      await _showNotification(title, body); // Muestra la notificación
-    });
+      // Evento de respuesta de prueba
+      socket.on('test_response', (data) async {
+        final title = 'Respuesta de Test';
+        final body = data.toString(); // Cuerpo de la respuesta
+        await _showNotification(title, body); // Muestra la notificación
+      });
+    }
   }
 
   // Dentro de SocketService
@@ -83,30 +91,35 @@ class SocketService {
 
   // Método privado para mostrar una notificación
   Future<void> _showNotification(String title, String body) async {
-    if (await areNotificationsEnabled()) {
-      // Configuración de la notificación para Android
-      const AndroidNotificationDetails androidPlatformChannelSpecifics =
-          AndroidNotificationDetails(
-        'your channel id',
-        'Notificacion grownomics',
-        'Notificacion',
-        importance: Importance.max,
-        priority: Priority.high,
-        ticker: 'ticker',
-      );
-      const NotificationDetails platformChannelSpecifics =
-          NotificationDetails(android: androidPlatformChannelSpecifics);
-      await flutterLocalNotificationsPlugin.show(
-        0, 
-        title,
-        body,
-        platformChannelSpecifics,
-        payload: 'item x',
-      );
-    }
-  }
+  if (await areNotificationsEnabled()) {
+    // Configuración de la notificación para Android
+    AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'your_channel_id',  // ID del canal, debe ser único
+      'Notificaciones Grownomics',  // Nombre del canal
+      icon: '@mipmap/ic_launcher',  // Icono de la notificación
+      importance: Importance.max,  // Define la importancia de la notificación
+      priority: Priority.high,  // Define la prioridad de la notificación
+      ticker: 'ticker',  // Texto a mostrar en la barra de estado cuando se muestra la notificación
+      playSound: true,  // Configura si se debe reproducir un sonido
+      enableVibration: true,  // Configura si se debe vibrar
+      additionalFlags: Int32List.fromList([4])  // FLAG_IMMUTABLE necesario para Android 12 y superior
+    );
 
-  
+    NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+    );
+
+    await flutterLocalNotificationsPlugin.show(
+      0,  // ID de notificación
+      title,  // Título de la notificación
+      body,  // Cuerpo de la notificación
+      platformChannelSpecifics,
+      payload: 'item x',  // Datos adicionales que se pasan con la notificación
+    );
+  }
+}
+
+
 
   // Método para enviar un evento de prueba al servidor
   void sendTestEvent() {

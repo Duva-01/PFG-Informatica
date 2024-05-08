@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request, current_app
 from flask_login import login_user, logout_user
 from ..models import Usuario, Cartera, ResetClaveToken, Notificacion
 from ..extensions import db
-
+from ..auth_decorators import login_required_conditional
 import random
 from datetime import datetime, timedelta
 
@@ -13,6 +13,7 @@ auth_bp = Blueprint('auth', __name__)
 
 # Rutas para registro, inicio de sesión, cierre de sesión y obtención de usuario
 @auth_bp.route('/register', methods=['POST'])
+@login_required_conditional
 def register():
     if request.method == 'POST':
         # Obtener los datos del formulario de registro
@@ -43,6 +44,7 @@ def register():
 
 # Ruta para iniciar sesión
 @auth_bp.route('/login', methods=['POST'])
+@login_required_conditional
 def login():
     if request.method == 'POST':
         # Obtener el correo electrónico y la contraseña del formulario de inicio de sesión
@@ -61,13 +63,16 @@ def login():
 
 # Ruta para cerrar sesión
 @auth_bp.route('/logout', methods=['GET'])
+@login_required_conditional
 def logout():
     # Cerrar sesión del usuario actual
     logout_user()
     return jsonify({'success': True, 'message': 'Has cerrado sesión correctamente.'}), 200
 
 # Ruta para obtener información de usuario por correo electrónico
+
 @auth_bp.route('/get_user', methods=['GET'])
+@login_required_conditional
 def get_user():
     email = request.args.get('email')
     if email:
@@ -92,6 +97,7 @@ def get_user():
 
 # Ruta para actualizar información de usuario
 @auth_bp.route('/update_user', methods=['POST'])
+@login_required_conditional
 def update_user():
     
     # Obtener los datos JSON de la solicitud
@@ -128,6 +134,7 @@ def update_user():
 
 # Ruta para restablecer la contraseña
 @auth_bp.route('/reset_password', methods=['POST'])
+@login_required_conditional
 def reset_password():
     # Obtener los datos JSON de la solicitud
     data = request.get_json()
@@ -152,6 +159,7 @@ def reset_password():
 
 # Ruta para solicitar restablecimiento de contraseña
 @auth_bp.route('/reset_password_request', methods=['POST'])
+@login_required_conditional
 def reset_password_request():
     # Obtener los datos JSON de la solicitud
     data = request.get_json()
@@ -202,6 +210,7 @@ def send_verification_code(email_to, verification_code):
     
 # Ruta para obtener las notificaciones de un usuario
 @auth_bp.route('/get_notifications', methods=['GET'])
+@login_required_conditional
 def get_notifications():
     email = request.args.get('email')
     if email:

@@ -18,7 +18,7 @@ class WidgetTablaDatos extends StatefulWidget {
 class _EstadoWidgetTablaDatos extends State<WidgetTablaDatos> {
   String _intervalo = '1mo'; // Intervalo de tiempo inicial
   List<HistoricalData> _datosHistoricos = []; // Lista de datos históricos
-
+  
   @override
 void initState() {
   super.initState();
@@ -36,6 +36,10 @@ void initState() {
     });
   }
 Widget build(BuildContext context) {
+
+  double screenWidth = MediaQuery.of(context).size.width;
+  double columnSpacing = screenWidth < 360 ? 10.0 : 25.0;  // Ajusta el espaciado según el ancho de la pantalla
+
   return ListView(
     children: [
       // Sección para seleccionar el intervalo de tiempo
@@ -120,34 +124,40 @@ Widget build(BuildContext context) {
           ],
         ),
       ),
-      // Sección para mostrar los datos en forma de tabla
-      SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: DataTable(
-          headingRowColor: MaterialStateColor.resolveWith((states) => Colors.green[200]!), // Color de fondo de los títulos de las columnas
-          columnSpacing: 25.0, // Espaciado entre columnas
-          columns: [
-            DataColumn(label: Text('Fecha', style: TextStyle(fontWeight: FontWeight.bold))), // Columna de fecha
-            DataColumn(label: Text('Apertura', style: TextStyle(fontWeight: FontWeight.bold))), // Columna de precio de apertura
-            DataColumn(label: Text('Cierre', style: TextStyle(fontWeight: FontWeight.bold))), // Columna de precio de cierre
-            DataColumn(label: Text('Alto', style: TextStyle(fontWeight: FontWeight.bold))), // Columna de precio máximo
-            DataColumn(label: Text('Bajo', style: TextStyle(fontWeight: FontWeight.bold))), // Columna de precio mínimo
-          ],
-          rows: _datosHistoricos.map((item) {
-            return DataRow(
-              cells: [
-                DataCell(Text(DateFormat('yMd').format(item.date))), // Celda con la fecha formateada
-                DataCell(Text('${item.open.toStringAsFixed(2)}')), // Celda con el precio de apertura
-                DataCell(Text('${item.close.toStringAsFixed(2)}')), // Celda con el precio de cierre
-                DataCell(Text('${item.high.toStringAsFixed(2)}')), // Celda con el precio máximo
-                DataCell(Text('${item.low.toStringAsFixed(2)}')), // Celda con el precio mínimo
-              ],
-            );
-          }).toList(),
-        ),
+      LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minWidth: constraints.maxWidth),
+              child: DataTable(
+                headingRowColor: MaterialStateColor.resolveWith((states) => Colors.green[200]!),
+                columnSpacing: 25.0,
+                columns: [
+                  DataColumn(label: Text('Fecha', style: TextStyle(fontWeight: FontWeight.bold))),
+                  DataColumn(label: Text('Apertura', style: TextStyle(fontWeight: FontWeight.bold))),
+                  DataColumn(label: Text('Cierre', style: TextStyle(fontWeight: FontWeight.bold))),
+                  DataColumn(label: Text('Alto', style: TextStyle(fontWeight: FontWeight.bold))),
+                  DataColumn(label: Text('Bajo', style: TextStyle(fontWeight: FontWeight.bold))),
+                ].map((dataColumn) => DataColumn(
+                  label: dataColumn.label,
+                  onSort: (int columnIndex, bool ascending) {
+                    // Implementa la función de ordenamiento si es necesario
+                  }
+                )).toList(),
+                rows: _datosHistoricos.map((item) => DataRow(cells: [
+                  DataCell(Text(DateFormat('yMd').format(item.date))),
+                  DataCell(Text('${item.open.toStringAsFixed(2)}')),
+                  DataCell(Text('${item.close.toStringAsFixed(2)}')),
+                  DataCell(Text('${item.high.toStringAsFixed(2)}')),
+                  DataCell(Text('${item.low.toStringAsFixed(2)}')),
+                ])).toList(),
+              ),
+            ),
+          );
+        }
       ),
     ],
   );
 }
-
 }

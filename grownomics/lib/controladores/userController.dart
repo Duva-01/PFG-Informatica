@@ -10,7 +10,7 @@ class UsuarioController {
   // Función para obtener los datos de un usuario dado su correo electrónico
   static Future<Map<String, dynamic>> obtenerDatosUsuario(String correo) async {
     final Uri url = Uri.parse('$baseUrl/auth/get_user?email=$correo');
-    final respuesta = await http.get(url);
+    final respuesta = await http.get(url, headers: {'X-App-Usage': 'true'});
 
     if (respuesta.statusCode == 200) {
       final responseData = json.decode(respuesta.body);
@@ -26,6 +26,7 @@ class UsuarioController {
       final response = await http.post(
         Uri.parse('$baseUrl/auth/login'),
         body: {'email': correo, 'password': contrasena},
+        headers: {'X-App-Usage': 'true'}
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -50,6 +51,7 @@ class UsuarioController {
       final response = await http.post(
         Uri.parse('$baseUrl/auth/register'),
         body: {'nombre': nombre, 'apellido': apellido, 'email': correo, 'password': contrasena},
+        headers: {'X-App-Usage': 'true'}
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -81,7 +83,7 @@ class UsuarioController {
 
       final respuesta = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Content-Type': 'application/json', 'X-App-Usage': 'true'},
         body: json.encode(body),
       );
 
@@ -107,7 +109,7 @@ class UsuarioController {
   static Future<bool> solicitarResetPassword(String email) async {
     final response = await http.post(
       Uri.parse('$baseUrl/auth/reset_password_request'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json', 'X-App-Usage': 'true'},
       body: json.encode({'email': email}),
     );
 
@@ -122,7 +124,7 @@ class UsuarioController {
   static Future<bool> resetPassword(String email, String codigo, String nuevaPassword) async {
     final response = await http.post(
       Uri.parse('$baseUrl/auth/reset_password'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json', 'X-App-Usage': 'true'},
       body: json.encode({
         'email': email,
         'code': codigo,
@@ -140,7 +142,7 @@ class UsuarioController {
   // Función para obtener las notificaciones de un usuario
   static Future<List<Notificacion>> obtenerNotificacionesUsuario(String correo) async {
     final Uri url = Uri.parse('$baseUrl/auth/get_notifications?email=$correo');
-    final respuesta = await http.get(url);
+    final respuesta = await http.get(url, headers: {'X-App-Usage': 'true'});
 
     if (respuesta.statusCode == 200) {
       List<dynamic> body = json.decode(respuesta.body);
