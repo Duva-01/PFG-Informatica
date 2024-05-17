@@ -9,6 +9,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:dcdg/dcdg.dart'; // Esto sirve para crearme los diagramas UML automaticamente
 
+
 void main() async {
   // Nos aseguramos de que los widgets estan correctamente inicializados antes de ejecutar cualquier accion
   WidgetsFlutterBinding.ensureInitialized();

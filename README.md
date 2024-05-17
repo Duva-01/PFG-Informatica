@@ -4,6 +4,11 @@
 
 Este proyecto fin de grado, desarrollado por David Martínez Díaz bajo la supervisión de Jose Manuel Zurita López, se centra en el diseño e implementación de una aplicación de asesoramiento financiero bursátil. Esta aplicación está diseñada para usuarios con diversos niveles de conocimiento financiero, permitiéndoles realizar simulaciones virtuales de inversiones con datos en tiempo real y recomendaciones basadas en análisis bursátil.
 
+### ¿Cómo funciona la aplicación?
+
+[![APP para Asesoramiento Financiero Bursátil](https://img.youtube.com/vi/Xo1dega6FgY/0.jpg)](https://www.youtube.com/watch?v=Xo1dega6FgY)
+
+
 ## Características
 
 - **Análisis en Tiempo Real**: La aplicación recopila datos en tiempo real de los mercados financieros a través de APIs confiables como Yahoo Finance, proporcionando a los usuarios información actualizada y relevante para la toma de decisiones.
@@ -75,9 +80,9 @@ flutter test
 
 ## Descarga de la Aplicación
 
-- **Google Play Store**: Puedes descargar la aplicación desde la Google Play Store a través de este enlace: [Descargar APP Financiera - Grownomics](https://play.google.com/store/apps/developer?id=David+Mart%C3%ADnez+Diaz)
+- **Google Play Store**: Puedes descargar la aplicación desde la Google Play Store a través de este enlace: [Descargar APP Financiera - Grownomics](https://play.google.com/store/apps/details?id=com.david.grownomicspfg&pcampaignid=web_share)
 
-[![Grownomics](http://developer.android.com/images/brand/en_generic_rgb_wo_45.png)](https://play.google.com/store/apps/developer?id=David+Mart%C3%ADnez+Diaz)
+[![Grownomics](http://developer.android.com/images/brand/en_generic_rgb_wo_45.png)](https://play.google.com/store/apps/details?id=com.david.grownomicspfg&pcampaignid=web_share)
 
 ## Uso
 

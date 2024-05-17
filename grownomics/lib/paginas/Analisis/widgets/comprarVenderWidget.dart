@@ -48,12 +48,13 @@ class _ComprarVenderWidgetState extends State<ComprarVenderWidget> {
     }
   }
 
-    Future<void> _cargarResumenAccion() async {
+  Future<void> _cargarResumenAccion() async {
     try {
-      resumen = await MercadoController.obtenerDatosAccion(widget.simboloAccion);
+      resumen =
+          await MercadoController.obtenerDatosAccion(widget.simboloAccion);
       setState(() {
         precio = resumen['current_price'];
-      print("El precio de la accion es " + precio.toString());
+        print("El precio de la accion es " + precio.toString());
       });
     } catch (e) {
       print("Error al cargar el resumen de la acción: $e");
@@ -172,98 +173,99 @@ class _ComprarVenderWidgetState extends State<ComprarVenderWidget> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(
-                      onPressed: cantidad <= 0
-                          ? null
-                          : () async {
-                              bool resultado =
-                                  await CarteraController.comprarAccion(
-                                widget.correoElectronico,
-                                widget.simboloAccion,
-                                precio,
-                                cantidad,
-                              );
-                              if (resultado) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text("Compra realizada con éxito"),
-                                  ),
-                                );
-                                setState(() {
-                                  cantidad = 0; // Restablece la cantidad a cero
-                                });
-                                _textFieldController
-                                    .clear(); // Restablece el valor del TextField a cero
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content:
-                                        Text("Error al realizar la compra"),
-                                  ),
-                                );
-                              }
-                            },
-                      style: ButtonStyle(
-                        foregroundColor:
-                            MaterialStateProperty.all<Color>(Colors.white),
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            cantidad <= 0 ? Colors.grey : Colors.green),
-                        padding: MaterialStateProperty.all<EdgeInsets>(
-                          EdgeInsets.all(16),
-                        ),
-                        textStyle: MaterialStateProperty.all<TextStyle>(
-                          TextStyle(
-                            fontSize: 20,
-                          ),
-                        ),
-                      ),
-                      child: Text("Comprar"),
-                    ),
-                    ElevatedButton(
-                      onPressed: cantidad <= 0
-                          ? null
-                          : () async {
-                              bool resultado =
-                                  await CarteraController.venderAccion(
-                                widget.correoElectronico,
-                                widget.simboloAccion,
-                                precio,
-                                cantidad,
-                              );
-                              if (resultado) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text("Venta realizada con éxito"),
-                                  ),
-                                );
-                                setState(() {
-                                  cantidad = 0; // Restablece la cantidad a cero
-                                });
-                                _textFieldController
-                                    .clear(); // Restablece el valor del TextField a cero
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text("Error al realizar la venta"),
-                                  ),
-                                );
-                              }
-                            },
-                      style: ButtonStyle(
-                        foregroundColor:
-                            MaterialStateProperty.all<Color>(Colors.white),
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            cantidad <= 0 ? Colors.grey : Colors.red),
-                        padding: MaterialStateProperty.all<EdgeInsets>(
-                          EdgeInsets.all(16),
-                        ),
-                        textStyle: MaterialStateProperty.all<TextStyle>(
-                          TextStyle(
-                            fontSize: 20,
-                          ),
-                        ),
-                      ),
-                      child: Text("Vender"),
-                    ),
+  onPressed: cantidad <= 0
+      ? null
+      : () async {
+          bool resultado = await CarteraController.comprarAccion(
+            widget.correoElectronico,
+            widget.simboloAccion,
+            precio,
+            cantidad,
+          );
+          if (resultado && mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Compra realizada con éxito"),
+              ),
+            );
+            _cargarDatosCartera();
+            _cargarAccionesUsuario();
+            _cargarResumenAccion();
+            setState(() {
+              cantidad = 0;
+              _textFieldController.clear();
+            });
+          } else if (!resultado && mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Error al realizar la compra"),
+              ),
+            );
+          }
+        },
+  style: ButtonStyle(
+    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+    backgroundColor: MaterialStateProperty.all<Color>(
+        cantidad <= 0 ? Colors.grey : Colors.green),
+    padding: MaterialStateProperty.all<EdgeInsets>(
+      EdgeInsets.all(16),
+    ),
+    textStyle: MaterialStateProperty.all<TextStyle>(
+      TextStyle(
+        fontSize: 20,
+      ),
+    ),
+  ),
+  child: Text("Comprar"),
+),
+
+ElevatedButton(
+  onPressed: cantidad <= 0
+      ? null
+      : () async {
+          bool resultado = await CarteraController.venderAccion(
+            widget.correoElectronico,
+            widget.simboloAccion,
+            precio,
+            cantidad,
+          );
+          if (resultado && mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Venta realizada con éxito"),
+              ),
+            );
+            _cargarDatosCartera();
+            _cargarAccionesUsuario();
+            _cargarResumenAccion();
+            setState(() {
+              cantidad = 0;
+              _textFieldController.clear();
+            });
+          } else if (!resultado && mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Error al realizar la venta"),
+              ),
+            );
+          }
+        },
+  style: ButtonStyle(
+    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+    backgroundColor: MaterialStateProperty.all<Color>(
+        cantidad <= 0 ? Colors.grey : Colors.red),
+    padding: MaterialStateProperty.all<EdgeInsets>(
+      EdgeInsets.all(16),
+    ),
+    textStyle: MaterialStateProperty.all<TextStyle>(
+      TextStyle(
+        fontSize: 20,
+      ),
+    ),
+  ),
+  child: Text("Vender"),
+),
+
                   ],
                 ),
               ],

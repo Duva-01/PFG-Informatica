@@ -8,12 +8,10 @@ import 'package:grownomics/paginas/Mercado/Widgets/chartWidget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PaginaConfiguracion extends StatefulWidget {
-  // Atributos de la clase
   final String userEmail;
   final String nombre;
   final String apellido;
 
-  // Constructor
   PaginaConfiguracion({
     required this.userEmail,
     required this.nombre,
@@ -25,8 +23,6 @@ class PaginaConfiguracion extends StatefulWidget {
 }
 
 class _PaginaConfiguracionState extends State<PaginaConfiguracion> {
-  
-  // Estado para el estado de las notificaciones
   bool _notificacionesActivadas = false;
   bool _isUserLoggedIn = false;
 
@@ -39,9 +35,7 @@ class _PaginaConfiguracionState extends State<PaginaConfiguracion> {
   Future<void> _loadUser() async {
     final prefs = await SharedPreferences.getInstance();
     final isLoggedIn = prefs.getBool('isUserLoggedIn') ?? false;
-    final isNotificationsEnabled =
-        prefs.getBool('notificationsEnabled') ?? false;
-    // Usa setState para actualizar _isUserLoggedIn y reconstruir la UI
+    final isNotificationsEnabled = prefs.getBool('notificationsEnabled') ?? false;
     setState(() {
       _isUserLoggedIn = isLoggedIn;
       _notificacionesActivadas = isNotificationsEnabled;
@@ -58,76 +52,56 @@ class _PaginaConfiguracionState extends State<PaginaConfiguracion> {
 
   @override
   Widget build(BuildContext context) {
-    // Obtener el controlador del ZoomDrawer
     final controller = ZoomDrawer.of(context);
 
     return Scaffold(
       appBar: AppBar(
         key: Key('AppBarConfiguracion'),
-        // Barra de aplicaciones en la parte superior de la página
         title: Text(
           'Configuracion',
-          style: TextStyle(
-            color: Colors.white, // Color del texto blanco
-          ),
-        ), // Título de la aplicación
-        centerTitle: true, // Centra el título en la barra de aplicaciones
+          style: TextStyle(color: Colors.white),
+        ),
+        centerTitle: true,
         leading: IconButton(
-          // Botón de menú en el lado izquierdo de la barra de aplicaciones
-          icon: Icon(Icons.menu, color: Colors.white), // Icono de menú
+          icon: Icon(Icons.menu, color: Colors.white),
           onPressed: () {
-            // Manejador de eventos cuando se presiona el botón de menú
-            controller
-                ?.toggle(); // Alterna el estado del ZoomDrawer (abre/cierra)
+            controller?.toggle();
           },
         ),
-        backgroundColor: Theme.of(context)
-            .primaryColor, // Color de fondo de la AppBar según el color primario del tema
-
+        backgroundColor: Theme.of(context).primaryColor,
         shadowColor: Colors.black,
         elevation: 4,
       ),
       body: Container(
         color: Colors.white,
         child: ListView(
-          // Cuerpo de la página, una lista desplazable
           children: <Widget>[
             UserAccountsDrawerHeader(
               decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor, // Color de fondo rojo
+                color: Theme.of(context).primaryColor,
               ),
-              // Encabezado de la cuenta del usuario
               accountName: Text(
-                // Nombre y apellido del usuario
-                widget.nombre + " " + widget.apellido,
+                '${widget.nombre} ${widget.apellido}',
                 style: TextStyle(fontSize: 20),
               ),
-              accountEmail:
-                  Text("Ajustes de Cuenta"), // Texto de ajustes de cuenta
+              accountEmail: Text("Ajustes de Cuenta"),
               currentAccountPicture: CircleAvatar(
-                // Imagen de perfil del usuario
                 backgroundColor: Colors.white,
                 child: Text(
-                  // Inicial del nombre del usuario como imagen de perfil
-                  widget.nombre[0],
-                  style: TextStyle(
-                      fontSize: 40.0, color: Theme.of(context).primaryColor),
+                  widget.nombre.isNotEmpty ? widget.nombre[0] : '',
+                  style: TextStyle(fontSize: 40.0, color: Theme.of(context).primaryColor),
                 ),
               ),
             ),
             if (_isUserLoggedIn) ...[
               ListTile(
                 key: Key('EditarPerfil'),
-                // Elemento de lista para editar perfil
-                title: Text('Editar Perfil'), // Título
-                trailing: Icon(Icons.arrow_forward_ios), // Icono de flecha
+                title: Text('Editar Perfil'),
+                trailing: Icon(Icons.arrow_forward_ios),
                 onTap: () {
-                  // Acción para política de privacidad
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            PaginaEditarPerfil(userEmail: widget.userEmail)),
+                    MaterialPageRoute(builder: (context) => PaginaEditarPerfil(userEmail: widget.userEmail)),
                   );
                 },
               ),
@@ -135,13 +109,11 @@ class _PaginaConfiguracionState extends State<PaginaConfiguracion> {
                 key: Key('ToggleNotificaciones'),
                 title: Text(
                   'Mostrar notificaciones',
-                  style: TextStyle(color: Colors.black), // Color de la etiqueta
+                  style: TextStyle(color: Colors.black),
                 ),
                 value: _notificacionesActivadas,
-                activeColor:
-                    Theme.of(context).primaryColor, // Color cuando está activo
-                inactiveTrackColor:
-                    Colors.grey, // Color de la pista cuando está inactivo
+                activeColor: Theme.of(context).primaryColor,
+                inactiveTrackColor: Colors.grey,
                 onChanged: (bool valor) {
                   setState(() {
                     _updateNotificationsPreference(valor);
@@ -150,57 +122,44 @@ class _PaginaConfiguracionState extends State<PaginaConfiguracion> {
               ),
             ],
             Divider(
-              color: const Color.fromARGB(255, 221, 216, 216), // Color gris
-              thickness: 1.0, // Grosor de 2 píxeles
+              color: const Color.fromARGB(255, 221, 216, 216),
+              thickness: 1.0,
             ),
             Padding(
-              // Espaciado interno
               padding: const EdgeInsets.all(8.0),
-              child: Text('Más información',
-                  style: TextStyle(
-                      color: Colors.grey,
-                      fontWeight: FontWeight.bold)), // Texto adicional
+              child: Text(
+                'Más información',
+                style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+              ),
             ),
             ListTile(
               key: Key('SobreNosotros'),
-              // Elemento de lista para mostrar información sobre nosotros
-              title: Text('Sobre nosotros'), // Título
-              trailing: Icon(Icons.arrow_forward_ios), // Icono de flecha
+              title: Text('Sobre nosotros'),
+              trailing: Icon(Icons.arrow_forward_ios),
               onTap: () {
-                // Acción para sobre nosotros
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          PaginaSobreNosotros(userEmail: widget.userEmail)),
+                  MaterialPageRoute(builder: (context) => PaginaSobreNosotros(userEmail: widget.userEmail)),
                 );
               },
             ),
             ListTile(
-              // Elemento de lista para mostrar la política de privacidad
-              title: Text('Política de Privacidad'), // Título
-              trailing: Icon(Icons.arrow_forward_ios), // Icono de flecha
+              title: Text('Política de Privacidad'),
+              trailing: Icon(Icons.arrow_forward_ios),
               onTap: () {
-                // Acción para política de privacidad
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => PaginaPoliticaPrivacidad(
-                          userEmail: widget.userEmail)),
+                  MaterialPageRoute(builder: (context) => PaginaPoliticaPrivacidad(userEmail: widget.userEmail)),
                 );
               },
             ),
             ListTile(
-              // Elemento de lista para mostrar los términos y condiciones
-              title: Text('Términos y Condiciones'), // Título
-              trailing: Icon(Icons.arrow_forward_ios), // Icono de flecha
+              title: Text('Términos y Condiciones'),
+              trailing: Icon(Icons.arrow_forward_ios),
               onTap: () {
-                // Acción para términos y condiciones
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => PaginaTerminosCondiciones(
-                          userEmail: widget.userEmail)),
+                  MaterialPageRoute(builder: (context) => PaginaTerminosCondiciones(userEmail: widget.userEmail)),
                 );
               },
             ),

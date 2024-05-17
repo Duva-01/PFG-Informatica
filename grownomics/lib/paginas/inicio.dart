@@ -5,7 +5,6 @@ import 'package:grownomics/paginas/Analisis/analisisPage.dart';
 import 'package:grownomics/paginas/Aprendizaje/learnPage.dart';
 import 'package:grownomics/paginas/Cartera/portfolioPage.dart';
 import 'package:grownomics/paginas/Configuracion/configPage.dart';
-
 import 'package:grownomics/paginas/Home/homePage.dart';
 import 'package:grownomics/paginas/Mercado/marketPage.dart';
 import 'package:grownomics/paginas/MisAcciones/myStockPage.dart';
@@ -24,8 +23,8 @@ class PantallaInicio extends StatefulWidget {
 class _PantallaInicioState extends State<PantallaInicio> {
   int _indiceSeleccionado = 0;
   late Future<void> _cargaInicial;
-  String correoElectronico = '';
-  String nombre = '';
+  String correoElectronico = 'grownomicero@gmail.com';
+  String nombre = 'grownomicero';
   String apellido = '';
 
   late SocketService _socketService;
@@ -81,10 +80,8 @@ class _PantallaInicioState extends State<PantallaInicio> {
     });
   }
 
- 
   @override
   Widget build(BuildContext context) {
-
     return FutureBuilder(
       future: _cargaInicial,
       builder: (context, snapshot) {
@@ -93,27 +90,27 @@ class _PantallaInicioState extends State<PantallaInicio> {
             body: Center(child: CircularProgressIndicator()), // Mostrar un indicador de carga mientras los datos se están cargando
           );
         } else {
-            final paginas = [
-              PaginaInicio(userEmail: correoElectronico), // Página de inicio
-              PaginaAnalisis(userEmail: correoElectronico), // Pagina de analisis
-              PaginaCartera(userEmail: correoElectronico), // Página de cartera
-              PaginaMisAcciones(userEmail: correoElectronico), // Página de mis acciones
-              PaginaNoticias(), // Página de noticias
-              PaginaAprendizaje(), // Página de aprendizaje
-              PaginaConfiguracion(userEmail: correoElectronico, nombre: nombre, apellido: apellido) // Página de configuración con datos de usuario
-            ];
+          final paginas = [
+            PaginaInicio(userEmail: correoElectronico), // Página de inicio
+            PaginaAnalisis(userEmail: correoElectronico), // Pagina de analisis
+            PaginaCartera(userEmail: correoElectronico), // Página de cartera
+            PaginaMisAcciones(userEmail: correoElectronico), // Página de mis acciones
+            PaginaNoticias(), // Página de noticias
+            PaginaAprendizaje(), // Página de aprendizaje
+            PaginaConfiguracion(userEmail: correoElectronico, nombre: nombre, apellido: apellido) // Página de configuración con datos de usuario
+          ];
 
-            return ZoomDrawer(
-              controller: controlador, // Controlador del ZoomDrawer
-              mainScreen: paginas[_indiceSeleccionado], // Página principal que se muestra
-              menuScreen: MenuScreen(controller: controlador, onItemTapped: _alItemTocar, socketService: _socketService), // Menú lateral
-              borderRadius: 24, // Radio de borde
-              showShadow: true, // Mostrar sombra
-              angle: 0.0, // Ángulo de rotación
-              drawerShadowsBackgroundColor: Colors.grey, // Color de fondo de las sombras del cajón
-              slideWidth: MediaQuery.of(context).size.width * 0.65, // Ancho del cajón deslizante
-              menuBackgroundColor: Color.fromARGB(255, 67, 211, 149), // Color de fondo del menú
-            );
+          return ZoomDrawer(
+            controller: controlador, // Controlador del ZoomDrawer
+            mainScreen: paginas[_indiceSeleccionado], // Página principal que se muestra
+            menuScreen: MenuScreen(controller: controlador, onItemTapped: _alItemTocar, socketService: _socketService), // Menú lateral
+            borderRadius: 24, // Radio de borde
+            showShadow: true, // Mostrar sombra
+            angle: 0.0, // Ángulo de rotación
+            drawerShadowsBackgroundColor: Colors.grey, // Color de fondo de las sombras del cajón
+            slideWidth: MediaQuery.of(context).size.width * 0.65, // Ancho del cajón deslizante
+            menuBackgroundColor: Color.fromARGB(255, 67, 211, 149), // Color de fondo del menú
+          );
         }
       },
     );

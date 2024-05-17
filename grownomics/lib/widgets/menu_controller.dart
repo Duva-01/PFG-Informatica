@@ -18,8 +18,7 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
-  late String userEmail =
-      "grownomicero@gmail.com"; // Correo electrónico predeterminado
+  late String userEmail = "grownomicero@gmail.com"; // Correo electrónico predeterminado
   late String nombre = "Grownomicero"; // Nombre predeterminado
   late String apellido = ""; // Apellido predeterminado
 
@@ -33,15 +32,13 @@ class _MenuScreenState extends State<MenuScreen> {
 
   Future<void> _loadUser() async {
     final prefs = await SharedPreferences.getInstance();
-    _isUserLoggedIn = prefs.getBool('isUserLoggedIn') ??
-        false; // Obtener el estado de inicio de sesión de SharedPreferences
+    _isUserLoggedIn = prefs.getBool('isUserLoggedIn') ?? false; // Obtener el estado de inicio de sesión de SharedPreferences
 
     if (_isUserLoggedIn) {
       final emailObtenido = prefs.getString('userEmail');
       if (emailObtenido != null) {
         try {
-          final datos = await UsuarioController.obtenerDatosUsuario(
-              emailObtenido); // Obtener datos del usuario utilizando el correo electrónico guardado
+          final datos = await UsuarioController.obtenerDatosUsuario(emailObtenido); // Obtener datos del usuario utilizando el correo electrónico guardado
           if (datos['nombre'] != null && datos['apellido'] != null) {
             setState(() {
               userEmail = emailObtenido;
@@ -65,17 +62,13 @@ class _MenuScreenState extends State<MenuScreen> {
           Container(
             width: double.infinity, // Establece el ancho al máximo posible
             color: Color(0xFF2F8B62), // Color de fondo
-            padding: EdgeInsets.symmetric(
-                vertical: 10,
-                horizontal: 16), // Añade relleno alrededor de los elementos
+            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16), // Añade relleno alrededor de los elementos
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment
-                  .start, // Alinea los elementos a la izquierda
+              crossAxisAlignment: CrossAxisAlignment.start, // Alinea los elementos a la izquierda
               children: [
                 CircleAvatar(
                   radius: 60.0, // Ajusta el tamaño del avatar
-                  backgroundImage: AssetImage(
-                      'assets/images/profile.gif'), // Imagen de fondo
+                  backgroundImage: AssetImage('assets/images/profile.gif'), // Imagen de fondo
                 ),
                 SizedBox(height: 12), // Espacio entre la imagen y el texto
                 Text(
@@ -109,27 +102,20 @@ class _MenuScreenState extends State<MenuScreen> {
             color: Theme.of(context).primaryColor,
           ),
           ListTile(
-            leading: Icon(_isUserLoggedIn ? Icons.exit_to_app : Icons.login,
-                color: Colors.white),
-            title: Text(_isUserLoggedIn ? 'Salir' : 'Iniciar sesión',
-                style: TextStyle(color: Colors.white)),
+            leading: Icon(_isUserLoggedIn ? Icons.exit_to_app : Icons.login, color: Colors.white),
+            title: Text(_isUserLoggedIn ? 'Salir' : 'Iniciar sesión', style: TextStyle(color: Colors.white)),
             onTap: () async {
               if (_isUserLoggedIn) {
                 widget.socketService.disconnect();
 
-                final SharedPreferences prefs =
-                    await SharedPreferences.getInstance();
-                await prefs.remove(
-                    'isUserLoggedIn'); // Eliminar el estado de inicio de sesión
-                await prefs
-                    .remove('userEmail'); // Eliminar el correo electrónico
+                final SharedPreferences prefs = await SharedPreferences.getInstance();
+                await prefs.remove('isUserLoggedIn'); // Eliminar el estado de inicio de sesión
+                await prefs.remove('userEmail'); // Eliminar el correo electrónico
                 Navigator.of(context).pushNamedAndRemoveUntil(
                     '/iniciar_sesion',
-                    (Route<dynamic> route) =>
-                        false); // Redirigir a la pantalla de inicio de sesión
+                    (Route<dynamic> route) => false); // Redirigir a la pantalla de inicio de sesión
               } else {
-                Navigator.of(context).pushNamed(
-                    '/iniciar_sesion'); // Navegar a la pantalla de inicio de sesión
+                Navigator.of(context).pushNamed('/iniciar_sesion'); // Navegar a la pantalla de inicio de sesión
               }
             },
           ),
