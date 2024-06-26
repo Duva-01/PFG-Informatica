@@ -225,14 +225,19 @@ class _HistorialWidgetState extends State<HistorialWidget> {
         xAxisTitles.insert(0, ""); // Insertar título vacío para la fecha
       }
     }
+// Asegurarnos de que el intervalo no sea cero
+    double interval = ((maxBalance - minBalance) / 5).ceil().toDouble();
+    if (interval == 0) {
+      interval = 1; // Asignar un valor por defecto si el intervalo es cero
+    }
 
-    // Configuración de los títulos en los ejes
+// Configuración de los títulos en los ejes
     FlTitlesData titlesData = FlTitlesData(
       leftTitles: AxisTitles(
         sideTitles: SideTitles(
           showTitles: true,
           reservedSize: 80,
-          interval: ((maxBalance - minBalance) / 5).ceil().toDouble(),
+          interval: interval,
           getTitlesWidget: (double value, TitleMeta meta) {
             if (value == 0.0) {
               return Text('');
@@ -269,7 +274,7 @@ class _HistorialWidgetState extends State<HistorialWidget> {
       ),
     );
 
-    // Construir el gráfico
+// Construir el gráfico
     return Container(
       // Contenedor del gráfico
       padding: EdgeInsets.all(10), // Padding
